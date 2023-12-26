@@ -1,38 +1,55 @@
-#define STORED_IMAGES_LENGTH 250000L // Max size of image storage
+#include "gifdec.h"
 
 class Display
 {
 private:
     int csPin;            // Chip Select pin
-    uint8_t *storedImage; // Pointer to the stored image in decoded format
-    size_t size;          // Size of image, length = 0 indicate no image
+    const uint8_t *image; // GIF Image in C
+    size_t imageSize;
+    uint16_t currentLoop = 0;
+
 public:
-    unsigned int fileIndex; // File index of image displayed from SD card, 0 = not read from SD Card
+    uint8_t *frame; // Frame ready to show
+    GIF *gif;       // GIF Image
+    bool imageReady = false;
     // Constructor
-    Display(int pin)
-        : csPin(pin), storedImage(NULL), size(0), fileIndex(0)
+    Display(int pin, const uint8_t *image, size_t imageSize)
+        : csPin(pin), frame(NULL), gif(NULL), image(image), imageSize(imageSize)
     {
+        gif = new GIF();
+        imageReady = gif->gd_open_gif_memory(image, imageSize);
+        if (imageReady)
+        {
+            Serial.printf("canvas size: %ux%u\n", gif->info()->width, gif->info()->height);
+            Serial.printf("number of colors: %d\n", gif->info()->palette->size);
+            Serial.printf("number of frames: %d\n", gif->info()->loop_count);
+            size_t bufferLength = gif->info()->width * gif->info()->height * colorOutputSize;
+            frame = (uint8_t *)malloc(bufferLength);
+            if (frame == NULL)
+            {
+                Serial.println("Not enough memory for buffer");
+                imageReady = false;
+            }
+            else
+            {
+
+                imageReady = true;
+            }
+        }
     }
 
-    bool reserveMemoryForStorage(void)
+    void getFrame(void)
     {
-        storedImage = (uint8_t *)ps_malloc(STORED_IMAGES_LENGTH);
-        return storedImage != NULL;
+        currentLoop++;
+        if (currentLoop == gif->info()->loop_count)
+        {
+            currentLoop = 0;
+            gif->gd_rewind();
+        }
+        gif->gd_get_frame();
+        gif->gd_render_frame(frame);
     }
 
-    void storeImage(uint8_t *image, size_t length)
-    {
-        if (length > STORED_IMAGES_LENGTH)
-        {
-            Serial.printf("!!! Cannot store image, too large=%u\n", length);
-            size = 0;
-        }
-        else
-        {
-            memcpy(storedImage, image, length);
-            size = length;
-        }
-    }
     void activate(void)
     {
         digitalWrite(csPin, LOW);
@@ -45,15 +62,5 @@ public:
     int chipSelectPin() const
     {
         return csPin;
-    }
-
-    size_t imageSize() const
-    {
-        return size;
-    }
-
-    uint8_t *image() const
-    {
-        return storedImage;
     }
 };
