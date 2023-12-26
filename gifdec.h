@@ -57,11 +57,11 @@ extern "C"
     public:
         bool gd_open_gif_memory(const uint8_t *buf, size_t len);
         gd_GIF* info();
+        void gd_close_gif();
         int gd_get_frame();
         void gd_render_frame(uint8_t *buffer);
         int gd_is_bgcolor(gd_GIF *gif, uint8_t color[3]);
         void gd_rewind();
-        void gd_close_gif();
         private:
         gd_GIF infoGIF;
     };
