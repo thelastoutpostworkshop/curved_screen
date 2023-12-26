@@ -47,6 +47,11 @@ void setup()
         Serial.println("!!! Code Execution stopped!");
         return;
     }
+
+    Serial.print("Free PSRAM: ");
+    Serial.print(ESP.getFreePsram());
+    Serial.println(" bytes");
+
     int currentDisplay = 0;
     while (true)
     {
