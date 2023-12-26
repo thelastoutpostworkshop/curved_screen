@@ -75,7 +75,7 @@ bool initDisplayPinsAndStorage(void)
     {
         pinMode(display[i]->chipSelectPin(), OUTPUT);
         display[i]->activate();
-        tft.setRotation(1); // Adjust orientation as needed (0-3)
+        tft.setRotation(0); // Adjust orientation as needed (0-3)
         tft.fillScreen(TFT_BLACK);
         display[i]->deActivate();
     }

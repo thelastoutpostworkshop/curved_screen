@@ -62,6 +62,8 @@ extern "C"
         int gd_is_bgcolor(gd_GIF *gif, uint8_t color[3]);
         void gd_rewind();
         void gd_close_gif();
+        private:
+        gd_GIF infoGIF;
     };
 
 #ifdef __cplusplus

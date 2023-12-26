@@ -18,8 +18,6 @@ typedef struct Table
     Entry *entries;
 } Table;
 
-gd_GIF infoGIF;
-
 gd_GIF* GIF::info(void) {
     return &infoGIF;
 }

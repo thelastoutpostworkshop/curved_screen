@@ -23,6 +23,7 @@ public:
             Serial.printf("canvas size: %ux%u\n", gif->info()->width, gif->info()->height);
             Serial.printf("number of colors: %d\n", gif->info()->palette->size);
             Serial.printf("number of frames: %d\n", gif->info()->loop_count);
+            Serial.printf("image size: %u\n", imageSize);
             size_t bufferLength = gif->info()->width * gif->info()->height * colorOutputSize;
             frame = (uint8_t *)malloc(bufferLength);
             if (frame == NULL)
@@ -40,14 +41,13 @@ public:
 
     void getFrame(void)
     {
-        currentLoop++;
-        if (currentLoop == gif->info()->loop_count)
+        if (gif->gd_get_frame())
         {
-            currentLoop = 0;
+            gif->gd_render_frame(frame);
+        } else {
             gif->gd_rewind();
+            getFrame();
         }
-        gif->gd_get_frame();
-        gif->gd_render_frame(frame);
     }
 
     void activate(void)
