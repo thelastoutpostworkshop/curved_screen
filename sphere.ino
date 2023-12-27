@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "display.h"
 #include "images/x_wing.h"
+#include "images/x_winglarge.h"
 #include "images/colortest.h"
 #include "images/hyperspace.h"
 #include "images/darthvader.h"
@@ -30,35 +31,37 @@ void setup()
     {
         Serial.printf("PSRAM Size=%ld\n", ESP.getPsramSize());
     }
-
     initDisplay();
-    for (int i = 0; i < NUM_DISPLAYS; i++)
-    {
-        display[i] = new Display(gifToLoad[i].displayCS, gifToLoad[i].image, gifToLoad[i].imageSize);
-        if (!display[i]->imageReady)
-        {
-            Serial.println("Image not ready, cannot continue");
-            return;
-        }
-    }
 
-    Serial.print("Free PSRAM: ");
-    Serial.print(ESP.getFreePsram());
-    Serial.println(" bytes");
+    Display display = new Display(15,x_wing, gifToLoad[i].imageSize);
 
-    int currentDisplay = 0;
-    while (true)
-    {
-        unsigned long speed = millis();
-        display[currentDisplay]->showFrames();
-        Serial.printf("Screen 0 FPS=%f\n", 1000.0f / (millis() - speed));
+    // for (int i = 0; i < NUM_DISPLAYS; i++)
+    // {
+    //     display[i] = new Display(gifToLoad[i].displayCS, gifToLoad[i].image, gifToLoad[i].imageSize);
+    //     if (!display[i]->imageReady)
+    //     {
+    //         Serial.println("Image not ready, cannot continue");
+    //         return;
+    //     }
+    // }
 
-        currentDisplay++;
-        if (currentDisplay == NUM_DISPLAYS)
-        {
-            currentDisplay = 0;
-        }
-    }
+    // Serial.print("Free PSRAM: ");
+    // Serial.print(ESP.getFreePsram());
+    // Serial.println(" bytes");
+
+    // int currentDisplay = 0;
+    // while (true)
+    // {
+    //     unsigned long speed = millis();
+    //     display[currentDisplay]->showFrames();
+    //     Serial.printf("Screen 0 FPS=%f\n", 1000.0f / (millis() - speed));
+
+    //     currentDisplay++;
+    //     if (currentDisplay == NUM_DISPLAYS)
+    //     {
+    //         currentDisplay = 0;
+    //     }
+    // }
 }
 
 void loop()
