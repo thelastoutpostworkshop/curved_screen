@@ -16,6 +16,26 @@
 //     size_t imageSize;
 // } gif_load;
 
+typedef struct
+{
+    int row;
+    int column;
+    int csPin;
+    Display *display;
+} Screen;
+
+#define ROWS 1    // Number of rows
+#define COLUMNS 2 // Number of columns
+
+Screen grid[ROWS][COLUMNS] = {
+    {
+        {.row = 0, .column = 0, .csPin = 7}, // Column 0
+        {.row = 0, .column = 1, .csPin = 15}   // Column 1
+    }};
+
+int totalWidth = imageWidth * COLUMNS;
+int totalHeight = imageHeight * ROWS;
+
 const int NUM_DISPLAYS = 2; // Adjust this value based on the number of displays
 // gif_load gifToLoad[NUM_DISPLAYS] = {{15, bb8, sizeof(bb8)}, {7, x_wing, sizeof(x_wing)}};
 Display *display[NUM_DISPLAYS];
@@ -40,9 +60,22 @@ void setup()
         display[i] = new Display(displayCS[i]);
     }
 
+    for (int r = 0; r < ROWS; r++)
+    {
+        for (int c = 0; c < COLUMNS; c++)
+        {
+            grid[r][c].display = new Display(grid[r][c].csPin);
+        }
+    }
+
     GIF *gif = new GIF();
     gif->gd_open_gif_memory(x_winglarge, sizeof(x_winglarge), colorOutputSize);
     Serial.printf("Width=%u, Height=%u\n", gif->info()->width, gif->info()->height);
+    if (gif->info()->width != totalWidth && gif->info()->height != totalWidth)
+    {
+        Serial.printf("GIF don't fit in the screen arrangement w=%d, h=%d\n", totalWidth, totalWidth);
+        return;
+    }
     uint8_t *buffer;
     size_t bufferLength = gif->info()->width * gif->info()->height * colorOutputSize;
     buffer = (uint8_t *)malloc(bufferLength);
@@ -53,25 +86,27 @@ void setup()
     }
     gif->gd_get_frame();
     gif->gd_render_frame(buffer);
-    uint8_t *buffer1;
-    uint8_t *buffer2;
-    buffer1 = display[0]->allocateBuffer();
-    buffer2 = display[1]->allocateBuffer();
-    if (buffer1 == NULL || buffer2 == NULL)
+
+    for (int r = 0; r < ROWS; r++)
     {
-        Serial.println("Not enough memory for splitImage");
-        free(buffer1);
-        free(buffer2);
-        return;
+        for (int c = 0; c < COLUMNS; c++)
+        {
+            grid[r][c].display->allocateBuffer();
+            getScreenImage(buffer, grid[r][c], 0);
+        }
     }
-    splitImage(buffer, gif->info()->width, gif->info()->height, colorOutputSize, buffer1, buffer2);
 
     Serial.print("Free PSRAM: ");
     Serial.print(ESP.getFreePsram());
     Serial.println(" bytes");
 
-    display[0]->showFrame(0);
-    display[1]->showFrame(0);
+    for (int r = 0; r < ROWS; r++)
+    {
+        for (int c = 0; c < COLUMNS; c++)
+        {
+            grid[r][c].display->showFrame(0);
+        }
+    }
 
     // int currentDisplay = 0;
     // while (true)
@@ -88,23 +123,16 @@ void setup()
     // }
 }
 
-void splitImage(const uint8_t *originalBuffer, int width, int height, int colorSize, uint8_t *buffer1, uint8_t *buffer2)
+void getScreenImage(const uint8_t *originalBuffer, Screen screen, int frame)
 {
-    int newWidth = width / 2;
-    int newHeight = height;
-    size_t newSize = newWidth * newHeight * colorSize;
+    int sourceX = screen.column * imageWidth;
+    int sourceY = screen.row * imageHeight;
 
-    for (int row = 0; row < newHeight; ++row)
+    for (int row = 0; row < imageHeight; ++row)
     {
-        // Copy first half of the row to buffer1
-        memcpy(buffer1 + row * newWidth * colorSize,
-               originalBuffer + row * width * colorSize,
-               newWidth * colorSize);
-
-        // Copy second half of the row to buffer2
-        memcpy(buffer2 + row * newWidth * colorSize,
-               originalBuffer + (row * width + newWidth) * colorSize,
-               newWidth * colorSize);
+        memcpy(screen.display->getBuffer(frame) + row * imageWidth * colorOutputSize,
+               originalBuffer + ((sourceY + row) * totalWidth + sourceX) * colorOutputSize,
+               imageWidth * colorOutputSize);
     }
 }
 

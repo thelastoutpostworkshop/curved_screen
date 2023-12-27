@@ -2,7 +2,7 @@
 
 #define colorOutputSize 2 // 8 bit color as output
 #define imageWidth 240
-#define imageHeigth 240
+#define imageHeight 240
 
 TFT_eSPI tft = TFT_eSPI(); // Make sure SPI_FREQUENCY is 20000000 in your TFT_eSPI driver for your display if on a breadboard
 
@@ -38,7 +38,7 @@ private:
 public:
     uint8_t *allocateBuffer(void)
     {
-        size_t bufferLength = imageWidth * imageHeigth * colorOutputSize;
+        size_t bufferLength = imageWidth * imageHeight * colorOutputSize;
         frames[frameCount] = (uint8_t *)malloc(bufferLength);
         frameCount++;
         return frames[frameCount - 1];
@@ -52,16 +52,19 @@ public:
         deActivate();
     }
 
+    uint8_t *getBuffer(int frame) {
+        return frames[frame];
+    }
     void showFrame(int frame)
     {
         activate();
-        tft.pushImage(0, 0, imageWidth, imageHeigth, (uint16_t *)frames[frame]);
+        tft.pushImage(0, 0, imageWidth, imageHeight, (uint16_t *)frames[frame]);
         deActivate();
     }
     void showFrames(void)
     {
         activate();
-        tft.pushImage(0, 0, imageWidth, imageHeigth, (uint16_t *)frames[currentFrame]);
+        tft.pushImage(0, 0, imageWidth, imageHeight, (uint16_t *)frames[currentFrame]);
         deActivate();
         currentFrame++;
         if (currentFrame == frameCount)
