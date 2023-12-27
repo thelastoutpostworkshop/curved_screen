@@ -73,7 +73,7 @@ public:
     {
         pinMode(csPin, OUTPUT);
         activate();
-        tft.setRotation(1); // Adjust orientation as needed (0-3)
+        tft.setRotation(2); // Adjust orientation as needed (0-3)
         tft.fillScreen(TFT_BLACK);
         deActivate();
         gif = new GIF();
