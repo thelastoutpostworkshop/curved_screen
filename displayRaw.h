@@ -12,8 +12,6 @@ void initDisplay(void)
     tft.setFreeFont(&FreeSans9pt7b);
 }
 
-
-
 class Display
 {
 private:
@@ -22,13 +20,6 @@ private:
     uint16_t currentFrame = 0;
     uint16_t frameCount = 0;
     uint8_t *frames[256];
-    bool allocateBuffer(void)
-    {
-        size_t bufferLength = imageWidth * imageHeigth * colorOutputSize;
-        frames[frameCount] = (uint8_t *)malloc(bufferLength);
-        frameCount++;
-        return frames[frameCount-1];
-    }
 
     void activate(void)
     {
@@ -45,7 +36,28 @@ private:
     }
 
 public:
-    // Constructor
+    uint8_t *allocateBuffer(void)
+    {
+        size_t bufferLength = imageWidth * imageHeigth * colorOutputSize;
+        frames[frameCount] = (uint8_t *)malloc(bufferLength);
+        frameCount++;
+        return frames[frameCount - 1];
+    }
+    Display(int pin) : csPin(pin)
+    {
+        pinMode(csPin, OUTPUT);
+        activate();
+        tft.setRotation(2); // Adjust orientation as needed (0-3)
+        tft.fillScreen(TFT_BLACK);
+        deActivate();
+    }
+
+    void showFrame(int frame)
+    {
+        activate();
+        tft.pushImage(0, 0, imageWidth, imageHeigth, (uint16_t *)frames[frame]);
+        deActivate();
+    }
     void showFrames(void)
     {
         activate();

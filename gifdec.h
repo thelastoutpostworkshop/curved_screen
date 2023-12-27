@@ -49,7 +49,7 @@ extern "C"
         uint16_t fx, fy, fw, fh;
         uint8_t bgindex;
         uint8_t *canvas, *frame;
-        int colorOutputSize;
+        int colorSize;
     } gd_GIF;
 
     class GIF

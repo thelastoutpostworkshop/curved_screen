@@ -9,16 +9,17 @@
 #include "images/hud_1.h"
 #include "images/bb8.h"
 
-typedef struct
-{
-    int displayCS;
-    const uint8_t *image;
-    size_t imageSize;
-} gif_load;
+// typedef struct
+// {
+//     int displayCS;
+//     const uint8_t *image;
+//     size_t imageSize;
+// } gif_load;
 
 const int NUM_DISPLAYS = 2; // Adjust this value based on the number of displays
-gif_load gifToLoad[NUM_DISPLAYS] = {{15, bb8, sizeof(bb8)}, {7, x_wing, sizeof(x_wing)}};
+// gif_load gifToLoad[NUM_DISPLAYS] = {{15, bb8, sizeof(bb8)}, {7, x_wing, sizeof(x_wing)}};
 Display *display[NUM_DISPLAYS];
+int displayCS[NUM_DISPLAYS] = {15, 7};
 
 void setup()
 {
@@ -34,8 +35,13 @@ void setup()
     }
     initDisplay();
 
+    for (int i = 0; i < NUM_DISPLAYS; i++)
+    {
+        display[i] = new Display(displayCS[i]);
+    }
+
     GIF *gif = new GIF();
-    gif->gd_open_gif_memory(x_winglarge, sizeof(x_winglarge),colorOutputSize);
+    gif->gd_open_gif_memory(x_winglarge, sizeof(x_winglarge), colorOutputSize);
     Serial.printf("Width=%u, Height=%u\n", gif->info()->width, gif->info()->height);
     uint8_t *buffer;
     size_t bufferLength = gif->info()->width * gif->info()->height * colorOutputSize;
@@ -49,22 +55,23 @@ void setup()
     gif->gd_render_frame(buffer);
     uint8_t *buffer1;
     uint8_t *buffer2;
-    splitImage(buffer,gif->info()->width,gif->info()->height,colorOutputSize,buffer1,buffer2);
+    buffer1 = display[0]->allocateBuffer();
+    buffer2 = display[1]->allocateBuffer();
+    if (buffer1 == NULL || buffer2 == NULL)
+    {
+        Serial.println("Not enough memory for splitImage");
+        free(buffer1);
+        free(buffer2);
+        return;
+    }
+    splitImage(buffer, gif->info()->width, gif->info()->height, colorOutputSize, buffer1, buffer2);
 
+    Serial.print("Free PSRAM: ");
+    Serial.print(ESP.getFreePsram());
+    Serial.println(" bytes");
 
-    // for (int i = 0; i < NUM_DISPLAYS; i++)
-    // {
-    //     display[i] = new Display(gifToLoad[i].displayCS, gifToLoad[i].image, gifToLoad[i].imageSize);
-    //     if (!display[i]->imageReady)
-    //     {
-    //         Serial.println("Image not ready, cannot continue");
-    //         return;
-    //     }
-    // }
-
-    // Serial.print("Free PSRAM: ");
-    // Serial.print(ESP.getFreePsram());
-    // Serial.println(" bytes");
+    display[0]->showFrame(0);
+    display[1]->showFrame(0);
 
     // int currentDisplay = 0;
     // while (true)
@@ -86,17 +93,6 @@ void splitImage(const uint8_t *originalBuffer, int width, int height, int colorS
     int newWidth = width / 2;
     int newHeight = height;
     size_t newSize = newWidth * newHeight * colorSize;
-
-    buffer1 = (uint8_t *)malloc(newSize);
-    buffer2 = (uint8_t *)malloc(newSize);
-
-    if (buffer1 == NULL || buffer2 == NULL)
-    {
-        Serial.println("Not enough memory for splitImage");
-        free(buffer1);
-        free(buffer2);
-        return;
-    }
 
     for (int row = 0; row < newHeight; ++row)
     {

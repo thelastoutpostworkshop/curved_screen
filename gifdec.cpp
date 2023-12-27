@@ -72,7 +72,7 @@ bool GIF::gd_open_gif_memory(const uint8_t *buf, size_t len,int colorSize)
     infoGIF.image.buffer = buf;
     infoGIF.image.length = len;
     infoGIF.image.position = 0;
-    infoGIF.colorOutputSize = colorSize;
+    infoGIF.colorSize = colorSize;
 
     // Header
     buffer_read(&infoGIF.image, sigver, 3);
@@ -130,7 +130,7 @@ bool GIF::gd_open_gif_memory(const uint8_t *buf, size_t len,int colorSize)
     bgcolor = &infoGIF.palette->colors[infoGIF.bgindex * 3];
     if (bgcolor[0] || bgcolor[1] || bgcolor[2])
         for (int i = 0; i < infoGIF.width * infoGIF.height; i++)
-            memcpy(&infoGIF.canvas[i * infoGIF.colorOutputSize], bgcolor, infoGIF.colorOutputSize);
+            memcpy(&infoGIF.canvas[i * infoGIF.colorSize], bgcolor, infoGIF.colorSize);
     infoGIF.anim_start = buffer_seek(&infoGIF.image, 0, SEEK_CUR);
     return true;
 }
@@ -509,7 +509,7 @@ render_frame_rect(gd_GIF *gif, uint8_t *buffer)
                 usRGB565 |= ((*(color + 1) >> 2) << 5); // G
                 usRGB565 |= (*(color + 2) >> 3);        // B
                 usRGB565 = __builtin_bswap16(usRGB565);
-                memcpy(&buffer[(i + k) * gif->colorOutputSize], &usRGB565, gif->colorOutputSize);
+                memcpy(&buffer[(i + k) * gif->colorSize], &usRGB565, gif->colorSize);
             }
         }
         i += gif->width;
@@ -537,7 +537,7 @@ dispose(gd_GIF *gif)
         for (j = 0; j < gif->fh; j++)
         {
             for (k = 0; k < gif->fw; k++)
-                memcpy(&gif->canvas[(i + k) * gif->colorOutputSize], &usRGB565, gif->colorOutputSize);
+                memcpy(&gif->canvas[(i + k) * gif->colorSize], &usRGB565, gif->colorSize);
             i += gif->width;
         }
         break;
@@ -573,7 +573,7 @@ int GIF::gd_get_frame()
 
 void GIF::gd_render_frame(uint8_t *buffer)
 {
-    memcpy(buffer, infoGIF.canvas, infoGIF.width * infoGIF.height * infoGIF.colorOutputSize);
+    memcpy(buffer, infoGIF.canvas, infoGIF.width * infoGIF.height * infoGIF.colorSize);
     render_frame_rect(&infoGIF, buffer);
 }
 
