@@ -45,6 +45,10 @@ void setup()
     }
     display->gif->gd_get_frame();
     display->gif->gd_render_frame(buffer);
+    uint8_t *buffer1;
+    uint8_t *buffer2;
+    splitImage(buffer,display->gif->info()->width,display->gif->info()->height,colorOutputSize,buffer1,buffer2);
+
 
     // for (int i = 0; i < NUM_DISPLAYS; i++)
     // {
@@ -86,7 +90,7 @@ void splitImage(const uint8_t *originalBuffer, int width, int height, int colorS
 
     if (buffer1 == NULL || buffer2 == NULL)
     {
-        // Handle memory allocation error
+        Serial.println("Not enough memory for splitImage");
         free(buffer1);
         free(buffer2);
         return;
@@ -104,12 +108,6 @@ void splitImage(const uint8_t *originalBuffer, int width, int height, int colorS
                originalBuffer + (row * width + newWidth) * colorSize,
                newWidth * colorSize);
     }
-
-    // At this point, buffer1 and buffer2 contain the split images
-
-    // Don't forget to free the buffers when done
-    free(buffer1);
-    free(buffer2);
 }
 
 void loop()
