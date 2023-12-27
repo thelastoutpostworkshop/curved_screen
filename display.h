@@ -26,9 +26,11 @@ private:
             frames[frameCount] = (uint8_t *)malloc(bufferLength);
             if (frames[frameCount] != NULL)
             {
-                gif->gd_render_frame(frames[frameCount] );
+                gif->gd_render_frame(frames[frameCount]);
                 frameCount++;
-            } else {
+            }
+            else
+            {
                 return false;
             }
         }
@@ -94,11 +96,13 @@ public:
 
             //     imageReady = true;
             // }
-            if(!getFrames()) {
-                Serial.printf("!!! Not enough memory for frames,stored %ld frames\n",frameCount);
+            if (!getFrames())
+            {
+                Serial.printf("!!! Not enough memory for frames,stored %ld frames\n", frameCount);
             }
-            else {
-                Serial.printf("Stored %ld frames\n",frameCount);
+            else
+            {
+                Serial.printf("Stored %ld frames\n", frameCount);
             }
         }
     }
@@ -108,5 +112,15 @@ public:
         activate();
         tft.pushImage(0, 0, gif->info()->width, gif->info()->height, (uint16_t *)frame);
         deActivate();
+    }
+    void showFrames(void)
+    {
+        activate();
+        tft.pushImage(0, 0, gif->info()->width, gif->info()->height, (uint16_t *)frames[currentFrame]);
+        deActivate();
+        currentFrame++;
+        if(currentFrame == frameCount) {
+            currentFrame = 0;
+        }
     }
 };

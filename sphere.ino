@@ -46,16 +46,16 @@ void setup()
     Serial.print(ESP.getFreePsram());
     Serial.println(" bytes");
 
-    // int currentDisplay = 0;
-    // while (true)
-    // {
-    //     display[currentDisplay]->showFrame();
-    //     currentDisplay++;
-    //     if (currentDisplay == NUM_DISPLAYS)
-    //     {
-    //         currentDisplay = 0;
-    //     }
-    // }
+    int currentDisplay = 0;
+    while (true)
+    {
+        display[currentDisplay]->showFrames();
+        currentDisplay++;
+        if (currentDisplay == NUM_DISPLAYS)
+        {
+            currentDisplay = 0;
+        }
+    }
 }
 
 void loop()
