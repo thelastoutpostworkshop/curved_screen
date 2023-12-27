@@ -33,7 +33,13 @@ void setup()
     }
     initDisplay();
 
-    Display display = new Display(15,x_wing, gifToLoad[i].imageSize);
+    Display *display = new Display(15, x_winglarge, sizeof(x_winglarge));
+    Serial.printf("Width=%u, Height=%u\n", display->gif->info()->width, display->gif->info()->height);
+    size_t bufferLength = display->gif->info()->width * display->gif->info()->height * colorOutputSize;
+    if(bufferLength == NULL) {
+        Serial.println("Not enough memory");
+        return;
+    }
 
     // for (int i = 0; i < NUM_DISPLAYS; i++)
     // {
