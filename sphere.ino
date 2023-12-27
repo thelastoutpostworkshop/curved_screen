@@ -49,7 +49,10 @@ void setup()
     int currentDisplay = 0;
     while (true)
     {
+        unsigned long speed = millis();
         display[currentDisplay]->showFrames();
+        Serial.printf("Screen 0 FPS=%f\n", 1000.0f / (millis() - speed));
+
         currentDisplay++;
         if (currentDisplay == NUM_DISPLAYS)
         {
