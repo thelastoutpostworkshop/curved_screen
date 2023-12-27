@@ -36,18 +36,6 @@ private:
         }
         return true;
     }
-    void getFrame(void)
-    {
-        if (gif->gd_get_frame())
-        {
-            gif->gd_render_frame(frame);
-        }
-        else
-        {
-            gif->gd_rewind();
-            getFrame();
-        }
-    }
 
     void activate(void)
     {
@@ -96,14 +84,27 @@ public:
 
             //     imageReady = true;
             // }
-            if (!getFrames())
-            {
-                Serial.printf("!!! Not enough memory for frames,stored %ld frames\n", frameCount);
-            }
-            else
-            {
-                Serial.printf("Stored %ld frames\n", frameCount);
-            }
+            //
+            // if (!getFrames())
+            // {
+            //     Serial.printf("!!! Not enough memory for frames,stored %ld frames\n", frameCount);
+            // }
+            // else
+            // {
+            //     Serial.printf("Stored %ld frames\n", frameCount);
+            // }
+        }
+    }
+    void getFrame(void)
+    {
+        if (gif->gd_get_frame())
+        {
+            gif->gd_render_frame(frame);
+        }
+        else
+        {
+            gif->gd_rewind();
+            getFrame();
         }
     }
     void showFrame(void)
@@ -119,7 +120,8 @@ public:
         tft.pushImage(0, 0, gif->info()->width, gif->info()->height, (uint16_t *)frames[currentFrame]);
         deActivate();
         currentFrame++;
-        if(currentFrame == frameCount) {
+        if (currentFrame == frameCount)
+        {
             currentFrame = 0;
         }
     }

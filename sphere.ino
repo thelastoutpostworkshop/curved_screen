@@ -35,11 +35,16 @@ void setup()
 
     Display *display = new Display(15, x_winglarge, sizeof(x_winglarge));
     Serial.printf("Width=%u, Height=%u\n", display->gif->info()->width, display->gif->info()->height);
+    uint8_t *buffer;
     size_t bufferLength = display->gif->info()->width * display->gif->info()->height * colorOutputSize;
-    if(bufferLength == NULL) {
+    buffer = (uint8_t *)malloc(bufferLength);
+    if (buffer == NULL)
+    {
         Serial.println("Not enough memory");
         return;
     }
+    display->gif->gd_get_frame();
+    display->gif->gd_render_frame(buffer);
 
     // for (int i = 0; i < NUM_DISPLAYS; i++)
     // {
@@ -68,6 +73,43 @@ void setup()
     //         currentDisplay = 0;
     //     }
     // }
+}
+
+void splitImage(const uint8_t *originalBuffer, int width, int height, int colorSize, uint8_t *buffer1, uint8_t *buffer2)
+{
+    int newWidth = width / 2;
+    int newHeight = height;
+    size_t newSize = newWidth * newHeight * colorSize;
+
+    buffer1 = (uint8_t *)malloc(newSize);
+    buffer2 = (uint8_t *)malloc(newSize);
+
+    if (buffer1 == NULL || buffer2 == NULL)
+    {
+        // Handle memory allocation error
+        free(buffer1);
+        free(buffer2);
+        return;
+    }
+
+    for (int row = 0; row < newHeight; ++row)
+    {
+        // Copy first half of the row to buffer1
+        memcpy(buffer1 + row * newWidth * colorSize,
+               originalBuffer + row * width * colorSize,
+               newWidth * colorSize);
+
+        // Copy second half of the row to buffer2
+        memcpy(buffer2 + row * newWidth * colorSize,
+               originalBuffer + (row * width + newWidth) * colorSize,
+               newWidth * colorSize);
+    }
+
+    // At this point, buffer1 and buffer2 contain the split images
+
+    // Don't forget to free the buffers when done
+    free(buffer1);
+    free(buffer2);
 }
 
 void loop()
