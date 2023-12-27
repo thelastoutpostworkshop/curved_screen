@@ -5,6 +5,7 @@
 #include "images/hyperspace.h"
 #include "images/darthvader.h"
 #include "images/hud_1.h"
+#include "images/bb8.h"
 
 typedef struct
 {
@@ -14,7 +15,7 @@ typedef struct
 } gif_load;
 
 const int NUM_DISPLAYS = 2; // Adjust this value based on the number of displays
-gif_load gifToLoad[NUM_DISPLAYS] = {{15, x_wing, sizeof(x_wing)}, {7, hud_1, sizeof(hud_1)}};
+gif_load gifToLoad[NUM_DISPLAYS] = {{15, bb8, sizeof(bb8)}, {7, x_wing, sizeof(x_wing)}};
 Display *display[NUM_DISPLAYS];
 
 void setup()
