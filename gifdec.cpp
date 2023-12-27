@@ -60,7 +60,7 @@ static uint16_t buffer_read_num(gd_GIF *gif)
     return bytes[0] + (((uint16_t)bytes[1]) << 8);
 }
 
-bool GIF::gd_open_gif_memory(const uint8_t *buf, size_t len,int colorOutputSize)
+bool GIF::gd_open_gif_memory(const uint8_t *buf, size_t len,int colorSize)
 {
     uint8_t sigver[3];
     uint16_t width, height, depth;
@@ -72,7 +72,7 @@ bool GIF::gd_open_gif_memory(const uint8_t *buf, size_t len,int colorOutputSize)
     infoGIF.image.buffer = buf;
     infoGIF.image.length = len;
     infoGIF.image.position = 0;
-    infoGIF.colorOutputSize = colorOutputSize;
+    infoGIF.colorOutputSize = colorSize;
 
     // Header
     buffer_read(&infoGIF.image, sigver, 3);
@@ -130,7 +130,7 @@ bool GIF::gd_open_gif_memory(const uint8_t *buf, size_t len,int colorOutputSize)
     bgcolor = &infoGIF.palette->colors[infoGIF.bgindex * 3];
     if (bgcolor[0] || bgcolor[1] || bgcolor[2])
         for (int i = 0; i < infoGIF.width * infoGIF.height; i++)
-            memcpy(&infoGIF.canvas[i * colorOutputSize], bgcolor, colorOutputSize);
+            memcpy(&infoGIF.canvas[i * infoGIF.colorOutputSize], bgcolor, infoGIF.colorOutputSize);
     infoGIF.anim_start = buffer_seek(&infoGIF.image, 0, SEEK_CUR);
     return true;
 }

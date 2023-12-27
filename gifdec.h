@@ -55,7 +55,7 @@ extern "C"
     class GIF
     {
     public:
-        bool gd_open_gif_memory(const uint8_t *buf, size_t len,int colorOutputSize);
+        bool gd_open_gif_memory(const uint8_t *buf, size_t len,int colorSize);
         gd_GIF* info();
         void gd_close_gif();
         int gd_get_frame();

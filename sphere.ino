@@ -1,5 +1,6 @@
 #include <Arduino.h>
-#include "display.h"
+#include "displayRaw.h"
+#include "gifdec.h"
 #include "images/x_wing.h"
 #include "images/x_winglarge.h"
 #include "images/colortest.h"
@@ -7,8 +8,6 @@
 #include "images/darthvader.h"
 #include "images/hud_1.h"
 #include "images/bb8.h"
-
-
 
 typedef struct
 {
@@ -35,21 +34,22 @@ void setup()
     }
     initDisplay();
 
-    Display *display = new Display(15, x_winglarge, sizeof(x_winglarge));
-    Serial.printf("Width=%u, Height=%u\n", display->gif->info()->width, display->gif->info()->height);
+    GIF *gif = new GIF();
+    gif->gd_open_gif_memory(x_winglarge, sizeof(x_winglarge),colorOutputSize);
+    Serial.printf("Width=%u, Height=%u\n", gif->info()->width, gif->info()->height);
     uint8_t *buffer;
-    size_t bufferLength = display->gif->info()->width * display->gif->info()->height * colorOutputSize;
+    size_t bufferLength = gif->info()->width * gif->info()->height * colorOutputSize;
     buffer = (uint8_t *)malloc(bufferLength);
     if (buffer == NULL)
     {
         Serial.println("Not enough memory");
         return;
     }
-    display->gif->gd_get_frame();
-    display->gif->gd_render_frame(buffer);
+    gif->gd_get_frame();
+    gif->gd_render_frame(buffer);
     uint8_t *buffer1;
     uint8_t *buffer2;
-    splitImage(buffer,display->gif->info()->width,display->gif->info()->height,colorOutputSize,buffer1,buffer2);
+    splitImage(buffer,gif->info()->width,gif->info()->height,colorOutputSize,buffer1,buffer2);
 
 
     // for (int i = 0; i < NUM_DISPLAYS; i++)
