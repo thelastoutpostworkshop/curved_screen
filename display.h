@@ -1,6 +1,10 @@
 #include <TFT_eSPI.h> // Install this library with the Arduino IDE Library Manager
 #include "gifdec.h"
 
+#define colorOutputSize 2 // 8 bit color as output
+#define imageWidth 240
+#define imageHeigth 240
+
 TFT_eSPI tft = TFT_eSPI(); // Make sure SPI_FREQUENCY is 20000000 in your TFT_eSPI driver for your display if on a breadboard
 
 void initDisplay(void)
@@ -65,7 +69,7 @@ public:
         tft.fillScreen(TFT_BLACK);
         deActivate();
         gif = new GIF();
-        imageReady = gif->gd_open_gif_memory(image, imageSize);
+        imageReady = gif->gd_open_gif_memory(image, imageSize,colorOutputSize);
         if (imageReady)
         {
             // Serial.printf("canvas size: %ux%u\n", gif->info()->width, gif->info()->height);

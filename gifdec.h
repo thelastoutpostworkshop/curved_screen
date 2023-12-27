@@ -7,7 +7,6 @@ extern "C"
 {
 #endif
 
-#define colorOutputSize 2 // 8 bit color as output
 
     typedef struct
     {
@@ -50,12 +49,13 @@ extern "C"
         uint16_t fx, fy, fw, fh;
         uint8_t bgindex;
         uint8_t *canvas, *frame;
+        int colorOutputSize;
     } gd_GIF;
 
     class GIF
     {
     public:
-        bool gd_open_gif_memory(const uint8_t *buf, size_t len);
+        bool gd_open_gif_memory(const uint8_t *buf, size_t len,int colorOutputSize);
         gd_GIF* info();
         void gd_close_gif();
         int gd_get_frame();

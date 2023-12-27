@@ -60,7 +60,7 @@ static uint16_t buffer_read_num(gd_GIF *gif)
     return bytes[0] + (((uint16_t)bytes[1]) << 8);
 }
 
-bool GIF::gd_open_gif_memory(const uint8_t *buf, size_t len)
+bool GIF::gd_open_gif_memory(const uint8_t *buf, size_t len,int colorOutputSize)
 {
     uint8_t sigver[3];
     uint16_t width, height, depth;
@@ -72,6 +72,7 @@ bool GIF::gd_open_gif_memory(const uint8_t *buf, size_t len)
     infoGIF.image.buffer = buf;
     infoGIF.image.length = len;
     infoGIF.image.position = 0;
+    infoGIF.colorOutputSize = colorOutputSize;
 
     // Header
     buffer_read(&infoGIF.image, sigver, 3);
@@ -508,7 +509,7 @@ render_frame_rect(gd_GIF *gif, uint8_t *buffer)
                 usRGB565 |= ((*(color + 1) >> 2) << 5); // G
                 usRGB565 |= (*(color + 2) >> 3);        // B
                 usRGB565 = __builtin_bswap16(usRGB565);
-                memcpy(&buffer[(i + k) * colorOutputSize], &usRGB565, colorOutputSize);
+                memcpy(&buffer[(i + k) * gif->colorOutputSize], &usRGB565, gif->colorOutputSize);
             }
         }
         i += gif->width;
@@ -536,7 +537,7 @@ dispose(gd_GIF *gif)
         for (j = 0; j < gif->fh; j++)
         {
             for (k = 0; k < gif->fw; k++)
-                memcpy(&gif->canvas[(i + k) * colorOutputSize], &usRGB565, colorOutputSize);
+                memcpy(&gif->canvas[(i + k) * gif->colorOutputSize], &usRGB565, gif->colorOutputSize);
             i += gif->width;
         }
         break;
@@ -572,7 +573,7 @@ int GIF::gd_get_frame()
 
 void GIF::gd_render_frame(uint8_t *buffer)
 {
-    memcpy(buffer, infoGIF.canvas, infoGIF.width * infoGIF.height * colorOutputSize);
+    memcpy(buffer, infoGIF.canvas, infoGIF.width * infoGIF.height * infoGIF.colorOutputSize);
     render_frame_rect(&infoGIF, buffer);
 }
 
