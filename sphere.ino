@@ -9,6 +9,7 @@
 #include "images/hud_1.h"
 #include "images/bb8.h"
 #include "images/quiz.h"
+#include "images/radar_lines.h"
 
 // typedef struct
 // {
@@ -70,7 +71,7 @@ void setup()
     }
 
     GIF *gif = new GIF();
-    gif->gd_open_gif_memory(quiz, sizeof(quiz), colorOutputSize);
+    gif->gd_open_gif_memory(radar_lines, sizeof(radar_lines), colorOutputSize);
     Serial.printf("Width=%u, Height=%u\n", gif->info()->width, gif->info()->height);
     if (gif->info()->width != totalWidth && gif->info()->height != totalWidth)
     {
