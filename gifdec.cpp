@@ -477,7 +477,6 @@ read_image(gd_GIF *gif)
     if (fisrz & 0x80)
     {
         /* Read LCT */
-        Serial.printf("Local color palette\n");
         gif->lct.size = 1 << ((fisrz & 0x07) + 1);
         buffer_read(&gif->image, gif->lct.colors, 3 * gif->lct.size);
         gif->palette = &gif->lct;
