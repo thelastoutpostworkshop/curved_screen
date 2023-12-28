@@ -51,8 +51,12 @@ public:
         tft.fillScreen(TFT_BLACK);
         deActivate();
     }
-
-    uint8_t *getBuffer(int frame) {
+    uint16_t getFrameCount(void)
+    {
+        return frameCount;
+    }
+    uint8_t *getBuffer(int frame)
+    {
         return frames[frame];
     }
     void showFrame(int frame)

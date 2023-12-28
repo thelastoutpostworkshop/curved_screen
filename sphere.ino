@@ -8,6 +8,7 @@
 #include "images/darthvader.h"
 #include "images/hud_1.h"
 #include "images/bb8.h"
+#include "images/quiz.h"
 
 // typedef struct
 // {
@@ -30,7 +31,7 @@ typedef struct
 Screen grid[ROWS][COLUMNS] = {
     {
         {.row = 0, .column = 0, .csPin = 7}, // Column 0
-        {.row = 0, .column = 1, .csPin = 15}   // Column 1
+        {.row = 0, .column = 1, .csPin = 15} // Column 1
     }};
 
 int totalWidth = imageWidth * COLUMNS;
@@ -69,7 +70,7 @@ void setup()
     }
 
     GIF *gif = new GIF();
-    gif->gd_open_gif_memory(x_winglarge, sizeof(x_winglarge), colorOutputSize);
+    gif->gd_open_gif_memory(quiz, sizeof(quiz), colorOutputSize);
     Serial.printf("Width=%u, Height=%u\n", gif->info()->width, gif->info()->height);
     if (gif->info()->width != totalWidth && gif->info()->height != totalWidth)
     {
@@ -84,27 +85,39 @@ void setup()
         Serial.println("Not enough memory");
         return;
     }
-    gif->gd_get_frame();
-    gif->gd_render_frame(buffer);
-
-    for (int r = 0; r < ROWS; r++)
+    int frameCount=0;
+    while (gif->gd_get_frame())
     {
-        for (int c = 0; c < COLUMNS; c++)
-        {
-            grid[r][c].display->allocateBuffer();
-            getScreenImage(buffer, grid[r][c], 0);
-        }
-    }
+        gif->gd_render_frame(buffer);
 
+        for (int r = 0; r < ROWS; r++)
+        {
+            for (int c = 0; c < COLUMNS; c++)
+            {
+                grid[r][c].display->allocateBuffer();
+                if (grid[r][c].display == NULL)
+                {
+                    Serial.printf("Not Enough memory for frames, frames rendered is %u\n", grid[r][c].display->getFrameCount());
+                    return;
+                }
+                getScreenImage(buffer, grid[r][c], frameCount);
+            }
+        }
+        frameCount++;
+    }
+    Serial.printf("Frames = %u\n",frameCount);
     Serial.print("Free PSRAM: ");
     Serial.print(ESP.getFreePsram());
     Serial.println(" bytes");
 
-    for (int r = 0; r < ROWS; r++)
+    while (true)
     {
-        for (int c = 0; c < COLUMNS; c++)
+        for (int r = 0; r < ROWS; r++)
         {
-            grid[r][c].display->showFrame(0);
+            for (int c = 0; c < COLUMNS; c++)
+            {
+                grid[r][c].display->showFrames();
+            }
         }
     }
 
