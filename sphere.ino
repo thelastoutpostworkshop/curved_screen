@@ -9,7 +9,7 @@
 #include "images/hud_1.h"
 #include "images/bb8.h"
 #include "images/quiz.h"
-#include "images/radar_lines.h"
+#include "images/eyes.h"
 
 // typedef struct
 // {
@@ -71,7 +71,7 @@ void setup()
     }
 
     GIF *gif = new GIF();
-    gif->gd_open_gif_memory(radar_lines, sizeof(radar_lines), colorOutputSize);
+    gif->gd_open_gif_memory(eyes, sizeof(eyes), colorOutputSize);
     Serial.printf("Width=%u, Height=%u\n", gif->info()->width, gif->info()->height);
     if (gif->info()->width != totalWidth && gif->info()->height != totalWidth)
     {
@@ -86,6 +86,8 @@ void setup()
         Serial.println("Not enough memory");
         return;
     }
+
+    Serial.println("Extracting frames...");
     int frameCount=0;
     while (gif->gd_get_frame())
     {
@@ -106,6 +108,7 @@ void setup()
         }
         frameCount++;
     }
+    free(buffer);
     Serial.printf("Frames = %u\n",frameCount);
     Serial.print("Free PSRAM: ");
     Serial.print(ESP.getFreePsram());
