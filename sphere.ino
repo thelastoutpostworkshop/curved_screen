@@ -87,7 +87,7 @@ void loop()
 {
 }
 
-void processGifImage(uint8_t *fileBuffer,size_t fileBufferSize)
+void processGifImage(uint8_t *fileBuffer, size_t fileBufferSize)
 {
     gif->gd_open_gif_memory(fileBuffer, fileBufferSize, colorOutputSize);
     Serial.printf("Width=%u, Height=%u\n", gif->info()->width, gif->info()->height);
@@ -166,10 +166,11 @@ void initWebServer(void)
         delay(300);
         Serial.print(".");
     }
-
-    // Start mDNS with the desired hostname
+    Serial.println("Connected to WiFi");
+    Serial.print("IP Address: ");
+    Serial.println(WiFi.localIP());
     if (!MDNS.begin("sphere"))
-    { // Use "esp32.local" to access the server
+    { 
         Serial.println("Error starting mDNS");
         return;
     }
