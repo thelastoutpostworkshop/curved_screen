@@ -15,9 +15,10 @@
 
 AsyncWebServer server(80);
 
-const size_t MAX_FILE_SIZE_UPLOAD = 1024 * 1024; // 1 MB, adjust as needed
 uint8_t *fileBuffer = NULL;
 size_t fileBufferSize = 0;
+
+bool imageReadytoDisplay = false;
 
 GIF *gif;
 
@@ -75,16 +76,20 @@ void setup()
     }
 
     gif = new GIF();
-
-    fileBuffer = new uint8_t[MAX_FILE_SIZE_UPLOAD];
-    if (fileBuffer == NULL)
-    {
-        Serial.println("Not enough memory for file buffer");
-    }
 }
 
 void loop()
 {
+    if (imageReadytoDisplay)
+    {
+        for (int r = 0; r < ROWS; r++)
+        {
+            for (int c = 0; c < COLUMNS; c++)
+            {
+                grid[r][c].display->showFrames();
+            }
+        }
+    }
 }
 
 void processGifImage(uint8_t *fileBuffer, size_t fileBufferSize)
@@ -109,7 +114,6 @@ void processGifImage(uint8_t *fileBuffer, size_t fileBufferSize)
     int frameCount = 0;
     while (gif->gd_get_frame())
     {
-        Serial.println("Rendering frame...");
         gif->gd_render_frame(buffer);
 
         for (int r = 0; r < ROWS; r++)
@@ -122,14 +126,11 @@ void processGifImage(uint8_t *fileBuffer, size_t fileBufferSize)
                     Serial.printf("Not Enough memory for frames, frames rendered is %u\n", grid[r][c].display->getFrameCount());
                     return;
                 }
-                Serial.println("getScreenImage...");
                 getScreenImage(buffer, grid[r][c], frameCount);
-                Serial.println("end getScreenImage...");
             }
         }
         frameCount++;
     }
-    Serial.println("Finished Extracting frames");
 
     free(buffer);
     Serial.printf("Frames = %u\n", frameCount);
@@ -137,16 +138,7 @@ void processGifImage(uint8_t *fileBuffer, size_t fileBufferSize)
     Serial.print(ESP.getFreePsram());
     Serial.println(" bytes");
 
-    while (true)
-    {
-        for (int r = 0; r < ROWS; r++)
-        {
-            for (int c = 0; c < COLUMNS; c++)
-            {
-                grid[r][c].display->showFrames();
-            }
-        }
-    }
+    imageReadytoDisplay = true;
 }
 
 void getScreenImage(const uint8_t *originalBuffer, Screen screen, int frame)
