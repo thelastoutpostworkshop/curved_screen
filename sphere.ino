@@ -13,14 +13,9 @@
 #include "images/quiz.h"
 #include "images/eyes.h"
 
-// typedef struct
-// {
-//     int displayCS;
-//     const uint8_t *image;
-//     size_t imageSize;
-// } gif_load;
-
 AsyncWebServer server(80);
+
+GIF *gif;
 
 typedef struct
 {
@@ -75,7 +70,15 @@ void setup()
         }
     }
 
-    GIF *gif = new GIF();
+    gif = new GIF();
+}
+
+void loop()
+{
+}
+
+void processGifImage(void)
+{
     gif->gd_open_gif_memory(eyes, sizeof(eyes), colorOutputSize);
     Serial.printf("Width=%u, Height=%u\n", gif->info()->width, gif->info()->height);
     if (gif->info()->width != totalWidth && gif->info()->height != totalWidth)
@@ -129,28 +132,6 @@ void setup()
             }
         }
     }
-
-    // int currentDisplay = 0;
-    // while (true)
-    // {
-    //     unsigned long speed = millis();
-    //     display[currentDisplay]->showFrames();
-    //     Serial.printf("Screen 0 FPS=%f\n", 1000.0f / (millis() - speed));
-
-    //     currentDisplay++;
-    //     if (currentDisplay == NUM_DISPLAYS)
-    //     {
-    //         currentDisplay = 0;
-    //     }
-    // }
-}
-
-void loop()
-{
-}
-
-void processGifImage(void) {
-    
 }
 
 void getScreenImage(const uint8_t *originalBuffer, Screen screen, int frame)
