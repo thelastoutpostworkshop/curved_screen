@@ -15,6 +15,10 @@
 
 AsyncWebServer server(80);
 
+const size_t MAX_FILE_SIZE_UPLOAD = 1024 * 1024; // 1 MB, adjust as needed
+uint8_t *fileBuffer;
+size_t fileBufferSize = 0;
+
 GIF *gif;
 
 typedef struct
@@ -71,15 +75,21 @@ void setup()
     }
 
     gif = new GIF();
+
+    fileBuffer = new uint8_t[MAX_FILE_SIZE_UPLOAD];
+    if (fileBuffer == NULL)
+    {
+        Serial.println("Not enough memory for file buffer");
+    }
 }
 
 void loop()
 {
 }
 
-void processGifImage(void)
+void processGifImage(uint8_t *fileBuffer,size_t fileBufferSize)
 {
-    gif->gd_open_gif_memory(eyes, sizeof(eyes), colorOutputSize);
+    gif->gd_open_gif_memory(fileBuffer, fileBufferSize, colorOutputSize);
     Serial.printf("Width=%u, Height=%u\n", gif->info()->width, gif->info()->height);
     if (gif->info()->width != totalWidth && gif->info()->height != totalWidth)
     {
@@ -166,27 +176,28 @@ void initWebServer(void)
 
     server.on(
         "/upload", HTTP_POST, [](AsyncWebServerRequest *request)
-        {
-        // Handle other fields in the POST request if necessary
-        request->send(200, "text/plain", "File Uploaded"); },
+        { request->send(200, "text/plain", "File Uploaded"); },
         [](AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final)
         {
-            // This function is called for each chunk of the file
-
             if (index == 0)
             {
-                // This is the start of the file
-                // Open a file for writing here (e.g., on SPIFFS or SD card)
+                // Reset buffer at the start of a new upload
+                memset(fileBuffer, 0, MAX_FILE_SIZE_UPLOAD);
+                fileBufferSize = 0;
                 Serial.printf("Upload Start: %s\n", filename.c_str());
-                // Example: File uploadFile = SPIFFS.open("/upload/" + filename, "w");
+            }
+
+            // Append data to buffer
+            if (fileBufferSize + len <= MAX_FILE_SIZE_UPLOAD)
+            {
+                memcpy(fileBuffer + fileBufferSize, data, len);
+                fileBufferSize += len;
             }
 
             if (final)
             {
-                // This is the final chunk of the file
-                Serial.printf("Upload Complete: %s, size: %u\n", filename.c_str(), index + len);
-                // Close the file here
-                // Example: uploadFile.close();
+                Serial.printf("Upload Complete: %s, size: %u\n", filename.c_str(), fileBufferSize);
+                processGifImage(fileBuffer, fileBufferSize);
             }
         });
     server.begin();
