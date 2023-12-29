@@ -1,4 +1,6 @@
-#include <Arduino.h>
+#include <ESPAsyncWebServer.h>
+#include <ESPmDNS.h>
+#include "secrets.h"
 #include "displayRaw.h"
 #include "gifdec.h"
 #include "images/x_wing.h"
@@ -17,6 +19,8 @@
 //     const uint8_t *image;
 //     size_t imageSize;
 // } gif_load;
+
+AsyncWebServer server(80);
 
 typedef struct
 {
@@ -46,6 +50,7 @@ int displayCS[NUM_DISPLAYS] = {15, 7};
 void setup()
 {
     Serial.begin(115200);
+    initWebServer();
     if (!psramFound())
     {
         Serial.println("!!! No PSRAM detected, cannot continue");
@@ -88,7 +93,7 @@ void setup()
     }
 
     Serial.println("Extracting frames...");
-    int frameCount=0;
+    int frameCount = 0;
     while (gif->gd_get_frame())
     {
         gif->gd_render_frame(buffer);
@@ -109,7 +114,7 @@ void setup()
         frameCount++;
     }
     free(buffer);
-    Serial.printf("Frames = %u\n",frameCount);
+    Serial.printf("Frames = %u\n", frameCount);
     Serial.print("Free PSRAM: ");
     Serial.print(ESP.getFreePsram());
     Serial.println(" bytes");
@@ -140,6 +145,14 @@ void setup()
     // }
 }
 
+void loop()
+{
+}
+
+void processGifImage(void) {
+    
+}
+
 void getScreenImage(const uint8_t *originalBuffer, Screen screen, int frame)
 {
     int sourceX = screen.column * imageWidth;
@@ -153,6 +166,47 @@ void getScreenImage(const uint8_t *originalBuffer, Screen screen, int frame)
     }
 }
 
-void loop()
+void initWebServer(void)
 {
+    Serial.println("Connecting to WiFi");
+    WiFi.begin(ssid, password);
+    while (WiFi.status() != WL_CONNECTED)
+    {
+        delay(300);
+        Serial.print(".");
+    }
+
+    // Start mDNS with the desired hostname
+    if (!MDNS.begin("sphere"))
+    { // Use "esp32.local" to access the server
+        Serial.println("Error starting mDNS");
+        return;
+    }
+
+    server.on(
+        "/upload", HTTP_POST, [](AsyncWebServerRequest *request)
+        {
+        // Handle other fields in the POST request if necessary
+        request->send(200, "text/plain", "File Uploaded"); },
+        [](AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final)
+        {
+            // This function is called for each chunk of the file
+
+            if (index == 0)
+            {
+                // This is the start of the file
+                // Open a file for writing here (e.g., on SPIFFS or SD card)
+                Serial.printf("Upload Start: %s\n", filename.c_str());
+                // Example: File uploadFile = SPIFFS.open("/upload/" + filename, "w");
+            }
+
+            if (final)
+            {
+                // This is the final chunk of the file
+                Serial.printf("Upload Complete: %s, size: %u\n", filename.c_str(), index + len);
+                // Close the file here
+                // Example: uploadFile.close();
+            }
+        });
+    server.begin();
 }
