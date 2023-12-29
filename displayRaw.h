@@ -30,12 +30,12 @@ private:
         digitalWrite(csPin, HIGH);
     }
 
+
+public:
     int chipSelectPin() const
     {
         return csPin;
     }
-
-public:
     uint8_t *allocateBuffer(void)
     {
         size_t bufferLength = imageWidth * imageHeight * colorOutputSize;
