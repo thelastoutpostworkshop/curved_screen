@@ -42,11 +42,6 @@ Screen grid[ROWS][COLUMNS] = {
 int totalWidth = imageWidth * COLUMNS;
 int totalHeight = imageHeight * ROWS;
 
-const int NUM_DISPLAYS = 2; // Adjust this value based on the number of displays
-// gif_load gifToLoad[NUM_DISPLAYS] = {{15, bb8, sizeof(bb8)}, {7, x_wing, sizeof(x_wing)}};
-Display *display[NUM_DISPLAYS];
-int displayCS[NUM_DISPLAYS] = {15, 7};
-
 void setup()
 {
     Serial.begin(115200);
@@ -61,11 +56,6 @@ void setup()
         Serial.printf("PSRAM Size=%ld\n", ESP.getPsramSize());
     }
     initDisplay();
-
-    for (int i = 0; i < NUM_DISPLAYS; i++)
-    {
-        display[i] = new Display(displayCS[i]);
-    }
 
     for (int r = 0; r < ROWS; r++)
     {
@@ -94,6 +84,15 @@ void loop()
 
 void processGifImage(uint8_t *fileBuffer, size_t fileBufferSize)
 {
+    // Free buffers
+    for (int r = 0; r < ROWS; r++)
+    {
+        for (int c = 0; c < COLUMNS; c++)
+        {
+            grid[r][c].display->freeFrames();
+        }
+    }
+
     gif->gd_open_gif_memory(fileBuffer, fileBufferSize, colorOutputSize);
     Serial.printf("Width=%u, Height=%u\n", gif->info()->width, gif->info()->height);
     if (gif->info()->width != totalWidth && gif->info()->height != totalWidth)
@@ -186,7 +185,7 @@ void initWebServer(void)
             if (index == 0)
             {
                 Serial.printf("Upload Start: %s\n", filename.c_str());
-                imageReadytoDisplay=false; 
+                imageReadytoDisplay = false;
             }
 
             // Resize buffer if necessary

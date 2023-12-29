@@ -59,21 +59,44 @@ public:
     {
         return frames[frame];
     }
+    void freeFrames(void)
+    {
+        for (int i = 0; i < frameCount; i++)
+        {
+            free(frames[i]);
+        }
+        frameCount = 0;
+        currentFrame = 0;
+    }
     void showFrame(int frame)
     {
-        activate();
-        tft.pushImage(0, 0, imageWidth, imageHeight, (uint16_t *)frames[frame]);
-        deActivate();
+        if (frame < frameCount)
+        {
+            activate();
+            tft.pushImage(0, 0, imageWidth, imageHeight, (uint16_t *)frames[frame]);
+            deActivate();
+        }
+        else
+        {
+            Serial.printf("!!! No frame %d\n", frame);
+        }
     }
     void showFrames(void)
     {
-        activate();
-        tft.pushImage(0, 0, imageWidth, imageHeight, (uint16_t *)frames[currentFrame]);
-        deActivate();
-        currentFrame++;
-        if (currentFrame == frameCount)
+        if (frameCount > 0)
         {
-            currentFrame = 0;
+            activate();
+            tft.pushImage(0, 0, imageWidth, imageHeight, (uint16_t *)frames[currentFrame]);
+            deActivate();
+            currentFrame++;
+            if (currentFrame == frameCount)
+            {
+                currentFrame = 0;
+            }
+        }
+        else
+        {
+            Serial.println("!!! No frames to show");
         }
     }
 };
