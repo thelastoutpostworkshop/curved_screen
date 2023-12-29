@@ -70,34 +70,6 @@ public:
         deActivate();
         gif = new GIF();
         imageReady = gif->gd_open_gif_memory(image, imageSize,colorOutputSize);
-        if (imageReady)
-        {
-            // Serial.printf("canvas size: %ux%u\n", gif->info()->width, gif->info()->height);
-            // Serial.printf("number of colors: %d\n", gif->info()->palette->size);
-            // Serial.printf("number of frames: %d\n", gif->info()->loop_count);
-            // Serial.printf("image size: %u\n", imageSize);
-            // size_t bufferLength = gif->info()->width * gif->info()->height * colorOutputSize;
-            // frame = (uint8_t *)malloc(bufferLength);
-            // if (frame == NULL)
-            // {
-            //     Serial.println("Not enough memory for buffer");
-            //     imageReady = false;
-            // }
-            // else
-            // {
-
-            //     imageReady = true;
-            // }
-            //
-            // if (!getFrames())
-            // {
-            //     Serial.printf("!!! Not enough memory for frames,stored %ld frames\n", frameCount);
-            // }
-            // else
-            // {
-            //     Serial.printf("Stored %ld frames\n", frameCount);
-            // }
-        }
     }
     void getFrame(void)
     {

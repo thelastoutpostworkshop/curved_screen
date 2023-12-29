@@ -186,6 +186,7 @@ void initWebServer(void)
             if (index == 0)
             {
                 Serial.printf("Upload Start: %s\n", filename.c_str());
+                imageReadytoDisplay=false; 
             }
 
             // Resize buffer if necessary
