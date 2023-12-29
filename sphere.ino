@@ -16,7 +16,7 @@
 AsyncWebServer server(80);
 
 const size_t MAX_FILE_SIZE_UPLOAD = 1024 * 1024; // 1 MB, adjust as needed
-uint8_t *fileBuffer;
+uint8_t *fileBuffer = NULL;
 size_t fileBufferSize = 0;
 
 GIF *gif;
@@ -109,6 +109,7 @@ void processGifImage(uint8_t *fileBuffer, size_t fileBufferSize)
     int frameCount = 0;
     while (gif->gd_get_frame())
     {
+        Serial.println("Rendering frame...");
         gif->gd_render_frame(buffer);
 
         for (int r = 0; r < ROWS; r++)
@@ -121,11 +122,15 @@ void processGifImage(uint8_t *fileBuffer, size_t fileBufferSize)
                     Serial.printf("Not Enough memory for frames, frames rendered is %u\n", grid[r][c].display->getFrameCount());
                     return;
                 }
+                Serial.println("getScreenImage...");
                 getScreenImage(buffer, grid[r][c], frameCount);
+                Serial.println("end getScreenImage...");
             }
         }
         frameCount++;
     }
+    Serial.println("Finished Extracting frames");
+
     free(buffer);
     Serial.printf("Frames = %u\n", frameCount);
     Serial.print("Free PSRAM: ");
@@ -166,34 +171,46 @@ void initWebServer(void)
         delay(300);
         Serial.print(".");
     }
-    Serial.println("Connected to WiFi");
+    Serial.println("Connected");
     Serial.print("IP Address: ");
     Serial.println(WiFi.localIP());
     if (!MDNS.begin("sphere"))
-    { 
+    {
         Serial.println("Error starting mDNS");
         return;
     }
 
     server.on(
         "/upload", HTTP_POST, [](AsyncWebServerRequest *request)
-        { request->send(200, "text/plain", "File Uploaded"); },
+        {
+        request->send(200, "text/plain", "File Uploaded");
+        if (fileBuffer) {
+            free(fileBuffer); // Free the buffer after processing
+            fileBuffer = nullptr;
+            fileBufferSize = 0;
+        } },
         [](AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final)
         {
             if (index == 0)
             {
-                // Reset buffer at the start of a new upload
-                memset(fileBuffer, 0, MAX_FILE_SIZE_UPLOAD);
-                fileBufferSize = 0;
                 Serial.printf("Upload Start: %s\n", filename.c_str());
             }
 
-            // Append data to buffer
-            if (fileBufferSize + len <= MAX_FILE_SIZE_UPLOAD)
+            // Resize buffer if necessary
+            if (fileBufferSize + len > fileBufferSize)
             {
-                memcpy(fileBuffer + fileBufferSize, data, len);
-                fileBufferSize += len;
+                uint8_t *newBuffer = (uint8_t *)realloc(fileBuffer, fileBufferSize + len);
+                if (!newBuffer)
+                {
+                    Serial.println("Failed to allocate memory");
+                    return;
+                }
+                fileBuffer = newBuffer;
             }
+
+            // Append data to buffer
+            memcpy(fileBuffer + fileBufferSize, data, len);
+            fileBufferSize += len;
 
             if (final)
             {
