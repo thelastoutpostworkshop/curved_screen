@@ -3,6 +3,8 @@
 #include "secrets.h"
 #include "displayRaw.h"
 
+#include "frame_001.h"
+
 AsyncWebServer server(80);
 
 uint8_t *fileBuffer = NULL;
@@ -28,27 +30,6 @@ Screen grid[ROWS][COLUMNS] = {
 // int totalWidth = imageWidth * COLUMNS;
 // int totalHeight = imageHeight * ROWS;
 
-void setup()
-{
-    Serial.begin(115200);
-    initWebServer();
-    initDisplay();
-
-    for (int r = 0; r < ROWS; r++)
-    {
-        for (int c = 0; c < COLUMNS; c++)
-        {
-            grid[r][c].display = new Display(grid[r][c].csPin);
-        }
-    }
-
-}
-
-void loop()
-{
-
-}
-
 void initWebServer(void)
 {
     Serial.println("Connecting to WiFi");
@@ -69,3 +50,31 @@ void initWebServer(void)
 
     server.begin();
 }
+
+void setup()
+{
+    Serial.begin(115200);
+    initWebServer();
+    initDisplay();
+
+    for (int r = 0; r < ROWS; r++)
+    {
+        for (int c = 0; c < COLUMNS; c++)
+        {
+            grid[r][c].display = new Display(grid[r][c].csPin);
+        }
+    }
+
+    grid[0][0].display->activate();
+    tft.pushImage(0,0,240,240,frame);
+    grid[0][0].display->deActivate();
+
+
+}
+
+void loop()
+{
+
+}
+
+

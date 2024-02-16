@@ -9,6 +9,7 @@ TFT_eSPI tft = TFT_eSPI(); // Make sure SPI_FREQUENCY is 20000000 in your TFT_eS
 void initDisplay(void)
 {
     tft.init();
+    tft.setSwapBytes(true);
     tft.setFreeFont(&FreeSans9pt7b);
 }
 
@@ -21,6 +22,9 @@ private:
     uint16_t frameCount = 0;
     uint8_t *frames[256];
 
+
+
+public:
     void activate(void)
     {
         digitalWrite(csPin, LOW);
@@ -29,9 +33,6 @@ private:
     {
         digitalWrite(csPin, HIGH);
     }
-
-
-public:
     int chipSelectPin() const
     {
         return csPin;
