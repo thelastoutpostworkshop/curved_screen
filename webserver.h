@@ -5,6 +5,7 @@
 AsyncWebServer server(80);
 AsyncWebSocket ws("/ws");
 
+
 class Frames
 {
 public:
@@ -55,6 +56,40 @@ public:
         frameCount++;
     }
 };
+
+class Images {
+public:
+    int imagesCount = 0;
+    Frames* framesArray = nullptr; // Pointer to an array of Frames objects
+
+    Images() : framesArray(nullptr), imagesCount(0) {}
+
+    ~Images() {
+        // Free the dynamically allocated Frames objects
+        delete[] framesArray;
+    }
+
+    void addFrames(const Frames& newFrames) {
+        // Create a new array with one more slot than the current array
+        Frames* newFramesArray = new Frames[imagesCount + 1];
+        
+        // Copy existing Frames objects to the new array
+        for (int i = 0; i < imagesCount; i++) {
+            newFramesArray[i] = framesArray[i];
+        }
+
+        // Add the new Frames object to the new array
+        newFramesArray[imagesCount] = newFrames;
+
+        // Free the old array
+        delete[] framesArray;
+
+        // Update the pointer and the count
+        framesArray = newFramesArray;
+        imagesCount++;
+    }
+};
+
 
 class ESP32Server
 {
@@ -129,6 +164,7 @@ private:
     }
 
 public:
+    Images images;
     void initWebServer()
     {
         Serial.println("Connecting to WiFi");
