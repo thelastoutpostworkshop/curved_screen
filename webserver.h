@@ -5,92 +5,98 @@
 AsyncWebServer server(80);
 AsyncWebSocket ws("/ws");
 
-void handleWebSocketMessage(void *arg, uint8_t *data, size_t len)
+class ESP32Server
 {
-    Serial.printf("Data received: %lu bytes\n", len);
-}
 
-void imageReceive(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type,
-                  void *arg, uint8_t *data, size_t len)
-{
-    if (type == WS_EVT_DATA)
+private:
+    void handleWebSocketMessage(void *arg, uint8_t *data, size_t len)
     {
-        handleWebSocketMessage(arg, data, len);
+        Serial.printf("Data received: %lu bytes\n", len);
     }
-    // Handle other events like WS_EVT_CONNECT, WS_EVT_DISCONNECT, etc.
-}
 
-void onWebSocketEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type,
+    void imageReceive(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type,
                       void *arg, uint8_t *data, size_t len)
-{
-    AwsFrameInfo *info = (AwsFrameInfo *)arg;
-
-    switch (type)
     {
-    case WS_EVT_CONNECT:
-        Serial.printf("WebSocket client #%u connected from %s\n", client->id(), client->remoteIP().toString().c_str());
-        // Add any additional actions you want to perform when the WebSocket is opened
-        break;
-    case WS_EVT_DISCONNECT:
-        Serial.printf("WebSocket client #%u disconnected\n", client->id());
-        // Handle disconnection
-        break;
-    case WS_EVT_DATA:
-        if (info->final && info->index == 0 && info->len == len)
+        if (type == WS_EVT_DATA)
         {
-            // The whole message is in a single frame and we got all of it's data
-            if (info->opcode == WS_TEXT)
+            handleWebSocketMessage(arg, data, len);
+        }
+        // Handle other events like WS_EVT_CONNECT, WS_EVT_DISCONNECT, etc.
+    }
+
+    static void onWebSocketEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type,
+                          void *arg, uint8_t *data, size_t len)
+    {
+        AwsFrameInfo *info = (AwsFrameInfo *)arg;
+
+        switch (type)
+        {
+        case WS_EVT_CONNECT:
+            Serial.printf("WebSocket client #%u connected from %s\n", client->id(), client->remoteIP().toString().c_str());
+            // Add any additional actions you want to perform when the WebSocket is opened
+            break;
+        case WS_EVT_DISCONNECT:
+            Serial.printf("WebSocket client #%u disconnected\n", client->id());
+            // Handle disconnection
+            break;
+        case WS_EVT_DATA:
+            if (info->final && info->index == 0 && info->len == len)
             {
-                // Data is text
-                Serial.println("Text data received");
-                // Convert the data to a string to process it as text
-                String message = "";
-                for (size_t i = 0; i < len; i++)
+                // The whole message is in a single frame and we got all of it's data
+                if (info->opcode == WS_TEXT)
                 {
-                    message += (char)data[i];
+                    // Data is text
+                    Serial.println("Text data received");
+                    // Convert the data to a string to process it as text
+                    String message = "";
+                    for (size_t i = 0; i < len; i++)
+                    {
+                        message += (char)data[i];
+                    }
+                    Serial.println(message);
                 }
-                Serial.println(message);
+                else if (info->opcode == WS_BINARY)
+                {
+                    // Data is binary
+                    Serial.println("Binary data received");
+                    // Process the binary data directly...
+                }
             }
-            else if (info->opcode == WS_BINARY)
+            else
             {
-                // Data is binary
-                Serial.println("Binary data received");
-                // Process the binary data directly...
+                Serial.println("Not final data");
             }
+            break;
+        case WS_EVT_PONG:
+            break;
+        case WS_EVT_ERROR:
+            // Handle PONG (response to ping) and ERROR events
+            break;
         }
-        else
+    }
+
+public:
+    void initWebServer(void)
+    {
+        Serial.println("Connecting to WiFi");
+        WiFi.begin(ssid, password);
+        while (WiFi.status() != WL_CONNECTED)
         {
-            Serial.println("Not final data");
+            delay(300);
+            Serial.print(".");
         }
-        break;
-    case WS_EVT_PONG:
-        break;
-    case WS_EVT_ERROR:
-        // Handle PONG (response to ping) and ERROR events
-        break;
-    }
-}
+        Serial.println("Connected");
+        Serial.print("IP Address: ");
+        Serial.println(WiFi.localIP());
+        if (!MDNS.begin("sphere"))
+        {
+            Serial.println("Error starting mDNS");
+            return;
+        }
 
-void initWebServer(void)
-{
-    Serial.println("Connecting to WiFi");
-    WiFi.begin(ssid, password);
-    while (WiFi.status() != WL_CONNECTED)
-    {
-        delay(300);
-        Serial.print(".");
-    }
-    Serial.println("Connected");
-    Serial.print("IP Address: ");
-    Serial.println(WiFi.localIP());
-    if (!MDNS.begin("sphere"))
-    {
-        Serial.println("Error starting mDNS");
-        return;
-    }
+        ws.onEvent(onWebSocketEvent);
+        server.addHandler(&ws);
 
-    ws.onEvent(onWebSocketEvent);
-    server.addHandler(&ws);
-
-    server.begin();
-}
+        server.begin();
+    }
+};

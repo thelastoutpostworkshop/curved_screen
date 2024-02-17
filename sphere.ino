@@ -27,10 +27,12 @@ Screen grid[ROWS][COLUMNS] = {
 // int totalWidth = imageWidth * COLUMNS;
 // int totalHeight = imageHeight * ROWS;
 
+ESP32Server esp32Server;
+
 void setup()
 {
     Serial.begin(115200);
-    initWebServer();
+    esp32Server.initWebServer();
     initDisplay();
 
     for (int r = 0; r < ROWS; r++)
