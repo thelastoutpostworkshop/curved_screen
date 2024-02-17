@@ -18,6 +18,27 @@ void imageReceive(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEvent
     // Handle other events like WS_EVT_CONNECT, WS_EVT_DISCONNECT, etc.
 }
 
+void onWebSocketEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type,
+                      void *arg, uint8_t *data, size_t len) {
+    switch(type) {
+        case WS_EVT_CONNECT:
+            Serial.printf("WebSocket client #%u connected from %s\n", client->id(), client->remoteIP().toString().c_str());
+            // Add any additional actions you want to perform when the WebSocket is opened
+            break;
+        case WS_EVT_DISCONNECT:
+            Serial.printf("WebSocket client #%u disconnected\n", client->id());
+            // Handle disconnection
+            break;
+        case WS_EVT_DATA:
+            handleWebSocketMessage(arg, data, len);
+            // Handle incoming data
+            break;
+        case WS_EVT_PONG:
+        case WS_EVT_ERROR:
+            // Handle PONG (response to ping) and ERROR events
+            break;
+    }
+}
 
 void initWebServer(void)
 {
@@ -37,7 +58,7 @@ void initWebServer(void)
         return;
     }
 
-    ws.onEvent(imageReceive);
+    ws.onEvent(onWebSocketEvent);
     server.addHandler(&ws);
 
     server.begin();
