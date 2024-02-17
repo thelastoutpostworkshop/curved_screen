@@ -99,8 +99,7 @@ uint8_t *currentFrameBuffer;
 size_t currentFrameBufferPosition;
 Images images;
 
-void imageReceive(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type,
-                  void *arg, uint8_t *data, size_t len)
+void imageReceive(AwsEventType type,uint8_t *data, size_t len)
 {
     if (type == WS_EVT_DATA)
     {
@@ -123,10 +122,11 @@ void imageReceive(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEvent
     }
 }
 
- void handleMessageCommand(String command)
+void handleMessageCommand(String command)
 {
     if (command == "start")
     {
+        Serial.println("New Frame Allocation");
         currentFrameBufferPosition = 0;
         currentFrameBuffer = (uint8_t *)malloc(imageBufferSize);
         if (currentFrameBuffer == nullptr)
@@ -140,8 +140,8 @@ void imageReceive(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEvent
     }
 }
 
- void onWebSocketEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type,
-                             void *arg, uint8_t *data, size_t len)
+void onWebSocketEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type,
+                      void *arg, uint8_t *data, size_t len)
 {
     AwsFrameInfo *info = (AwsFrameInfo *)arg;
 
@@ -180,7 +180,7 @@ void imageReceive(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEvent
         }
         else
         {
-            Serial.println("Not final data");
+            imageReceive(type, data, len);
         }
         break;
     case WS_EVT_PONG:
