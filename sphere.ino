@@ -27,8 +27,6 @@ Screen grid[ROWS][COLUMNS] = {
 // int totalWidth = imageWidth * COLUMNS;
 // int totalHeight = imageHeight * ROWS;
 
-
-
 void setup()
 {
     Serial.begin(115200);

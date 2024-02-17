@@ -5,13 +5,9 @@
 AsyncWebServer server(80);
 AsyncWebSocket ws("/ws");
 
-size_t totalDateCount = 0;
-
 void handleWebSocketMessage(void *arg, uint8_t *data, size_t len)
 {
     Serial.printf("Data received: %lu bytes\n", len);
-    totalDateCount += len;
-    Serial.printf("Total Data received: %lu bytes\n", totalDateCount);
 }
 
 void imageReceive(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type,
@@ -32,7 +28,6 @@ void onWebSocketEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsE
     switch (type)
     {
     case WS_EVT_CONNECT:
-        totalDateCount = 0;
         Serial.printf("WebSocket client #%u connected from %s\n", client->id(), client->remoteIP().toString().c_str());
         // Add any additional actions you want to perform when the WebSocket is opened
         break;
