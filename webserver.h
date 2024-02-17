@@ -5,11 +5,62 @@
 AsyncWebServer server(80);
 AsyncWebSocket ws("/ws");
 
+class Frames
+{
+public:
+    int frameCount = 0;
+    size_t *dataSizes = nullptr;   // Array to store the size of each frame
+    uint8_t **frameData = nullptr; // Pointer to an array of pointers to store frame data
+
+    Frames() : frameData(nullptr), frameCount(0), dataSizes(nullptr) {}
+
+    ~Frames()
+    {
+        // Free each frame
+        for (int i = 0; i < frameCount; i++)
+        {
+            delete[] frameData[i];
+        }
+        // Free the array of pointers
+        delete[] frameData;
+        // Free the array of sizes
+        delete[] dataSizes;
+    }
+
+    void addFrame(const uint8_t *data, size_t size)
+    {
+        // Allocate new array of pointers with an extra slot for the new frame
+        uint8_t **newFrameData = new uint8_t *[frameCount + 1];
+        size_t *newDataSizes = new size_t[frameCount + 1];
+
+        // Copy existing frame pointers and sizes to the new array
+        for (int i = 0; i < frameCount; i++)
+        {
+            newFrameData[i] = frameData[i];
+            newDataSizes[i] = dataSizes[i];
+        }
+
+        // Allocate memory for the new frame and copy its data
+        newFrameData[frameCount] = new uint8_t[size];
+        memcpy(newFrameData[frameCount], data, size);
+        newDataSizes[frameCount] = size;
+
+        // Free old arrays
+        delete[] frameData;
+        delete[] dataSizes;
+
+        // Update class members to point to the new arrays
+        frameData = newFrameData;
+        dataSizes = newDataSizes;
+        frameCount++;
+    }
+};
+
 class ESP32Server
 {
 
 private:
-    size_t frameBufferSize;
+    Frames myFrames;
 
     void handleWebSocketMessage(void *arg, uint8_t *data, size_t len)
     {
@@ -78,9 +129,8 @@ private:
     }
 
 public:
-    void initWebServer(size_t bufferSize)
+    void initWebServer()
     {
-        frameBufferSize = bufferSize;
         Serial.println("Connecting to WiFi");
         WiFi.begin(ssid, password);
         while (WiFi.status() != WL_CONNECTED)
