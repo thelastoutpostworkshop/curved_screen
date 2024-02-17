@@ -27,7 +27,7 @@ public:
         delete[] dataSizes;
     }
 
-    void addFrame(const uint8_t *data, size_t size)
+    void addFrame(uint8_t *data, size_t size)
     {
         // Allocate new array of pointers with an extra slot for the new frame
         uint8_t **newFrameData = new uint8_t *[frameCount + 1];
@@ -40,9 +40,8 @@ public:
             newDataSizes[i] = dataSizes[i];
         }
 
-        // Allocate memory for the new frame and copy its data
-        newFrameData[frameCount] = new uint8_t[size];
-        memcpy(newFrameData[frameCount], data, size);
+        // Store the pointer to the data passed, instead of allocating new memory and copying
+        newFrameData[frameCount] = data;
         newDataSizes[frameCount] = size;
 
         // Free old arrays
@@ -99,7 +98,7 @@ uint8_t *currentFrameBuffer;
 size_t currentFrameBufferPosition;
 Images images;
 
-void imageReceive(AwsEventType type,uint8_t *data, size_t len)
+void imageReceive(AwsEventType type, uint8_t *data, size_t len)
 {
     if (type == WS_EVT_DATA)
     {
@@ -136,8 +135,8 @@ void handleMessageCommand(String command)
     }
     if (command == "end")
     {
-        Serial.printf("Adding frame of size %lu\n",currentFrameBufferPosition);
-        frames.addFrame(currentFrameBuffer,currentFrameBufferPosition);
+        Serial.printf("Adding frame of size %lu\n", currentFrameBufferPosition);
+        frames.addFrame(currentFrameBuffer, currentFrameBufferPosition);
     }
 }
 
