@@ -1,11 +1,8 @@
-#include <ESPAsyncWebServer.h>
-#include <ESPmDNS.h>
-#include "secrets.h"
+
 #include "displayRaw.h"
-
+#include "wear_levelling.h"
 #include "frame_001.h"
-
-AsyncWebServer server(80);
+#include "webserver.h"
 
 uint8_t *fileBuffer = NULL;
 size_t fileBufferSize = 0;
@@ -30,26 +27,7 @@ Screen grid[ROWS][COLUMNS] = {
 // int totalWidth = imageWidth * COLUMNS;
 // int totalHeight = imageHeight * ROWS;
 
-void initWebServer(void)
-{
-    Serial.println("Connecting to WiFi");
-    WiFi.begin(ssid, password);
-    while (WiFi.status() != WL_CONNECTED)
-    {
-        delay(300);
-        Serial.print(".");
-    }
-    Serial.println("Connected");
-    Serial.print("IP Address: ");
-    Serial.println(WiFi.localIP());
-    if (!MDNS.begin("sphere"))
-    {
-        Serial.println("Error starting mDNS");
-        return;
-    }
 
-    server.begin();
-}
 
 void setup()
 {
