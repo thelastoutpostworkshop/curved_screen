@@ -24,15 +24,14 @@ Screen grid[ROWS][COLUMNS] = {
         {.row = 0, .column = 1, .csPin = 6} // Column 1
     }};
 
-// int totalWidth = imageWidth * COLUMNS;
-// int totalHeight = imageHeight * ROWS;
+size_t frameBufferSize = imageWidth*imageHeight*2; // 16 bit color image
 
 ESP32Server esp32Server;
 
 void setup()
 {
     Serial.begin(115200);
-    esp32Server.initWebServer();
+    esp32Server.initWebServer(frameBufferSize);
     initDisplay();
 
     for (int r = 0; r < ROWS; r++)

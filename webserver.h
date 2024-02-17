@@ -9,6 +9,8 @@ class ESP32Server
 {
 
 private:
+    size_t frameBufferSize;
+
     void handleWebSocketMessage(void *arg, uint8_t *data, size_t len)
     {
         Serial.printf("Data received: %lu bytes\n", len);
@@ -25,7 +27,7 @@ private:
     }
 
     static void onWebSocketEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type,
-                          void *arg, uint8_t *data, size_t len)
+                                 void *arg, uint8_t *data, size_t len)
     {
         AwsFrameInfo *info = (AwsFrameInfo *)arg;
 
@@ -76,8 +78,9 @@ private:
     }
 
 public:
-    void initWebServer(void)
+    void initWebServer(size_t bufferSize)
     {
+        frameBufferSize = bufferSize;
         Serial.println("Connecting to WiFi");
         WiFi.begin(ssid, password);
         while (WiFi.status() != WL_CONNECTED)
