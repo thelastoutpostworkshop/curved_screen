@@ -94,7 +94,7 @@ public:
 };
 
 size_t imageBufferSize;
-Frames myFrames;
+Frames frames;
 uint8_t *currentFrameBuffer;
 size_t currentFrameBufferPosition;
 Images images;
@@ -126,7 +126,6 @@ void handleMessageCommand(String command)
 {
     if (command == "start")
     {
-        Serial.println("New Frame Allocation");
         currentFrameBufferPosition = 0;
         currentFrameBuffer = (uint8_t *)malloc(imageBufferSize);
         if (currentFrameBuffer == nullptr)
@@ -137,6 +136,8 @@ void handleMessageCommand(String command)
     }
     if (command == "end")
     {
+        Serial.printf("Adding frame of size %lu\n",currentFrameBufferPosition);
+        frames.addFrame(currentFrameBuffer,currentFrameBufferPosition);
     }
 }
 
@@ -162,7 +163,6 @@ void onWebSocketEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsE
             if (info->opcode == WS_TEXT)
             {
                 // Data is text
-                Serial.println("Text data received");
                 // Convert the data to a string to process it as text
                 String message = "";
                 for (size_t i = 0; i < len; i++)
