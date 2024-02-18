@@ -19,12 +19,12 @@ class Display
 private:
     int csPin; // Chip Select pin
     int screenRotation;
-    size_t imageSize;
     uint16_t currentFrame = 0;
     uint16_t frameCount = 0;
     uint8_t *frames[MAX_FRAMES];
 
 public:
+    size_t imageSize;
     void activate(void)
     {
         digitalWrite(csPin, LOW);

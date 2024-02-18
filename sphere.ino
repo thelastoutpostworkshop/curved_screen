@@ -1,11 +1,12 @@
 
+#include "JPEGDEC.h"
 #include "displayRaw.h"
-#include "wear_levelling.h"
-#include "frame_001.h"
 #include "webserver.h"
 
 uint8_t *fileBuffer = NULL;
 size_t fileBufferSize = 0;
+
+JPEGDEC jpeg;
 
 typedef struct
 {
@@ -69,6 +70,13 @@ void setup()
     Serial.printf("PSRAM left = %lu\n", ESP.getFreePsram());
 }
 
+int draw(JPEGDRAW *pDraw)
+{
+    tft.setAddrWindow(pDraw->x, pDraw->y, pDraw->iWidth, pDraw->iHeight);
+    tft.pushPixels(pDraw->pPixels, pDraw->iWidth * pDraw->iHeight);
+    return 1;
+}
+
 int currentFrame = 0;
 unsigned long t;
 
@@ -82,16 +90,38 @@ void loop()
     t = millis();
     for (int i = 0; i < SCREEN_COUNT; i++)
     {
-        getFrameData(i, currentFrame, grid[i].display->getFrame(0), grid[i].display->getFrameSize());
+        grid[i].display->imageSize = getFrameJPGData(i, currentFrame, grid[i].display->getFrame(0), grid[i].display->getFrameSize());
         currentFrame++;
         if (currentFrame == frameCount)
         {
             currentFrame = 0;
         }
     }
+
     for (int i = 0; i < SCREEN_COUNT; i++)
     {
-        grid[i].display->showFrame(0);
+        jpeg.openRAM(grid[i].display->getFrame(0), grid[i].display->imageSize, draw);
+        grid[i].display->activate();
+        while (jpeg.decode(0,0,0))
+        {
+            /* code */
+        }
+        grid[i].display->deActivate();
+        jpeg.close();
+        
     }
-    Serial.printf("Took %ld ms\n",millis()-t);
+    Serial.printf("Took %ld ms\n", millis() - t);
+
+    // t = millis();
+
+    // getFrameData(0, currentFrame, grid[0].display->getFrame(0), grid[0].display->getFrameSize());
+    // currentFrame++;
+    // if (currentFrame == frameCount)
+    // {
+    //     currentFrame = 0;
+    // }
+
+    // grid[0].display->showFrame(0);
+
+    // Serial.printf("Took %ld ms\n", millis() - t);
 }
