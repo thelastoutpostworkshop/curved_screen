@@ -52,7 +52,6 @@ void getFrames(void)
                 u_int8_t *frame = currentScreen.display->addNewFrame();
                 if (frame != NULL)
                 {
-                    Serial.printf("Get Frame #%d for Screen %d",frameIndex,i+j);
                     getFrameData(i+j, frameIndex, frame, currentScreen.display->getFrameSize());
                 }
             }

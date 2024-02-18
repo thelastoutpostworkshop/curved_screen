@@ -78,7 +78,7 @@ int getFrameData(int screenNumber, int frameNumber, uint8_t *buffer, size_t buff
             // Consider removing delay or adjusting its value based on your application's tolerance for latency
         }
         http.end(); // End connection
-        Serial.printf("Total bytes read: %lu\n", totalBytesRead);
+        // Serial.printf("Total bytes read: %lu\n", totalBytesRead);
         return totalBytesRead; // Return total bytes read
     } else {
         Serial.printf("[HTTP] GET failed, error: %s\n", http.errorToString(httpCode).c_str());
