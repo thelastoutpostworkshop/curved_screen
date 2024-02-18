@@ -58,8 +58,8 @@ int getFrameData(int screenNumber, int frameNumber, uint8_t *buffer, size_t buff
         return -1; // Invalid buffer
     }
 
-    const String url=apiEndpoint+"frame/:"+screenNumber+"/:"+frameNumber;
-    Serial.printf("Calling %s",url);
+    const String url = apiEndpoint + "frame/" + screenNumber + "/" + frameNumber;
+    Serial.printf("Calling %s\n", url.c_str());
 
     http.begin(url);           // Start the connection
     int httpCode = http.GET(); // Make the GET request
@@ -80,7 +80,7 @@ int getFrameData(int screenNumber, int frameNumber, uint8_t *buffer, size_t buff
                     totalBytesRead += bytesRead;
                     if (totalBytesRead >= bufferSize)
                     {
-                        Serial.printf("Buffer is full %lu\n",totalBytesRead);
+                        Serial.printf("Buffer is full %lu\n", totalBytesRead);
                         break; // Buffer is full
                     }
                 }
