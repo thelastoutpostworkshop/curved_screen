@@ -105,7 +105,7 @@ void loop()
         jpeg.openRAM(grid[i].display->getFrame(0), grid[i].display->imageSize, draw);
         grid[i].display->activate();
         tft.setRotation(grid[i].display->screenRotation);
-        while (jpeg.decode(0,0,0))
+        while (jpeg.decode(0,0,0) == JPEG_SUCCESS)
         {
             /* code */
         }
