@@ -4,6 +4,7 @@
 #include "frame_001.h"
 #include "webserver.h"
 
+
 uint8_t *fileBuffer = NULL;
 size_t fileBufferSize = 0;
 
@@ -57,6 +58,7 @@ void setup()
     createDisplay();
 
     getFrames();
+    Serial.printf("PSRAM left = %lu\n",ESP.getFreePsram());
 }
 
 void loop()
