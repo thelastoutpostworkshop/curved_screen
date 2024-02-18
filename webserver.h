@@ -4,7 +4,7 @@
 #include "secrets.h"
 
 AsyncWebServer server(80);
-const String apiEndpoint = "http://localhost:3000/api/";
+const String apiEndpoint = "http://192.168.1.90:3000/api/";
 
 void initWebServer()
 {

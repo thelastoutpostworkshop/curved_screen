@@ -40,6 +40,9 @@ void setup()
         }
     }
 
+    int framesCount = getFramesCount();
+    Serial.printf("Frames Count = %d\n",framesCount);
+
     grid[0][0].display->activate();
     tft.pushImage(0,0,240,240,frame);
     grid[0][0].display->deActivate();
