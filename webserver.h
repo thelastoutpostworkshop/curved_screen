@@ -143,6 +143,10 @@ void handleMessageCommand(String command)
 void onWebSocketEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type,
                       void *arg, uint8_t *data, size_t len)
 {
+    if (len == 0)
+    {
+        return;
+    }
     AwsFrameInfo *info = (AwsFrameInfo *)arg;
 
     switch (type)
@@ -173,8 +177,13 @@ void onWebSocketEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsE
             else if (info->opcode == WS_BINARY)
             {
                 // Data is binary
-                Serial.println("Binary data received");
-                // Process the binary data directly...
+                Serial.printf("Binary data received len=%lu\n", len);
+                String message = "";
+                for (size_t i = 0; i < len; i++)
+                {
+                    message += (char)data[i];
+                }
+                Serial.println(message);
             }
         }
         else
