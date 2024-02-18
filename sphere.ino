@@ -70,7 +70,7 @@ void setup()
 }
 
 int currentFrame = 0;
-unsigned long time;
+unsigned long t;
 
 void loop()
 {
@@ -79,7 +79,7 @@ void loop()
     //     grid[i].display->showFrames();
     // }
 
-    time = millis();
+    t = millis();
     for (int i = 0; i < SCREEN_COUNT; i++)
     {
         getFrameData(i, currentFrame, grid[i].display->getFrame(0), grid[i].display->getFrameSize());
@@ -93,5 +93,5 @@ void loop()
     {
         grid[i].display->showFrame(0);
     }
-    Serial.printf("Took %ld ms",millis()-time);
+    Serial.printf("Took %ld ms\n",millis()-t);
 }
