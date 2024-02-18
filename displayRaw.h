@@ -13,6 +13,7 @@ void initDisplay(void)
     tft.setFreeFont(&FreeSans9pt7b);
 }
 
+#define MAX_FRAMES 256
 class Display
 {
 private:
@@ -20,7 +21,7 @@ private:
     size_t imageSize;
     uint16_t currentFrame = 0;
     uint16_t frameCount = 0;
-    uint8_t *frames[256];
+    uint8_t *frames[MAX_FRAMES];
 
 public:
     void activate(void)
@@ -35,13 +36,29 @@ public:
     {
         return csPin;
     }
+
     uint8_t *addNewFrame(void)
     {
+        if (frameCount >= MAX_FRAMES) // Assuming MAX_FRAMES is defined as the maximum number of frames
+        {
+            Serial.println("Error: Maximum frame count reached.");
+            return NULL;
+        }
+
         size_t bufferLength = imageWidth * imageHeight * colorOutputSize;
-        frames[frameCount] = (uint8_t *)malloc(bufferLength);
+        uint8_t *newFrame = (uint8_t *)malloc(bufferLength);
+
+        if (newFrame == NULL)
+        {
+            Serial.println("Error: Memory allocation for new frame failed.");
+            return NULL;
+        }
+
+        frames[frameCount] = newFrame;
         frameCount++;
-        return frames[frameCount - 1];
+        return newFrame;
     }
+
     Display(int pin) : csPin(pin)
     {
         pinMode(csPin, OUTPUT);
@@ -58,7 +75,8 @@ public:
     {
         return frames[frame];
     }
-    size_t getFrameSize() {
+    size_t getFrameSize()
+    {
         return imageWidth * imageHeight * colorOutputSize;
     }
     void freeFrames(void)
