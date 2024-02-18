@@ -21,17 +21,32 @@ typedef struct
 Screen grid[ROWS][COLUMNS] = {
     {
         {.row = 0, .column = 0, .csPin = 7}, // Column 0
-        {.row = 0, .column = 1, .csPin = 6} // Column 1
+        {.row = 0, .column = 1, .csPin = 6}  // Column 1
     }};
 
-size_t imageSize = imageWidth*imageHeight*2; // 16 bit color
+size_t imageSize = imageWidth * imageHeight * 2; // 16 bit color
 
 void setup()
 {
     Serial.begin(115200);
     initWebServer();
-    initDisplay();
+    initTFT_eSPI();
+    createDisplay();
 
+    int framesCount = getFramesCount();
+    Serial.printf("Frames Count = %d\n", framesCount);
+    u_int8_t *frame = grid[0][0].display->addNewFrame();
+    getFrameData(0, 0, frame, grid[0][0].display->getFrameSize());
+
+    grid[0][0].display->showFrame(0);
+}
+
+void loop()
+{
+}
+
+void createDisplay(void)
+{
     for (int r = 0; r < ROWS; r++)
     {
         for (int c = 0; c < COLUMNS; c++)
@@ -39,19 +54,4 @@ void setup()
             grid[r][c].display = new Display(grid[r][c].csPin);
         }
     }
-
-    int framesCount = getFramesCount();
-    Serial.printf("Frames Count = %d\n",framesCount);
-    u_int8_t* frame = grid[0][0].display->addNewFrame();
-    getFrameData(0,0,frame,grid[0][0].display->getFrameSize());
-
-    grid[0][0].display->showFrame(0);
-
 }
-
-void loop()
-{
-
-}
-
-

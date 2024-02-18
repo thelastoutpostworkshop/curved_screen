@@ -6,7 +6,7 @@
 
 TFT_eSPI tft = TFT_eSPI(); // Make sure SPI_FREQUENCY is 20000000 in your TFT_eSPI driver for your display if on a breadboard
 
-void initDisplay(void)
+void initTFT_eSPI(void)
 {
     tft.init();
     // tft.setSwapBytes(true);
