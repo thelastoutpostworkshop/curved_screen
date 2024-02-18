@@ -9,7 +9,7 @@ TFT_eSPI tft = TFT_eSPI(); // Make sure SPI_FREQUENCY is 20000000 in your TFT_eS
 void initTFT_eSPI(void)
 {
     tft.init();
-    // tft.setSwapBytes(true);
+    tft.setSwapBytes(true);
     tft.setFreeFont(&FreeSans9pt7b);
 }
 
@@ -18,12 +18,12 @@ class Display
 {
 private:
     int csPin; // Chip Select pin
-    int screenRotation;
     uint16_t currentFrame = 0;
     uint16_t frameCount = 0;
     uint8_t *frames[MAX_FRAMES];
 
 public:
+    int screenRotation;
     size_t imageSize;
     void activate(void)
     {
