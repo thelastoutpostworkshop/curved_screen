@@ -19,8 +19,8 @@ typedef struct
 Screen grid[SCREEN_COUNT] = {
     {.csPin = 6, .rotation = 0},
     {.csPin = 7, .rotation = 0},
-    {.csPin = 15, .rotation = 2},
-    {.csPin = 16, .rotation = 2}};
+    {.csPin = 16, .rotation = 2},
+    {.csPin = 15, .rotation = 2}};
 
 void createDisplay(void)
 {
