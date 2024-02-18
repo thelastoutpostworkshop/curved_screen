@@ -12,17 +12,23 @@ typedef struct
     int row;
     int column;
     int csPin;
+    int rotation;
     Display *display;
 } Screen;
 
-#define ROWS 1    // Number of rows
+#define ROWS 2    // Number of rows
 #define COLUMNS 2 // Number of columns
 
 Screen grid[ROWS][COLUMNS] = {
     {
-        {.row = 0, .column = 0, .csPin = 6}, 
-        {.row = 0, .column = 1, .csPin = 7}  
-    }};
+        {.row = 0, .column = 0, .csPin = 6, .rotation = 0},
+        {.row = 0, .column = 1, .csPin = 7, .rotation = 0}
+    },
+    {
+        {.row = 1, .column = 0, .csPin = 16, .rotation = 2},
+        {.row = 1, .column = 1, .csPin = 17, .rotation = 2} 
+    }
+};
 
 void createDisplay(void)
 {
@@ -53,4 +59,3 @@ void setup()
 void loop()
 {
 }
-
