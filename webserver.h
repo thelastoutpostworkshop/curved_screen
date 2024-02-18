@@ -51,8 +51,10 @@ int getFramesCount()
     }
 }
 
-int getFrameData(int screenNumber, int frameNumber, uint8_t *buffer, size_t bufferSize) {
-    if (!buffer) {
+int getFrameData(int screenNumber, int frameNumber, uint8_t *buffer, size_t bufferSize)
+{
+    if (!buffer)
+    {
         return -1; // Invalid buffer
     }
 
@@ -60,29 +62,36 @@ int getFrameData(int screenNumber, int frameNumber, uint8_t *buffer, size_t buff
     String url = apiEndpoint + "frame/" + String(screenNumber) + "/" + String(frameNumber);
     // Serial.printf("Calling %s\n", url.c_str());
 
-    http.begin(url); // Start the connection
+    http.setReuse(true);
+    http.begin(url);           // Start the connection
     int httpCode = http.GET(); // Make the GET request
 
-    if (httpCode == HTTP_CODE_OK) {
+    if (httpCode == HTTP_CODE_OK)
+    {
         WiFiClient *stream = http.getStreamPtr();
         size_t totalBytesRead = 0;
         // Loop to read bytes as long as there's data available and buffer has space
-        while (totalBytesRead < bufferSize) {
+        while (totalBytesRead < bufferSize)
+        {
             size_t availableBytes = stream->available();
-            if (availableBytes > 0) {
+            if (availableBytes > 0)
+            {
                 int bytesRead = stream->readBytes(buffer + totalBytesRead, min(availableBytes, bufferSize - totalBytesRead));
                 totalBytesRead += bytesRead;
-            } else if (!http.connected()) {
+            }
+            else if (!http.connected())
+            {
                 break; // Break if no longer connected
             }
-            // Consider removing delay or adjusting its value based on your application's tolerance for latency
         }
         http.end(); // End connection
         // Serial.printf("Total bytes read: %lu\n", totalBytesRead);
         return totalBytesRead; // Return total bytes read
-    } else {
+    }
+    else
+    {
         Serial.printf("[HTTP] GET failed, error: %s\n", http.errorToString(httpCode).c_str());
         http.end(); // Ensure connection is closed
-        return -2; // HTTP error or no data read
+        return -2;  // HTTP error or no data read
     }
 }
