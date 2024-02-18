@@ -58,7 +58,7 @@ int getFrameData(int screenNumber, int frameNumber, uint8_t *buffer, size_t buff
 
     // Ensure variables are converted to String for URL construction
     String url = apiEndpoint + "frame/" + String(screenNumber) + "/" + String(frameNumber);
-    Serial.printf("Calling %s\n", url.c_str());
+    // Serial.printf("Calling %s\n", url.c_str());
 
     http.begin(url); // Start the connection
     int httpCode = http.GET(); // Make the GET request

@@ -4,7 +4,6 @@
 #include "frame_001.h"
 #include "webserver.h"
 
-
 uint8_t *fileBuffer = NULL;
 size_t fileBufferSize = 0;
 
@@ -50,6 +49,8 @@ void getFrames(void)
     }
 }
 
+int frameCount;
+
 void setup()
 {
     Serial.begin(115200);
@@ -57,14 +58,40 @@ void setup()
     initTFT_eSPI();
     createDisplay();
 
-    getFrames();
-    Serial.printf("PSRAM left = %lu\n",ESP.getFreePsram());
+    // getFrames();
+
+    frameCount = getFramesCount();
+    Serial.printf("Frames Count = %d\n", frameCount);
+    for (int i = 0; i < SCREEN_COUNT; i++)
+    {
+        grid[i].display->addNewFrame();
+    }
+    Serial.printf("PSRAM left = %lu\n", ESP.getFreePsram());
 }
+
+int currentFrame = 0;
+unsigned long time;
 
 void loop()
 {
+    // for (int i = 0; i < SCREEN_COUNT; i++)
+    // {
+    //     grid[i].display->showFrames();
+    // }
+
+    time = millis();
     for (int i = 0; i < SCREEN_COUNT; i++)
     {
-            grid[i].display->showFrames();
+        getFrameData(i, currentFrame, grid[i].display->getFrame(0), grid[i].display->getFrameSize());
+        currentFrame++;
+        if (currentFrame == frameCount)
+        {
+            currentFrame = 0;
+        }
     }
+    for (int i = 0; i < SCREEN_COUNT; i++)
+    {
+        grid[i].display->showFrame(0);
+    }
+    Serial.printf("Took %ld ms",millis()-time);
 }
