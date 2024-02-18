@@ -54,9 +54,12 @@ public:
     {
         return frameCount;
     }
-    uint8_t *getBuffer(int frame)
+    uint8_t *getFrame(int frame)
     {
         return frames[frame];
+    }
+    size_t getFrameSize() {
+        return imageWidth * imageHeight * colorOutputSize;
     }
     void freeFrames(void)
     {

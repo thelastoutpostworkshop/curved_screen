@@ -51,12 +51,15 @@ int getFramesCount()
     }
 }
 
-int readBytesFromApi(const char *url, uint8_t *buffer, size_t bufferSize)
+int getFrameData(int screenNumber, int frameNumber, uint8_t *buffer, size_t bufferSize)
 {
     if (!buffer)
     {
         return -1; // Invalid buffer
     }
+
+    const String url=apiEndpoint+"frame/:"+screenNumber+"/:"+frameNumber;
+    Serial.printf("Calling %s",url);
 
     http.begin(url);           // Start the connection
     int httpCode = http.GET(); // Make the GET request
