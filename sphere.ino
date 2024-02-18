@@ -20,11 +20,20 @@ typedef struct
 
 Screen grid[ROWS][COLUMNS] = {
     {
-        {.row = 0, .column = 0, .csPin = 7}, // Column 0
-        {.row = 0, .column = 1, .csPin = 6}  // Column 1
+        {.row = 0, .column = 0, .csPin = 6}, 
+        {.row = 0, .column = 1, .csPin = 7}  
     }};
 
-size_t imageSize = imageWidth * imageHeight * 2; // 16 bit color
+void createDisplay(void)
+{
+    for (int r = 0; r < ROWS; r++)
+    {
+        for (int c = 0; c < COLUMNS; c++)
+        {
+            grid[r][c].display = new Display(grid[r][c].csPin);
+        }
+    }
+}
 
 void setup()
 {
@@ -45,13 +54,3 @@ void loop()
 {
 }
 
-void createDisplay(void)
-{
-    for (int r = 0; r < ROWS; r++)
-    {
-        for (int c = 0; c < COLUMNS; c++)
-        {
-            grid[r][c].display = new Display(grid[r][c].csPin);
-        }
-    }
-}
