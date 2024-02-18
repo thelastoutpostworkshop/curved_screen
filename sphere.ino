@@ -36,7 +36,7 @@ void createDisplay(void)
     {
         for (int c = 0; c < COLUMNS; c++)
         {
-            grid[r][c].display = new Display(grid[r][c].csPin);
+            grid[r][c].display = new Display(grid[r][c].csPin,grid[r][c].rotation);
         }
     }
 }

@@ -18,6 +18,7 @@ class Display
 {
 private:
     int csPin; // Chip Select pin
+    int screenRotation;
     size_t imageSize;
     uint16_t currentFrame = 0;
     uint16_t frameCount = 0;
@@ -59,7 +60,7 @@ public:
         return newFrame;
     }
 
-    Display(int pin) : csPin(pin)
+    Display(int pin,int rotation) : csPin(pin),screenRotation(rotation)
     {
         pinMode(csPin, OUTPUT);
         activate();
@@ -93,6 +94,7 @@ public:
         if (frame < frameCount)
         {
             activate();
+            tft.setRotation(screenRotation);
             tft.pushImage(0, 0, imageWidth, imageHeight, (uint16_t *)frames[frame]);
             deActivate();
         }
@@ -106,6 +108,7 @@ public:
         if (frameCount > 0)
         {
             activate();
+            tft.setRotation(screenRotation);
             tft.pushImage(0, 0, imageWidth, imageHeight, (uint16_t *)frames[currentFrame]);
             deActivate();
             currentFrame++;
