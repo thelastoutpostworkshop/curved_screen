@@ -9,7 +9,7 @@ TFT_eSPI tft = TFT_eSPI(); // Make sure SPI_FREQUENCY is 20000000 in your TFT_eS
 void initDisplay(void)
 {
     tft.init();
-    tft.setSwapBytes(true);
+    // tft.setSwapBytes(true);
     tft.setFreeFont(&FreeSans9pt7b);
 }
 
