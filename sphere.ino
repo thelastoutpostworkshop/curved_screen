@@ -29,7 +29,7 @@ size_t imageSize = imageWidth*imageHeight*2; // 16 bit color
 void setup()
 {
     Serial.begin(115200);
-    initWebServer(imageSize);
+    initWebServer();
     initDisplay();
 
     for (int r = 0; r < ROWS; r++)
