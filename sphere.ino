@@ -45,10 +45,7 @@ void setup()
     u_int8_t* frame = grid[0][0].display->addNewFrame();
     getFrameData(0,0,frame,grid[0][0].display->getFrameSize());
 
-    grid[0][0].display->activate();
-    tft.pushImage(0,0,240,240,grid[0][0].display->getFrame(0));
-    grid[0][0].display->deActivate();
-
+    grid[0][0].display->showFrame(0);
 
 }
 

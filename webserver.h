@@ -80,7 +80,7 @@ int getFrameData(int screenNumber, int frameNumber, uint8_t *buffer, size_t buff
                     totalBytesRead += bytesRead;
                     if (totalBytesRead >= bufferSize)
                     {
-                        Serial.printf("Buffer is full %lu\n", totalBytesRead);
+                        Serial.printf("Buffer is full %lu, remaining to read %lu\n", totalBytesRead,bytesRead);
                         break; // Buffer is full
                     }
                 }
