@@ -52,7 +52,7 @@ void getFrames(void)
                 u_int8_t *frame = currentScreen.display->addNewFrame();
                 if (frame != NULL)
                 {
-                    getFrameData(i+j, frameIndex, frame, currentScreen.display->getFrameSize());
+                    getFrameData(i + j, frameIndex, frame, currentScreen.display->getFrameSize());
                 }
             }
         }
@@ -71,4 +71,11 @@ void setup()
 
 void loop()
 {
+    for (int i = 0; i < ROWS; ++i)
+    {
+        for (int j = 0; j < COLUMNS; ++j)
+        {
+            grid[i][j].display->showFrames();
+        }
+    }
 }
