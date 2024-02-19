@@ -40,7 +40,7 @@ public:
 
     uint8_t *addNewFrame(void)
     {
-        if (frameCount >= MAX_FRAMES) // Assuming MAX_FRAMES is defined as the maximum number of frames
+        if (frameCount >= MAX_FRAMES) 
         {
             Serial.println("Error: Maximum frame count reached.");
             return NULL;
@@ -58,6 +58,23 @@ public:
         frames[frameCount] = newFrame;
         frameCount++;
         return newFrame;
+    }
+
+    void addNewFrame(uint8_t *frame, size_t size) {
+        if (frameCount >= MAX_FRAMES) 
+        {
+            Serial.println("Error: Maximum frame count reached.");
+        }
+
+        uint8_t *newFrame = (uint8_t *)malloc(size);
+
+        if (newFrame == NULL)
+        {
+            Serial.println("Error: Memory allocation for new frame failed.");
+        }
+
+        frames[frameCount] = newFrame;
+        frameCount++;
     }
 
     Display(int pin,int rotation) : csPin(pin),screenRotation(rotation)
