@@ -78,6 +78,7 @@ public:
         }
 
         uint8_t *newFrame = (uint8_t *)malloc(size);
+        memcpy(newFrame,frame,size);
 
         if (newFrame == NULL)
         {
@@ -155,8 +156,7 @@ public:
     {
         if (frameCount > 0)
         {
-            jpeg.openRAM(frames[currentFrame], framesSize[currentFrame], draw);
-
+            int res = jpeg.openRAM(frames[currentFrame], framesSize[currentFrame], draw);
             activate();
             tft.setRotation(screenRotation);
             while (jpeg.decode(0, 0, 0) == JPEG_SUCCESS)
