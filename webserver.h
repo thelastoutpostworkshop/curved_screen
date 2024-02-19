@@ -4,7 +4,6 @@
 #include "secrets.h"
 
 AsyncWebServer server(80);
-HTTPClient http;
 
 const String apiEndpoint = "http://192.168.1.90:3000/api/";
 
@@ -32,8 +31,8 @@ void initWebServer()
 int getFramesCount()
 {
 
+    HTTPClient http;
     String url = apiEndpoint + "frames-count";
-
     http.begin(url);
     int httpCode = http.GET();
 
@@ -53,6 +52,8 @@ int getFramesCount()
 
 int getFrameData(int screenNumber, int frameNumber, uint8_t *buffer, size_t bufferSize)
 {
+    HTTPClient http;
+
     if (!buffer)
     {
         return -1; // Invalid buffer
@@ -95,6 +96,9 @@ int getFrameData(int screenNumber, int frameNumber, uint8_t *buffer, size_t buff
         return -2;  // HTTP error or no data read
     }
 }
+
+#include <HTTPClient.h>
+
 size_t getFrameJPGData(int screenNumber, int frameNumber, uint8_t *buffer, size_t bufferSize)
 {
     if (!buffer)
@@ -102,7 +106,7 @@ size_t getFrameJPGData(int screenNumber, int frameNumber, uint8_t *buffer, size_
         return -1; // Invalid buffer
     }
 
-    // Ensure variables are converted to String for URL construction
+    HTTPClient http;
     String url = apiEndpoint + "framejpg/" + String(screenNumber) + "/" + String(frameNumber);
     // Serial.printf("Calling %s\n", url.c_str());
 
@@ -112,30 +116,30 @@ size_t getFrameJPGData(int screenNumber, int frameNumber, uint8_t *buffer, size_
 
     if (httpCode == HTTP_CODE_OK)
     {
+        size_t contentLength = http.getSize(); // Get the size of the response payload
         WiFiClient *stream = http.getStreamPtr();
         size_t totalBytesRead = 0;
-        // Loop to read bytes as long as there's data available and buffer has space
-        while (totalBytesRead < bufferSize)
+        while (totalBytesRead < bufferSize && totalBytesRead < contentLength)
         {
             size_t availableBytes = stream->available();
             if (availableBytes > 0)
             {
-                int bytesRead = stream->readBytes(buffer + totalBytesRead, min(availableBytes, bufferSize - totalBytesRead));
+                int bytesRead = stream->readBytes(buffer + totalBytesRead, min(min(availableBytes, bufferSize - totalBytesRead), contentLength - totalBytesRead));
                 totalBytesRead += bytesRead;
             }
             else if (!http.connected())
             {
-                break; // Break if no longer connected
+                break; 
             }
         }
-        http.end(); // End connection
+        http.end(); 
         // Serial.printf("Total bytes read: %lu\n", totalBytesRead);
         return totalBytesRead; // Return total bytes read
     }
     else
     {
         Serial.printf("[HTTP] GET failed, error: %s\n", http.errorToString(httpCode).c_str());
-        http.end(); // Ensure connection is closed
-        return -2;  // HTTP error or no data read
+        http.end(); 
+        return -2;  
     }
 }
