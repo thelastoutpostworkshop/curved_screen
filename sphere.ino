@@ -1,7 +1,9 @@
 
-#include "JPEGDEC.h"
 #include "displayRaw.h"
 #include "webserver.h"
+
+#define FRAME_BUFFER_SIZE 50000L
+uint8_t* frameBuffer;
 
 uint8_t *fileBuffer = NULL;
 size_t fileBufferSize = 0;
@@ -52,6 +54,7 @@ void getFrames(void)
 
 void getJPGFrames(void)
 {
+
     int framesCount = getFramesCount();
     Serial.printf("Frames Count = %d\n", framesCount);
 
@@ -60,11 +63,8 @@ void getJPGFrames(void)
         Screen currentScreen = grid[i];
         for (int frameIndex = 0; frameIndex < framesCount; frameIndex++)
         {
-            u_int8_t *frame = currentScreen.display->addNewFrame();
-            if (frame != NULL)
-            {
-                getFrameData(i, frameIndex, frame, currentScreen.display->getFrameSize());
-            }
+            size_t jpgsize = getFrameJPGData(i, frameIndex, frameBuffer, FRAME_BUFFER_SIZE);
+            currentScreen.display->addNewFrame(frameBuffer,jpgsize);
         }
     }
 }
@@ -78,22 +78,24 @@ void setup()
     initTFT_eSPI();
     createDisplay();
 
-    // getFrames();
+    frameBuffer = (uint8_t *)malloc(FRAME_BUFFER_SIZE);
 
-    frameCount = getFramesCount();
-    Serial.printf("Frames Count = %d\n", frameCount);
-    for (int i = 0; i < SCREEN_COUNT; i++)
+    if (frameBuffer == NULL)
     {
-        grid[i].display->addNewFrame();
+        Serial.println("Error: Memory allocation failed for frame buffer, cannot continue.");
+        while (true)
+            ;
     }
-    Serial.printf("PSRAM left = %lu\n", ESP.getFreePsram());
-}
 
-int draw(JPEGDRAW *pDraw)
-{
-    tft.setAddrWindow(pDraw->x, pDraw->y, pDraw->iWidth, pDraw->iHeight);
-    tft.pushPixels(pDraw->pPixels, pDraw->iWidth * pDraw->iHeight);
-    return 1;
+    getJPGFrames();
+
+    // frameCount = getFramesCount();
+    // Serial.printf("Frames Count = %d\n", frameCount);
+    // for (int i = 0; i < SCREEN_COUNT; i++)
+    // {
+    //     grid[i].display->addNewFrame();
+    // }
+    Serial.printf("PSRAM left = %lu\n", ESP.getFreePsram());
 }
 
 int currentFrame = 0;
@@ -101,36 +103,35 @@ unsigned long t;
 
 void loop()
 {
-    // for (int i = 0; i < SCREEN_COUNT; i++)
-    // {
-    //     grid[i].display->showFrames();
-    // }
-
     t = millis();
     for (int i = 0; i < SCREEN_COUNT; i++)
     {
-        grid[i].display->imageSize = getFrameJPGData(i, currentFrame, grid[i].display->getFrame(0), grid[i].display->getFrameSize());
-        currentFrame++;
-        if (currentFrame == frameCount)
-        {
-            currentFrame = 0;
-        }
-    }
-
-    for (int i = 0; i < SCREEN_COUNT; i++)
-    {
-        jpeg.openRAM(grid[i].display->getFrame(0), grid[i].display->imageSize, draw);
-        grid[i].display->activate();
-        tft.setRotation(grid[i].display->screenRotation);
-        while (jpeg.decode(0,0,0) == JPEG_SUCCESS)
-        {
-            /* code */
-        }
-        grid[i].display->deActivate();
-        jpeg.close();
-        
+        grid[i].display->showJPGFrames();
     }
     Serial.printf("Took %ld ms\n", millis() - t);
+
+    // for (int i = 0; i < SCREEN_COUNT; i++)
+    // {
+    //     grid[i].display->imageSize = getFrameJPGData(i, currentFrame, grid[i].display->getFrame(0), grid[i].display->getFrameSize());
+    //     currentFrame++;
+    //     if (currentFrame == frameCount)
+    //     {
+    //         currentFrame = 0;
+    //     }
+    // }
+
+    // for (int i = 0; i < SCREEN_COUNT; i++)
+    // {
+    //     jpeg.openRAM(grid[i].display->getFrame(0), grid[i].display->imageSize, draw);
+    //     grid[i].display->activate();
+    //     tft.setRotation(grid[i].display->screenRotation);
+    //     while (jpeg.decode(0, 0, 0) == JPEG_SUCCESS)
+    //     {
+    //         /* code */
+    //     }
+    //     grid[i].display->deActivate();
+    //     jpeg.close();
+    // }
 
     // t = millis();
 
