@@ -8,8 +8,6 @@ uint8_t* frameBuffer;
 uint8_t *fileBuffer = NULL;
 size_t fileBufferSize = 0;
 
-JPEGDEC jpeg;
-
 typedef struct
 {
     int csPin;
