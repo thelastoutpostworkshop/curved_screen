@@ -90,7 +90,6 @@ void loop()
     t = millis();
     for (int i = 0; i < SCREEN_COUNT; i++)
     {
-        Serial.printf("Getting JPG Screen %d\n",i);
         grid[i].display->imageSize = getFrameJPGData(i, currentFrame, grid[i].display->getFrame(0), grid[i].display->getFrameSize());
         currentFrame++;
         if (currentFrame == frameCount)
@@ -101,7 +100,6 @@ void loop()
 
     for (int i = 0; i < SCREEN_COUNT; i++)
     {
-        Serial.printf("Writing JPG Screen %d\n",i);
         jpeg.openRAM(grid[i].display->getFrame(0), grid[i].display->imageSize, draw);
         grid[i].display->activate();
         tft.setRotation(grid[i].display->screenRotation);

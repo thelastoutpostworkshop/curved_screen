@@ -111,12 +111,12 @@ size_t getFrameJPGData(int screenNumber, int frameNumber, uint8_t *buffer, size_
     // Serial.printf("Calling %s\n", url.c_str());
 
     http.setReuse(true);
-    http.begin(url);           // Start the connection
-    int httpCode = http.GET(); // Make the GET request
+    http.begin(url);           
+    int httpCode = http.GET(); 
 
     if (httpCode == HTTP_CODE_OK)
     {
-        size_t contentLength = http.getSize(); // Get the size of the response payload
+        size_t contentLength = http.getSize(); 
         WiFiClient *stream = http.getStreamPtr();
         size_t totalBytesRead = 0;
         while (totalBytesRead < bufferSize && totalBytesRead < contentLength)
@@ -134,7 +134,7 @@ size_t getFrameJPGData(int screenNumber, int frameNumber, uint8_t *buffer, size_
         }
         http.end(); 
         // Serial.printf("Total bytes read: %lu\n", totalBytesRead);
-        return totalBytesRead; // Return total bytes read
+        return totalBytesRead; 
     }
     else
     {
