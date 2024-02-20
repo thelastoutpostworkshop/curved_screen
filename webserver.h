@@ -101,11 +101,6 @@ int getFrameData(int screenNumber, int frameNumber, uint8_t *buffer, size_t buff
 
 size_t getFrameJPGData(int screenNumber, int frameNumber, uint8_t *buffer, size_t bufferSize)
 {
-    if (!buffer)
-    {
-        return -1; // Invalid buffer
-    }
-
     HTTPClient http;
     String url = apiEndpoint + "framejpg/" + String(screenNumber) + "/" + String(frameNumber);
     Serial.printf("Calling %s\n", url.c_str());
