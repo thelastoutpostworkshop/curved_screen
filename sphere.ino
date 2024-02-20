@@ -3,7 +3,7 @@
 #include "webserver.h"
 
 #define FRAME_BUFFER_SIZE 50000L
-uint8_t* frameBuffer;
+uint8_t *frameBuffer;
 
 uint8_t *fileBuffer = NULL;
 size_t fileBufferSize = 0;
@@ -50,7 +50,7 @@ void getFrames(void)
     }
 }
 
-void getJPGFrames(void)
+bool getJPGFrames(void)
 {
 
     int framesCount = getFramesCount();
@@ -62,9 +62,14 @@ void getJPGFrames(void)
         for (int frameIndex = 0; frameIndex < framesCount; frameIndex++)
         {
             size_t jpgsize = getFrameJPGData(i, frameIndex, frameBuffer, FRAME_BUFFER_SIZE);
-            currentScreen.display->addNewFrame(frameBuffer,jpgsize);
+            if (jpgsize == 0)
+            {
+                return false;
+            }
+            currentScreen.display->addNewFrame(frameBuffer, jpgsize);
         }
     }
+    return true;
 }
 
 int frameCount;
@@ -85,7 +90,12 @@ void setup()
             ;
     }
 
-    getJPGFrames();
+    if (!getJPGFrames())
+    {
+        Serial.println("Error: Could not retrived all the jpg images, cannot continue.");
+        while (true)
+            ;
+    }
 
     // frameCount = getFramesCount();
     // Serial.printf("Frames Count = %d\n", frameCount);
