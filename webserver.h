@@ -105,7 +105,8 @@ size_t getFrameJPGData(int screenNumber, int frameNumber, uint8_t *buffer, size_
     String url = apiEndpoint + "framejpg/" + String(screenNumber) + "/" + String(frameNumber);
     Serial.printf("Calling %s\n", url.c_str());
 
-    http.setReuse(true);
+    // http.setReuse(true);
+    http.setTimeout(10000L);
     http.begin(url);           
     int httpCode = http.GET(); 
 
