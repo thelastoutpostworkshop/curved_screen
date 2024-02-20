@@ -92,7 +92,7 @@ void setup()
 
     if (!getJPGFrames())
     {
-        Serial.println("Error: Could not retrived all the jpg images, cannot continue.");
+        Serial.println("Error: Could not retrieved all the jpg images, cannot continue.");
         while (true)
             ;
     }

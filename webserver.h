@@ -107,35 +107,40 @@ size_t getFrameJPGData(int screenNumber, int frameNumber, uint8_t *buffer, size_
 
     // http.setReuse(true);
     http.setTimeout(10000L);
-    http.begin(url);           
-    int httpCode = http.GET(); 
+    http.begin(url);
+    int httpCode = http.GET();
 
     if (httpCode == HTTP_CODE_OK)
     {
-        size_t contentLength = http.getSize(); 
+        size_t contentLength = http.getSize();
+        if (contentLength > bufferSize)
+        {
+            Serial.printf("getFrameJPGData content too large, content size = %lu, bufferSize=%lu\n", contentLength, bufferSize);
+            return 0;
+        }
         WiFiClient *stream = http.getStreamPtr();
         size_t totalBytesRead = 0;
-        while (totalBytesRead < bufferSize && totalBytesRead < contentLength)
+
+        while (http.connected() && (contentLength > 0 || contentLength == -1))
         {
             size_t availableBytes = stream->available();
             if (availableBytes > 0)
             {
-                int bytesRead = stream->readBytes(buffer + totalBytesRead, min(min(availableBytes, bufferSize - totalBytesRead), contentLength - totalBytesRead));
+                int bytesRead = stream->readBytes(buffer + totalBytesRead, availableBytes);
                 totalBytesRead += bytesRead;
+                contentLength -= bytesRead;
             }
-            else if (!http.connected())
-            {
-                break; 
-            }
+            delay(1);
         }
-        http.end(); 
+
+        http.end();
         // Serial.printf("Total bytes read: %lu\n", totalBytesRead);
-        return totalBytesRead; 
+        return totalBytesRead;
     }
     else
     {
         Serial.printf("[HTTP] GET failed, error: %s\n", http.errorToString(httpCode).c_str());
-        http.end(); 
-        return 0;  
+        http.end();
+        return 0;
     }
 }
