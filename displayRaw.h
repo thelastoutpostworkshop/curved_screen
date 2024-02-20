@@ -78,16 +78,18 @@ public:
         }
 
         uint8_t *newFrame = (uint8_t *)malloc(size);
-        memcpy(newFrame,frame,size);
 
         if (newFrame == NULL)
         {
             Serial.println("Error: Memory allocation for new frame failed.");
         }
-
-        framesSize[frameCount] = size;
-        frames[frameCount] = newFrame;
-        frameCount++;
+        else
+        {
+            memcpy(newFrame, frame, size);
+            framesSize[frameCount] = size;
+            frames[frameCount] = newFrame;
+            frameCount++;
+        }
     }
 
     Display(int pin, int rotation) : csPin(pin), screenRotation(rotation)
