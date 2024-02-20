@@ -135,6 +135,6 @@ size_t getFrameJPGData(int screenNumber, int frameNumber, uint8_t *buffer, size_
     {
         Serial.printf("[HTTP] GET failed, error: %s\n", http.errorToString(httpCode).c_str());
         http.end(); 
-        return -2;  
+        return 0;  
     }
 }
