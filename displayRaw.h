@@ -34,10 +34,11 @@ private:
 
 public:
     int screenRotation;
-    // size_t imageSize;
+
     void activate(void)
     {
         digitalWrite(csPin, LOW);
+        tft.setRotation(screenRotation);
     }
     void deActivate(void)
     {
@@ -96,7 +97,6 @@ public:
     {
         pinMode(csPin, OUTPUT);
         activate();
-        tft.setRotation(2); // Adjust orientation as needed (0-3)
         tft.fillScreen(TFT_BLACK);
         deActivate();
     }
@@ -126,7 +126,6 @@ public:
         if (frame < frameCount)
         {
             activate();
-            tft.setRotation(screenRotation);
             tft.pushImage(0, 0, imageWidth, imageHeight, (uint16_t *)frames[frame]);
             deActivate();
         }
@@ -140,7 +139,6 @@ public:
         if (frameCount > 0)
         {
             activate();
-            tft.setRotation(screenRotation);
             tft.pushImage(0, 0, imageWidth, imageHeight, (uint16_t *)frames[currentFrame]);
             deActivate();
             currentFrame++;
@@ -160,7 +158,6 @@ public:
         {
             int res = jpeg.openRAM(frames[currentFrame], framesSize[currentFrame], draw);
             activate();
-            tft.setRotation(screenRotation);
             while (jpeg.decode(0, 0, 0) == JPEG_SUCCESS)
             {
                 /* jpg file is decoded */
@@ -182,8 +179,7 @@ public:
     void showText(const char *text, u_int16_t color)
     {
         activate();
-        tft.setRotation(screenRotation);
-        tft.setCursor(0, 0);
+        tft.setCursor(10, 10);
         tft.setTextColor(color);
         tft.println(text);
         deActivate();
