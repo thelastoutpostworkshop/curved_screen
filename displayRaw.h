@@ -1,12 +1,12 @@
-#include "JPEGDEC.h"    // Install this library with the Arduino IDE Library Manager
-#include <TFT_eSPI.h>   // Install this library with the Arduino IDE Library Manager
+#include "JPEGDEC.h"  // Install this library with the Arduino IDE Library Manager
+#include <TFT_eSPI.h> // Install this library with the Arduino IDE Library Manager
 
 #define MAX_FRAMES 256
 #define colorOutputSize 2 // 16 bit color as output
 #define imageWidth 240
 #define imageHeight 240
 
-TFT_eSPI tft = TFT_eSPI(); 
+TFT_eSPI tft = TFT_eSPI();
 JPEGDEC jpeg;
 
 void initTFT_eSPI(void)
@@ -179,9 +179,11 @@ public:
             Serial.println("!!! No frames to show");
         }
     }
-    void showText(char *text,u_int16_t color) {
+    void showText(const char *text, u_int16_t color)
+    {
         activate();
-        tft.setCursor(0,0);
+        tft.setRotation(screenRotation);
+        tft.setCursor(0, 0);
         tft.setTextColor(color);
         tft.println(text);
         deActivate();

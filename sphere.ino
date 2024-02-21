@@ -51,8 +51,29 @@ bool getJPGFrames(void)
     return true;
 }
 
-void displayErrorMessage(char *message) {
-    grid[0].display->showText(message,TFT_ORANGE);
+String formatBytes(size_t bytes)
+{
+    if (bytes < 1024)
+    {
+        return String(bytes) + " B";
+    }
+    else if (bytes < (1024 * 1024))
+    {
+        return String(bytes / 1024.0, 2) + " KB";
+    }
+    else
+    {
+        return String(bytes / 1024.0 / 1024.0, 2) + " MB";
+    }
+}
+
+void displayErrorMessage(char *message)
+{
+    grid[0].display->showText(message, TFT_ORANGE);
+}
+void displayNormalMessage(const char *message)
+{
+    grid[0].display->showText(message, TFT_GREEN);
 }
 
 void setup()
@@ -67,6 +88,7 @@ void setup()
     if (frameBuffer == NULL)
     {
         Serial.println("Error: Memory allocation failed for frame buffer, cannot continue.");
+        displayErrorMessage("No Memory for Frame Buffer");
         while (true)
             ;
     }
@@ -74,11 +96,15 @@ void setup()
     if (!getJPGFrames())
     {
         Serial.println("Error: Could not retrieved all the jpg images, cannot continue.");
+        displayErrorMessage("Could not retrieved all the jpg images");
         while (true)
             ;
     }
 
-    Serial.printf("PSRAM left = %lu\n", ESP.getFreePsram());
+    Serial.printf("PSRAM left = %lu\n", formatBytes(ESP.getFreePsram()));
+    String psram = "PSRAM left="+formatBytes(ESP.getFreePsram());
+    displayNormalMessage(psram.c_str());
+    delay(5000);
 }
 
 unsigned long t;
