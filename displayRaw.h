@@ -1,11 +1,12 @@
-#include "JPEGDEC.h"
-#include <TFT_eSPI.h> // Install this library with the Arduino IDE Library Manager
+#include "JPEGDEC.h"    // Install this library with the Arduino IDE Library Manager
+#include <TFT_eSPI.h>   // Install this library with the Arduino IDE Library Manager
 
-#define colorOutputSize 2 // 8 bit color as output
+#define MAX_FRAMES 256
+#define colorOutputSize 2 // 16 bit color as output
 #define imageWidth 240
 #define imageHeight 240
 
-TFT_eSPI tft = TFT_eSPI(); // Make sure SPI_FREQUENCY is 20000000 in your TFT_eSPI driver for your display if on a breadboard
+TFT_eSPI tft = TFT_eSPI(); 
 JPEGDEC jpeg;
 
 void initTFT_eSPI(void)
@@ -22,7 +23,6 @@ int draw(JPEGDRAW *pDraw)
     return 1;
 }
 
-#define MAX_FRAMES 256
 class Display
 {
 private:
@@ -165,7 +165,6 @@ public:
             {
                 /* code */
             }
-            // tft.pushImage(0, 0, imageWidth, imageHeight, (uint16_t *)frames[currentFrame]);
             deActivate();
             jpeg.close();
 
