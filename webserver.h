@@ -4,6 +4,7 @@
 #include "secrets.h"
 
 AsyncWebServer server(80);
+HTTPClient http;
 
 const String apiEndpoint = "http://192.168.1.90:3000/api/";
 
@@ -30,8 +31,6 @@ void initWebServer()
 
 int getFramesCount()
 {
-
-    HTTPClient http;
     String url = apiEndpoint + "frames-count";
     http.begin(url);
     int httpCode = http.GET();
@@ -101,7 +100,6 @@ int getFrameData(int screenNumber, int frameNumber, uint8_t *buffer, size_t buff
 
 size_t getFrameJPGData(int screenNumber, int frameNumber, uint8_t *buffer, size_t bufferSize)
 {
-    HTTPClient http;
     String url = apiEndpoint + "framejpg/" + String(screenNumber) + "/" + String(frameNumber);
     Serial.printf("Calling %s\n", url.c_str());
 
