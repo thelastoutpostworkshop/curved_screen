@@ -80,10 +80,10 @@ void setup()
 unsigned long t;
 void loop()
 {
-    t = millis();
+    // t = millis();
     for (int i = 0; i < SCREEN_COUNT; i++)
     {
         grid[i].display->showJPGFrames();
     }
-    Serial.printf("Took %ld ms\n", millis() - t);
+    // Serial.printf("Took %ld ms\n", millis() - t);
 }
