@@ -127,10 +127,11 @@ size_t getFrameJPGData(int screenNumber, int frameNumber, uint8_t *buffer, size_
                 totalBytesRead += bytesRead;
                 contentLength -= bytesRead;
             }
-            delay(1);
+            yield();
         }
 
         http.end();
+        yield();
         // Serial.printf("Total bytes read: %lu\n", totalBytesRead);
         return totalBytesRead;
     }
