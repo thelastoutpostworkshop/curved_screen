@@ -6,6 +6,8 @@
 #define imageWidth 240
 #define imageHeight 240
 
+#include "fonts/Prototype20pt7b.h"
+
 TFT_eSPI tft = TFT_eSPI();
 JPEGDEC jpeg;
 
@@ -13,7 +15,7 @@ void initTFT_eSPI(void)
 {
     tft.init();
     tft.setSwapBytes(true);
-    tft.setFreeFont(&FreeSans9pt7b);
+    tft.setFreeFont(&Prototype20pt7b);
 }
 
 int draw(JPEGDRAW *pDraw)
@@ -181,6 +183,26 @@ public:
         activate();
         tft.setCursor(10, 20);
         tft.setTextColor(color);
+        tft.println(text);
+        deActivate();
+    }
+    void showCenteredText(const String &text, uint16_t color)
+    {
+        activate();                        // Ensure your display is initialized and ready
+        tft.setFreeFont(&Prototype20pt7b); // Set the font accordingly
+        tft.setTextColor(color);
+        tft.fillScreen(TFT_BLACK);
+
+        // Approximate text size, assuming monospace for simplicity. Adjust as needed.
+        // For proportional fonts, you would need a more complex calculation.
+        int16_t fontHeight = tft.fontHeight();         // Get the font height
+        int16_t charWidth = tft.textWidth(" ");        // Get the width of a character (for monospace fonts)
+        int16_t textWidth = charWidth * text.length(); // Approximate the text width
+
+        int x = (tft.width() - textWidth) / 2;   // Calculate the x position to center the text
+        int y = (tft.height() + fontHeight) / 2; // Center vertically, simplistic approach
+
+        tft.setCursor(x, y - fontHeight); // Adjust cursor position for baseline
         tft.println(text);
         deActivate();
     }
