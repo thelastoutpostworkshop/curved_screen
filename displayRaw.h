@@ -163,7 +163,7 @@ public:
             tft.setRotation(screenRotation);
             while (jpeg.decode(0, 0, 0) == JPEG_SUCCESS)
             {
-                /* code */
+                /* jpg file is decoded */
             }
             deActivate();
             jpeg.close();
@@ -178,5 +178,12 @@ public:
         {
             Serial.println("!!! No frames to show");
         }
+    }
+    void showText(char *text,u_int16_t color) {
+        activate();
+        tft.setCursor(0,0);
+        tft.setTextColor(color);
+        tft.println(text);
+        deActivate();
     }
 };
