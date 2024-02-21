@@ -179,7 +179,7 @@ public:
     void showText(const char *text, u_int16_t color)
     {
         activate();
-        tft.setCursor(10, 10);
+        tft.setCursor(10, 20);
         tft.setTextColor(color);
         tft.println(text);
         deActivate();
