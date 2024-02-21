@@ -67,6 +67,7 @@ bool getJPGFrames(void)
                 return false;
             }
             currentScreen.display->addNewFrame(frameBuffer, jpgsize);
+            yield();
         }
     }
     return true;
