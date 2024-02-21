@@ -51,6 +51,10 @@ bool getJPGFrames(void)
     return true;
 }
 
+void displayErrorMessage(char *message) {
+    grid[0].display->showText(message,TFT_ORANGE);
+}
+
 void setup()
 {
     Serial.begin(115200);
