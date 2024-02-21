@@ -27,6 +27,7 @@ void initWebServer()
     }
 
     server.begin();
+    http.setReuse(true);
 }
 
 int getFramesCount()
@@ -62,7 +63,6 @@ int getFrameData(int screenNumber, int frameNumber, uint8_t *buffer, size_t buff
     String url = apiEndpoint + "frame/" + String(screenNumber) + "/" + String(frameNumber);
     // Serial.printf("Calling %s\n", url.c_str());
 
-    http.setReuse(true);
     http.begin(url);           // Start the connection
     int httpCode = http.GET(); // Make the GET request
 
