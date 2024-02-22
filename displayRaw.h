@@ -193,21 +193,14 @@ public:
         tft.println(text);
         deActivate();
     }
-    void showCenteredText(const char *text, int16_t line, uint16_t color)
+    void showCenteredText(String text, int16_t line, uint8_t datum,uint16_t color)
     {
         activate();
         tft.setFreeFont(&Prototype20pt7b);
         tft.setTextColor(color);
-
-        int16_t textWidth = tft.textWidth(text);
-
-        int x = (tft.width() - textWidth) / 2;
-
-        int16_t fontHeight = tft.fontHeight();
-        int y = fontHeight * line - (fontHeight / 2); // Adjust as needed for exact positioning
-
-        tft.setCursor(x, y);
-        tft.print(text);
+        tft.setTextDatum(datum);
+        tft.setCursor(0, line);
+        tft.drawString(text,0,line);
         deActivate();
     }
 };

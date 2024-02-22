@@ -49,8 +49,8 @@ bool getJPGFrames(void)
             currentScreen.display->addNewFrame(frameBuffer, jpgsize);
             frameText = String(frameIndex + 1) + "/" + String(framesCount);
             grid[i].display->clearScreen();
-            grid[i].display->showCenteredText("Getting Frames",50,TFT_GREEN);
-            grid[i].display->showCenteredText(frameText.c_str(), 100,TFT_GREEN);
+            grid[i].display->showCenteredText("Getting Frames",50,TC_DATUM,TFT_GREEN);
+            grid[i].display->showCenteredText(frameText.c_str(), 100,MC_DATUM,TFT_GREEN);
             yield();
         }
     }
