@@ -187,7 +187,6 @@ public:
     void showText(const char *text,int16_t line ,u_int16_t color)
     {
         activate();
-        tft.fillScreen(TFT_BLACK);
         tft.setCursor(10, line);
         tft.setTextColor(color);
         tft.println(text);

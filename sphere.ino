@@ -31,7 +31,6 @@ void createDisplay(void)
 
 bool getJPGFrames(void)
 {
-
     String frameText = "";
     framesCount = getFramesCount();
     Serial.printf("Frames Count = %d\n", framesCount);
@@ -48,7 +47,8 @@ bool getJPGFrames(void)
             }
             currentScreen.display->addNewFrame(frameBuffer, jpgsize);
             frameText = String(frameIndex + 1) + "/" + String(framesCount);
-            grid[i].display->showText("Getting Frames", 50, TFT_GREEN);
+            grid[i].display->clearScreen();
+            grid[i].display->showText("Frames", 50, TFT_GREEN);
             grid[i].display->showText(frameText.c_str(), 100, TFT_GREEN);
             yield();
         }
@@ -74,10 +74,12 @@ String formatBytes(size_t bytes)
 
 void displayErrorMessage(char *message, int16_t line)
 {
+    grid[0].display->clearScreen();
     grid[0].display->showText(message, line, TFT_ORANGE);
 }
 void displayNormalMessage(const char *message, int16_t line)
 {
+    grid[0].display->clearScreen();
     grid[0].display->showText(message, line, TFT_GREEN);
 }
 
