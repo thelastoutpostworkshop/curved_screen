@@ -113,13 +113,6 @@ void setup()
             ;
     }
 
-    // Show mac number for identification by the server
-    esp_id = ESP.getEfuseMac();
-    String idmsg = "id=" + String(esp_id);
-    Serial.printf("id=%s\n", idmsg.c_str());
-    displayNormalMessage(idmsg.c_str(), 40);
-    delay(5000);
-
     // Retrieve all the JPG Frames
     ErrorCode res = getJPGFrames();
     if (res != noError)
@@ -139,6 +132,11 @@ void setup()
         while (true)
             ;
     }
+
+    // Show mac number for identification by the server
+    esp_id = ESP.getEfuseMac();
+    String idmsg = String(esp_id);
+    Serial.printf("id=%s\n", idmsg.c_str());
 
     Serial.printf("PSRAM left = %lu\n", formatBytes(ESP.getFreePsram()));
     String psram = "PSRAM left=" + formatBytes(ESP.getFreePsram());

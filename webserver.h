@@ -1,9 +1,7 @@
-#include <ESPAsyncWebServer.h>
 #include <ESPmDNS.h>
 #include <HTTPClient.h>
 #include "secrets.h"
 
-AsyncWebServer server(80);
 HTTPClient http;
 
 const String apiEndpoint = "http://192.168.1.90:3000/api/";
@@ -28,7 +26,6 @@ void initWebServer()
         return;
     }
 
-    server.begin();
     http.setReuse(true);
 }
 
