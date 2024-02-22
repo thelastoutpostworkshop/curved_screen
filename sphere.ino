@@ -48,9 +48,8 @@ bool getJPGFrames(void)
             }
             currentScreen.display->addNewFrame(frameBuffer, jpgsize);
             frameText = String(frameIndex + 1) + "/" + String(framesCount);
-            grid[i].display->clearScreen();
-            grid[i].display->showCenteredText("Getting Frames",50,TC_DATUM,TFT_GREEN);
-            grid[i].display->showCenteredText(frameText.c_str(), 100,MC_DATUM,TFT_GREEN);
+            grid[i].display->showText("Getting Frames", 50, TFT_GREEN);
+            grid[i].display->showText(frameText.c_str(), 100, TFT_GREEN);
             yield();
         }
     }
@@ -73,13 +72,13 @@ String formatBytes(size_t bytes)
     }
 }
 
-void displayErrorMessage(char *message)
+void displayErrorMessage(char *message, int16_t line)
 {
-    grid[0].display->showText(message, TFT_ORANGE);
+    grid[0].display->showText(message, line, TFT_ORANGE);
 }
-void displayNormalMessage(const char *message)
+void displayNormalMessage(const char *message, int16_t line)
 {
-    grid[0].display->showText(message, TFT_GREEN);
+    grid[0].display->showText(message, line, TFT_GREEN);
 }
 
 void setup()
@@ -94,7 +93,7 @@ void setup()
     if (frameBuffer == NULL)
     {
         Serial.println("Error: Memory allocation failed for frame buffer, cannot continue.");
-        displayErrorMessage("No Memory for Frame Buffer");
+        displayErrorMessage("No Memory for Frame Buffer",40);
         while (true)
             ;
     }
@@ -102,14 +101,14 @@ void setup()
     if (!getJPGFrames())
     {
         Serial.println("Error: Could not retrieved all the jpg images, cannot continue.");
-        displayErrorMessage("Could not retrieved all the jpg images");
+        displayErrorMessage("Could not retrieved all the jpg images",40);
         while (true)
             ;
     }
 
     Serial.printf("PSRAM left = %lu\n", formatBytes(ESP.getFreePsram()));
     String psram = "PSRAM left=" + formatBytes(ESP.getFreePsram());
-    displayNormalMessage(psram.c_str());
+    displayNormalMessage(psram.c_str(),40);
     delay(5000);
 }
 

@@ -184,23 +184,13 @@ public:
         tft.fillScreen(TFT_BLACK);
         deActivate();
     }
-    void showText(const char *text, u_int16_t color)
+    void showText(const char *text,int16_t line ,u_int16_t color)
     {
         activate();
         tft.fillScreen(TFT_BLACK);
-        tft.setCursor(10, 40);
+        tft.setCursor(10, line);
         tft.setTextColor(color);
         tft.println(text);
-        deActivate();
-    }
-    void showCenteredText(String text, int16_t line, uint8_t datum,uint16_t color)
-    {
-        activate();
-        tft.setFreeFont(&Prototype20pt7b);
-        tft.setTextColor(color);
-        tft.setTextDatum(datum);
-        tft.setCursor(0, line);
-        tft.drawString(text,0,line);
         deActivate();
     }
 };
