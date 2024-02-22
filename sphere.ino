@@ -4,6 +4,7 @@
 
 #define FRAME_BUFFER_SIZE 50000L
 uint8_t *frameBuffer;
+int framesCount;
 
 typedef struct
 {
@@ -31,7 +32,8 @@ void createDisplay(void)
 bool getJPGFrames(void)
 {
 
-    int framesCount = getFramesCount();
+    String frameText = "";
+    framesCount = getFramesCount();
     Serial.printf("Frames Count = %d\n", framesCount);
 
     for (int i = 0; i < SCREEN_COUNT; i++)
@@ -45,6 +47,10 @@ bool getJPGFrames(void)
                 return false;
             }
             currentScreen.display->addNewFrame(frameBuffer, jpgsize);
+            frameText = String(frameIndex + 1) + "/" + String(framesCount);
+            grid[i].display->clearScreen();
+            grid[i].display->showCenteredText("Getting Frames",50,TFT_GREEN);
+            grid[i].display->showCenteredText(frameText.c_str(), 100,TFT_GREEN);
             yield();
         }
     }
@@ -102,7 +108,7 @@ void setup()
     }
 
     Serial.printf("PSRAM left = %lu\n", formatBytes(ESP.getFreePsram()));
-    String psram = "PSRAM left="+formatBytes(ESP.getFreePsram());
+    String psram = "PSRAM left=" + formatBytes(ESP.getFreePsram());
     displayNormalMessage(psram.c_str());
     delay(5000);
 }
