@@ -14,6 +14,13 @@ typedef struct
     Display *display;
 } Screen;
 
+enum ErrorCode
+{
+    noError,
+    noFrames,
+    cannotGetJPGFrames
+};
+
 #define SCREEN_COUNT 4
 
 Screen grid[SCREEN_COUNT] = {
@@ -30,11 +37,16 @@ void createDisplay(void)
     }
 }
 
-bool getJPGFrames(void)
+ErrorCode getJPGFrames(void)
 {
     String frameText = "";
     framesCount = getFramesCount();
     Serial.printf("Frames Count = %d\n", framesCount);
+
+    if (framesCount <= 0)
+    {
+        return noFrames;
+    }
 
     for (int i = 0; i < SCREEN_COUNT; i++)
     {
@@ -44,7 +56,7 @@ bool getJPGFrames(void)
             size_t jpgsize = getFrameJPGData(i, frameIndex, frameBuffer, FRAME_BUFFER_SIZE);
             if (jpgsize == 0)
             {
-                return false;
+                return cannotGetJPGFrames;
             }
             currentScreen.display->addNewFrame(frameBuffer, jpgsize);
             frameText = String(frameIndex + 1) + "/" + String(framesCount);
@@ -54,7 +66,7 @@ bool getJPGFrames(void)
             yield();
         }
     }
-    return true;
+    return noError;
 }
 
 String formatBytes(size_t bytes)
@@ -96,29 +108,41 @@ void setup()
     if (frameBuffer == NULL)
     {
         Serial.println("Error: Memory allocation failed for frame buffer, cannot continue.");
-        displayErrorMessage("No Memory for Frame Buffer",40);
+        displayErrorMessage("No Memory for Frame Buffer", 40);
         while (true)
             ;
     }
 
     // Show mac number for identification by the server
     esp_id = ESP.getEfuseMac();
-    String idmsg = "id="+String(esp_id);
-    Serial.printf("id=%s\n",idmsg.c_str());
-    displayNormalMessage(idmsg.c_str(),40);
+    String idmsg = "id=" + String(esp_id);
+    Serial.printf("id=%s\n", idmsg.c_str());
+    displayNormalMessage(idmsg.c_str(), 40);
     delay(5000);
 
-    if (!getJPGFrames())
+    // Retrieve all the JPG Frames
+    ErrorCode res = getJPGFrames();
+    if (res != noError)
     {
-        Serial.println("Error: Could not retrieved all the jpg images, cannot continue.");
-        displayErrorMessage("Could not retrieved all the jpg images",40);
+        switch (res)
+        {
+        case noFrames:
+            Serial.println("Error: No Frames.");
+            displayErrorMessage("No Frames", 40);
+            break;
+
+        case cannotGetJPGFrames:
+            Serial.println("Error: Could not retrieved all the jpg images, cannot continue.");
+            displayErrorMessage("Could not retrieved all the jpg images", 40);
+            break;
+        }
         while (true)
             ;
     }
 
     Serial.printf("PSRAM left = %lu\n", formatBytes(ESP.getFreePsram()));
     String psram = "PSRAM left=" + formatBytes(ESP.getFreePsram());
-    displayNormalMessage(psram.c_str(),40);
+    displayNormalMessage(psram.c_str(), 40);
     delay(5000);
 }
 
