@@ -5,6 +5,7 @@
 #define FRAME_BUFFER_SIZE 50000L
 uint8_t *frameBuffer;
 int framesCount;
+uint64_t esp_id;
 
 typedef struct
 {
@@ -99,6 +100,13 @@ void setup()
         while (true)
             ;
     }
+
+    // Show mac number for identification by the server
+    esp_id = ESP.getEfuseMac();
+    String idmsg = "id="+String(esp_id);
+    Serial.printf("id=%s\n",idmsg.c_str());
+    displayNormalMessage(idmsg.c_str(),40);
+    delay(5000);
 
     if (!getJPGFrames())
     {
