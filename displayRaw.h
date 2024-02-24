@@ -78,21 +78,26 @@ public:
         if (frameCount >= MAX_FRAMES)
         {
             Serial.println("Error: Maximum frame count reached.");
+            return;
         }
 
-        uint8_t *newFrame = (uint8_t *)malloc(frameSize);
+        // Specify the alignment. For example, align to a 8-byte boundary.
+        const size_t alignment = 8;
+        void *newFrame = NULL;
 
-        if (newFrame == NULL)
+        // Allocate memory with posix_memalign
+        int result = posix_memalign(&newFrame, alignment, frameSize);
+        if (result != 0)
         {
+            newFrame = NULL; // posix_memalign doesn't set pointer on failure, unlike malloc
             Serial.println("Error: Memory allocation for new frame failed.");
+            return;
         }
-        else
-        {
-            memcpy(newFrame, frame, frameSize);
-            framesSize[frameCount] = frameSize;
-            frames[frameCount] = newFrame;
-            frameCount++;
-        }
+
+        memcpy(newFrame, frame, frameSize);
+        framesSize[frameCount] = frameSize;
+        frames[frameCount] = (uint8_t *)newFrame; // Cast is safe because posix_memalign guarantees alignment
+        frameCount++;
     }
 
     Display(int pin, int rotation) : csPin(pin), screenRotation(rotation)
@@ -184,7 +189,7 @@ public:
         tft.fillScreen(TFT_BLACK);
         deActivate();
     }
-    void showText(const char *text,int16_t line ,u_int16_t color)
+    void showText(const char *text, int16_t line, u_int16_t color)
     {
         activate();
         tft.setCursor(10, line);
