@@ -54,7 +54,7 @@ ErrorCode getJPGFrames(void)
         Screen currentScreen = grid[i];
         for (int frameIndex = 0; frameIndex < framesCount; frameIndex++)
         {
-            size_t jpgsize = getFrameJPGData(esp_id, i, frameIndex, frameBuffer, FRAME_BUFFER_SIZE);
+            size_t jpgsize = getFrameJPGData(esp_id_s, i, frameIndex, frameBuffer, FRAME_BUFFER_SIZE);
             if (jpgsize == 0)
             {
                 return cannotGetJPGFrames;
