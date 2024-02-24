@@ -24,10 +24,10 @@ enum ErrorCode
 #define SCREEN_COUNT 4
 
 Screen grid[SCREEN_COUNT] = {
-    {.csPin = 3, .rotation = 0},
-    {.csPin = 8, .rotation = 0},
-    {.csPin = 18, .rotation = 2},
-    {.csPin = 17, .rotation = 2}};
+    {.csPin = 17, .rotation = 3},
+    {.csPin = 18, .rotation = 3},
+    {.csPin = 8, .rotation = 3},
+    {.csPin = 3, .rotation = 3}};
 
 void createDisplay(void)
 {
