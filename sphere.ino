@@ -5,7 +5,7 @@
 #define FRAME_BUFFER_SIZE 50000L
 uint8_t *frameBuffer;
 int framesCount;
-uint64_t esp_id;
+String esp_id;
 
 typedef struct
 {
@@ -53,7 +53,7 @@ ErrorCode getJPGFrames(void)
         Screen currentScreen = grid[i];
         for (int frameIndex = 0; frameIndex < framesCount; frameIndex++)
         {
-            size_t jpgsize = getFrameJPGData(i, frameIndex, frameBuffer, FRAME_BUFFER_SIZE);
+            size_t jpgsize = getFrameJPGData(esp_id, i, frameIndex, frameBuffer, FRAME_BUFFER_SIZE);
             if (jpgsize == 0)
             {
                 return cannotGetJPGFrames;
@@ -113,6 +113,8 @@ void setup()
             ;
     }
 
+    esp_id = String(ESP.getEfuseMac());
+
     // Retrieve all the JPG Frames
     ErrorCode res = getJPGFrames();
     if (res != noError)
@@ -134,9 +136,7 @@ void setup()
     }
 
     // Show mac number for identification by the server
-    esp_id = ESP.getEfuseMac();
-    String idmsg = String(esp_id);
-    Serial.printf("id=%s\n", idmsg.c_str());
+    Serial.printf("id=%s\n", esp_id.c_str());
 
     Serial.printf("PSRAM left = %lu\n", formatBytes(ESP.getFreePsram()));
     String psram = "PSRAM left=" + formatBytes(ESP.getFreePsram());

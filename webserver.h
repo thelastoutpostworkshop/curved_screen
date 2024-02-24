@@ -50,9 +50,9 @@ int getFramesCount()
 }
 
 
-size_t getFrameJPGData(int screenNumber, int frameNumber, uint8_t *buffer, size_t bufferSize)
+size_t getFrameJPGData(String esp_id,int screenNumber, int frameNumber, uint8_t *buffer, size_t bufferSize)
 {
-    String url = apiEndpoint + apiFrameJPG + String(screenNumber) + "/" + String(frameNumber);
+    String url = apiEndpoint + apiFrameJPG + esp_id + "/"+ String(screenNumber) + "/" + String(frameNumber);
     Serial.printf("Calling %s\n", url.c_str());
 
     http.setReuse(true);
