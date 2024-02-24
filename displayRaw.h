@@ -73,14 +73,14 @@ public:
         return newFrame;
     }
 
-    void addNewFrame(uint8_t *frame, size_t size)
+    void addNewFrame(uint8_t *frame, size_t frameSize)
     {
         if (frameCount >= MAX_FRAMES)
         {
             Serial.println("Error: Maximum frame count reached.");
         }
 
-        uint8_t *newFrame = (uint8_t *)malloc(size);
+        uint8_t *newFrame = (uint8_t *)malloc(frameSize);
 
         if (newFrame == NULL)
         {
@@ -88,8 +88,8 @@ public:
         }
         else
         {
-            memcpy(newFrame, frame, size);
-            framesSize[frameCount] = size;
+            memcpy(newFrame, frame, frameSize);
+            framesSize[frameCount] = frameSize;
             frames[frameCount] = newFrame;
             frameCount++;
         }
