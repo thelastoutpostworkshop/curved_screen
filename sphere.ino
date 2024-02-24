@@ -140,7 +140,7 @@ void setup()
     // Show mac number for identification by the server
     Serial.printf("id=%s\n", esp_id_s.c_str());
 
-    Serial.printf("PSRAM left = %lu\n", formatBytes(ESP.getFreePsram()));
+    Serial.printf("PSRAM left = %s\n", formatBytes(ESP.getFreePsram()).c_str());
     String psram = "PSRAM left=" + formatBytes(ESP.getFreePsram());
     displayNormalMessage(psram.c_str(), 40);
     delay(5000);
