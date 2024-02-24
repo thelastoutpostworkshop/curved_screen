@@ -5,7 +5,8 @@
 #define FRAME_BUFFER_SIZE 50000L
 uint8_t *frameBuffer;
 int framesCount;
-String esp_id;
+String esp_id_s;
+uint64_t ESPID;
 
 typedef struct
 {
@@ -113,7 +114,8 @@ void setup()
             ;
     }
 
-    esp_id = String(ESP.getEfuseMac());
+    ESPID = ESP.getEfuseMac();
+    esp_id_s = String(ESPID);
 
     // Retrieve all the JPG Frames
     ErrorCode res = getJPGFrames();
@@ -136,7 +138,7 @@ void setup()
     }
 
     // Show mac number for identification by the server
-    Serial.printf("id=%s\n", esp_id.c_str());
+    Serial.printf("id=%s\n", esp_id_s.c_str());
 
     Serial.printf("PSRAM left = %lu\n", formatBytes(ESP.getFreePsram()));
     String psram = "PSRAM left=" + formatBytes(ESP.getFreePsram());
