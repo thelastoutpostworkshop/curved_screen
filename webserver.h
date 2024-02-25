@@ -56,7 +56,7 @@ ErrorCode initWebServer()
 
 void sendReady(void)
 {
-    String url = String(SERVERNAME) + "/ready";
+    String url = String(SERVERNAME) + ".local/ready";
     http.begin(url);
     int httpCode = http.GET();
     Serial.printf("Sending ready %s\n", url.c_str());
