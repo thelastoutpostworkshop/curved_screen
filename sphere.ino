@@ -107,10 +107,10 @@ void displayNormalMessage(const char *message, int16_t line)
 void setup()
 {
 #ifdef MASTER
-    pinMode(10, OUTPUT);
-    digitalWrite(10, LOW);
+    pinMode(PIN_SYNC, OUTPUT);
+    digitalWrite(PIN_SYNC, LOW);
 #else
-    pinMode(10, INPUT_PULLUP);
+    pinMode(PIN_SYNC, INPUT_PULLUP);
 #endif
 
     Serial.begin(115200);
@@ -177,9 +177,9 @@ unsigned long t;
 void loop()
 {
 #ifdef MASTER
-    digitalWrite(10, HIGH);
+    digitalWrite(PIN_SYNC, HIGH);
     delayMicroseconds(100); // Short duration for the pulse
-    digitalWrite(10, LOW);  // Set the signal LOW again
+    digitalWrite(PIN_SYNC, LOW);  // Set the signal LOW again
 
     // broadcastCommand("Start");
     t = millis();
@@ -192,7 +192,7 @@ void loop()
         ;
         // waitForSlaves();
 #else
-    if (digitalRead(10) == HIGH)
+    if (digitalRead(PIN_SYNC) == HIGH)
     {
         t = millis();
         for (int i = 0; i < SCREEN_COUNT; i++)
@@ -201,7 +201,6 @@ void loop()
         }
         // sendReady();
         Serial.printf("Took %ld ms\n", millis() - t);
-        Serial.printf("Took %ld ms, pin sync=%d\n", millis() - t, digitalRead(10));
     }
 #endif
 }
