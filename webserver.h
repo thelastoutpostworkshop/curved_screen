@@ -62,6 +62,14 @@ void broadcastCommand(const char *command)
     }
 }
 
+void sendMessageToServer(const char *message)
+{
+    String url = String("http://") + String(SERVERNAME) + ".local";
+    udp.beginPacket(url.c_str(), localUdpPort);        
+    udp.write((uint8_t *)message, strlen(message)); 
+    udp.endPacket();                                
+}
+
 ErrorCode initWebServer()
 {
     Serial.println("Connecting to WiFi");

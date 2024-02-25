@@ -181,6 +181,7 @@ void loop()
         {
             grid[i].display->showJPGFrames();
         }
+        sendMessageToServer("ready");
         // Serial.printf("Took %ld ms\n", millis() - t);
     }
 #endif
