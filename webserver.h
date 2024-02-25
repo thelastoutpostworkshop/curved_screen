@@ -3,6 +3,18 @@
 #include "secrets.h"
 #include "sphere.h"
 
+#ifdef MASTER
+#include <WebServer.h>
+WebServer masterServer(80);
+int slavesReady = 0;
+
+void handleReady()
+{
+    masterServer.send(200, "text/plain", "Server is ready!");
+    slavesReady++;
+}
+#endif
+
 HTTPClient http;
 
 const String apiEndpoint = "http://192.168.1.90:3000/api/";
@@ -28,6 +40,8 @@ ErrorCode initWebServer()
         Serial.println("Error starting mDNS for the Master");
         return noMDNS;
     }
+    masterServer.on("/ready", handleReady);
+
 #endif
 
     http.setReuse(true);

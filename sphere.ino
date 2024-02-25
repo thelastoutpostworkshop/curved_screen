@@ -116,6 +116,7 @@ void setup()
     ESPID = ESP.getEfuseMac();
     esp_id_s = String(ESPID);
 
+
     // Retrieve all the JPG Frames
     ErrorCode res = getJPGFrames();
     if (res != noError)
