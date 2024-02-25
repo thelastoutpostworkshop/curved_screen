@@ -111,7 +111,6 @@ void setup()
     digitalWrite(10, LOW);
 #else
     pinMode(10, INPUT_PULLUP);
-    sendReady();
 #endif
 
     Serial.begin(115200);
@@ -168,6 +167,10 @@ void setup()
     Serial.printf("PSRAM left = %s\n", formatBytes(ESP.getFreePsram()).c_str());
     String psram = "PSRAM left=" + formatBytes(ESP.getFreePsram());
     displayNormalMessage(psram.c_str(), 40);
+
+#ifndef MASTER
+    sendReady();
+#endif
 }
 
 unsigned long t;
