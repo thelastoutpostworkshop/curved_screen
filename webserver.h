@@ -2,6 +2,7 @@
 #include <WiFi.h>
 #include <AsyncTCP.h>
 #include <HTTPClient.h>
+#include <WiFiUdp.h>
 #include "secrets.h"
 #include "sphere.h"
 
@@ -18,6 +19,9 @@ void handleReady(AsyncWebServerRequest *request)
 #endif
 
 HTTPClient http;
+WiFiUDP udp;
+unsigned int localUdpPort = 4210; // Local port to listen on
+char incomingPacket[255];         // Buffer for incoming packets
 
 const String apiEndpoint = "http://192.168.1.90:3000/api/";
 const String apiFrameCount = "frames-count";
@@ -37,6 +41,8 @@ ErrorCode initWebServer()
     Serial.print("IP Address: ");
     Serial.println(WiFi.localIP());
 
+    udp.begin(localUdpPort);
+    Serial.printf("Now listening at IP %s, UDP port %d\n", WiFi.localIP().toString().c_str(), localUdpPort);
 #ifdef MASTER
     if (!MDNS.begin(SERVERNAME))
     {
@@ -56,7 +62,7 @@ ErrorCode initWebServer()
 
 void sendReady(void)
 {
-    String url = String("http://")+String(SERVERNAME) + ".local/ready";
+    String url = String("http://") + String(SERVERNAME) + ".local/ready";
     http.begin(url);
     int httpCode = http.GET();
     Serial.printf("Sending ready %s\n", url.c_str());
