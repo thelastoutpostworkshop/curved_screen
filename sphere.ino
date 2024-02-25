@@ -1,6 +1,7 @@
 
 #include "sphere.h"
 #include "displayRaw.h"
+#include "ESP.h"
 #include "webserver.h"
 
 #define FRAME_BUFFER_SIZE 50000L
@@ -27,7 +28,7 @@ Screen grid[SCREEN_COUNT] = {
 #ifdef MASTER
     void waitForSlaves(void) {
         while(slavesReady != SLAVECOUNT) {
-            yield();
+            delay(100);
         }
     }
 #endif

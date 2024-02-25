@@ -1,16 +1,18 @@
 #include <ESPmDNS.h>
+#include <WiFi.h>
+#include <AsyncTCP.h>
 #include <HTTPClient.h>
 #include "secrets.h"
 #include "sphere.h"
 
 #ifdef MASTER
-#include <WebServer.h>
-WebServer masterServer(80);
+#include <ESPAsyncWebServer.h>
+AsyncWebServer masterServer(80);
 int slavesReady = 0;
 
-void handleReady()
+void handleReady(AsyncWebServerRequest *request)
 {
-    masterServer.send(200, "text/plain", "Server is ready!");
+    request->send(200, "text/plain", "ok");
     slavesReady++;
 }
 #endif
@@ -24,6 +26,7 @@ const String apiFrameJPG = "framejpg/";
 ErrorCode initWebServer()
 {
     Serial.println("Connecting to WiFi");
+    WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, password);
     while (WiFi.status() != WL_CONNECTED)
     {
@@ -40,7 +43,8 @@ ErrorCode initWebServer()
         Serial.println("Error starting mDNS for the Master");
         return noMDNS;
     }
-    masterServer.on("/ready", handleReady);
+    masterServer.on("/ready", HTTP_GET, [](AsyncWebServerRequest *request)
+                    { handleReady(request); });
     masterServer.begin();
 
 #endif
