@@ -24,6 +24,14 @@ Screen grid[SCREEN_COUNT] = {
     {.csPin = 8, .rotation = 3},
     {.csPin = 3, .rotation = 3}};
 
+#ifdef MASTER
+    void waitForSlaves(void) {
+        while(slavesReady != SLAVECOUNT) {
+            yield();
+        }
+    }
+#endif
+
 void createDisplay(void)
 {
     for (int i = 0; i < SCREEN_COUNT; i++)
@@ -116,6 +124,10 @@ void setup()
     ESPID = ESP.getEfuseMac();
     esp_id_s = String(ESPID);
 
+#ifdef MASTER
+    displayNormalMessage("Waiting for slaves...",40);
+    waitForSlaves();
+#endif
 
     // Retrieve all the JPG Frames
     ErrorCode res = getJPGFrames();
