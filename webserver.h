@@ -46,7 +46,7 @@ ErrorCode initWebServer()
     masterServer.on("/ready", HTTP_GET, [](AsyncWebServerRequest *request)
                     { handleReady(request); });
     masterServer.begin();
-    Serial.printf("Server listening on %s.local",SERVERNAME);
+    Serial.printf("Server listening on %s.local\n",SERVERNAME);
 
 #endif
 
