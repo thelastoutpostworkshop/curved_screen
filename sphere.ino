@@ -28,11 +28,11 @@ Screen grid[SCREEN_COUNT] = {
 #ifdef MASTER
 void waitForSlaves(void)
 {
+    slavesReady = 0;
     while (slavesReady != SLAVECOUNT)
     {
         delay(100);
     }
-    slavesReady = 0;
 }
 
 #endif
@@ -176,7 +176,6 @@ void loop()
         grid[i].display->showJPGFrames();
     }
     waitForSlavesToshowFrame();
-    slavesReady = 0;
 #else
     if (waitForCommand("Start"))
     {
