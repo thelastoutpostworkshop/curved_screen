@@ -170,15 +170,18 @@ unsigned long t;
 void loop()
 {
 #ifdef MASTER
-    t = millis();
     broadcastCommand("Start");
+    t = millis();
     for (int i = 0; i < SCREEN_COUNT; i++)
     {
         grid[i].display->showJPGFrames();
     }
-    while(millis()-t <180) {
+    while (millis() - t < 180)
+    {
         delay(1);
     }
+    Serial.printf("Took %ld ms\n", millis() - t);
+
     // waitForSlaves();
 #else
     if (waitForCommand("Start"))
