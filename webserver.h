@@ -20,12 +20,47 @@ void handleReady(AsyncWebServerRequest *request)
 
 HTTPClient http;
 WiFiUDP udp;
-unsigned int localUdpPort = 4210; // Local port to listen on
-char incomingPacket[255];         // Buffer for incoming packets
+unsigned int localUdpPort = 4210;                 // Local port to listen on
+char incomingPacket[255];                         // Buffer for incoming packets
+const char *broadcastAddress = "255.255.255.255"; // Broadcast address
 
 const String apiEndpoint = "http://192.168.1.90:3000/api/";
 const String apiFrameCount = "frames-count";
 const String apiFrameJPG = "framejpg/";
+
+bool waitForCommand(const char *command)
+{
+    int packetSize = udp.parsePacket();
+    if (packetSize)
+    {
+        // read the packet into the buffer
+        int len = udp.read(incomingPacket, sizeof(incomingPacket));
+        if (len > 0)
+        {
+            incomingPacket[len] = 0; // Null-terminate the string
+        }
+        Serial.printf("Received: %s\n", incomingPacket);
+        if (strcmp(incomingPacket, command) == 0)
+        {
+            return true; // Command matches the expected command
+        }
+    }
+    return false; // No matching command received
+}
+
+void broadcastCommand(const char *command)
+{
+    udp.beginPacket(broadcastAddress, localUdpPort);
+    udp.write((uint8_t *)command, strlen(command)); // Correctly send the command as bytes
+    if (udp.endPacket())
+    {
+        Serial.printf("Command \"%s\" broadcasted successfully.\n", command);
+    }
+    else
+    {
+        Serial.println("Error broadcasting command.");
+    }
+}
 
 ErrorCode initWebServer()
 {

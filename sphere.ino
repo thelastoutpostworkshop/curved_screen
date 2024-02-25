@@ -26,11 +26,13 @@ Screen grid[SCREEN_COUNT] = {
     {.csPin = 3, .rotation = 3}};
 
 #ifdef MASTER
-    void waitForSlaves(void) {
-        while(slavesReady != SLAVECOUNT) {
-            delay(100);
-        }
+void waitForSlaves(void)
+{
+    while (slavesReady != SLAVECOUNT)
+    {
+        delay(100);
     }
+}
 #endif
 
 void createDisplay(void)
@@ -126,7 +128,7 @@ void setup()
     esp_id_s = String(ESPID);
 
 #ifdef MASTER
-    displayNormalMessage("Waiting for slaves...",40);
+    displayNormalMessage("Waiting for slaves...", 40);
     waitForSlaves();
 #endif
 
@@ -157,18 +159,31 @@ void setup()
     String psram = "PSRAM left=" + formatBytes(ESP.getFreePsram());
     displayNormalMessage(psram.c_str(), 40);
 
-    #ifndef MASTER
-        sendReady();
-    #endif
+#ifndef MASTER
+    sendReady();
+#endif
 }
 
 unsigned long t;
 void loop()
 {
-    // t = millis();
+#ifdef MASTER
+    broadcastCommand("Start");
     for (int i = 0; i < SCREEN_COUNT; i++)
     {
         grid[i].display->showJPGFrames();
     }
-    // Serial.printf("Took %ld ms\n", millis() - t);
+#else
+    if (waitForCommand("Start"))
+    {
+        Serial.println("Start command received. Proceeding with the action...");
+        // Place the code here to handle the start action, such as starting video playback
+        // t = millis();
+        for (int i = 0; i < SCREEN_COUNT; i++)
+        {
+            grid[i].display->showJPGFrames();
+        }
+        // Serial.printf("Took %ld ms\n", millis() - t);
+    }
+#endif
 }
