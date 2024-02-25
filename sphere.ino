@@ -106,6 +106,14 @@ void displayNormalMessage(const char *message, int16_t line)
 
 void setup()
 {
+#ifdef MASTER
+    pinMode(10, OUTPUT);
+    digitalWrite(10, LOW);
+#else
+    pinMode(10, INPUT_PULLUP);
+    sendReady();
+#endif
+
     Serial.begin(115200);
     if (initWebServer() != noError)
     {
@@ -160,37 +168,28 @@ void setup()
     Serial.printf("PSRAM left = %s\n", formatBytes(ESP.getFreePsram()).c_str());
     String psram = "PSRAM left=" + formatBytes(ESP.getFreePsram());
     displayNormalMessage(psram.c_str(), 40);
-
-#ifndef MASTER
-    pinMode(10, INPUT_PULLUP);
-    sendReady();
-#else
-    pinMode(10, OUTPUT);
-#endif
 }
 
 unsigned long t;
 void loop()
 {
 #ifdef MASTER
-    broadcastCommand("Start");
+    digitalWrite(10, HIGH);
+    delayMicroseconds(100); // Short duration for the pulse
+    digitalWrite(10, LOW);  // Set the signal LOW again
+
+    // broadcastCommand("Start");
     t = millis();
     for (int i = 0; i < SCREEN_COUNT; i++)
     {
         grid[i].display->showJPGFrames();
     }
     Serial.printf("Took %ld ms\n", millis() - t);
-    if (digitalRead(10) == HIGH)
-    {
-        digitalWrite(10, LOW);
-    }
-    else
-    {
-        digitalWrite(10, HIGH);
-    }
-    // waitForSlaves();
+    while (millis() - t < 160)
+        ;
+        // waitForSlaves();
 #else
-    if (waitForCommand("Start"))
+    if (digitalRead(10) == HIGH)
     {
         t = millis();
         for (int i = 0; i < SCREEN_COUNT; i++)
