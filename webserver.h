@@ -39,7 +39,7 @@ bool waitForCommand(const char *command)
         {
             incomingPacket[len] = 0; // Null-terminate the string
         }
-        Serial.printf("Received: %s\n", incomingPacket);
+        // Serial.printf("Received: %s\n", incomingPacket);
         if (strcmp(incomingPacket, command) == 0)
         {
             return true; // Command matches the expected command
