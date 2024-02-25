@@ -38,7 +38,7 @@ ErrorCode initWebServer()
     Serial.println(WiFi.localIP());
 
 #ifdef MASTER
-    if (!MDNS.begin("sphere"))
+    if (!MDNS.begin(SERVERNAME))
     {
         Serial.println("Error starting mDNS for the Master");
         return noMDNS;
@@ -46,6 +46,7 @@ ErrorCode initWebServer()
     masterServer.on("/ready", HTTP_GET, [](AsyncWebServerRequest *request)
                     { handleReady(request); });
     masterServer.begin();
+    Serial.printf("Server listening on %s.local",SERVERNAME);
 
 #endif
 

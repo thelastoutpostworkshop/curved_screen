@@ -5,6 +5,7 @@
 
 #ifdef MASTER
 #define SLAVECOUNT 1 // The number of ESP32 slaves
+#define SERVERNAME "sphere"
 #endif
 
 enum ErrorCode
