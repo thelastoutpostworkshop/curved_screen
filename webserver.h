@@ -24,7 +24,7 @@ void handleReady(AsyncWebServerRequest *request)
 void waitForSlavesToshowFrame(void)
 {
     slavesReady = 0;
-    while (slavesReady != SLAVECOUNT)
+    while (slavesReady < SLAVECOUNT)
     {
         int packetSize = udp.parsePacket();
         if (packetSize)
@@ -37,6 +37,7 @@ void waitForSlavesToshowFrame(void)
                 if (strcmp(incomingPacket, "ready") == 0)
                 {
                     slavesReady++;
+                    Serial.println("Slave ready received");
                 }
             }
         }

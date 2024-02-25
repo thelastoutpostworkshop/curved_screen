@@ -29,7 +29,7 @@ Screen grid[SCREEN_COUNT] = {
 void waitForSlaves(void)
 {
     slavesReady = 0;
-    while (slavesReady != SLAVECOUNT)
+    while (slavesReady < SLAVECOUNT)
     {
         delay(100);
     }
