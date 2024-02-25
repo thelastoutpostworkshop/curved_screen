@@ -32,7 +32,9 @@ void waitForSlaves(void)
     {
         delay(100);
     }
+    slavesReady = 0;
 }
+
 #endif
 
 void createDisplay(void)
@@ -173,6 +175,8 @@ void loop()
     {
         grid[i].display->showJPGFrames();
     }
+    waitForSlavesToshowFrame();
+    slavesReady = 0;
 #else
     if (waitForCommand("Start"))
     {

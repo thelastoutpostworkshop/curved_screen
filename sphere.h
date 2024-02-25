@@ -1,7 +1,7 @@
 #ifndef _SPHERE_
 #define _SPHERE_
 
-// #define MASTER // When uncommented this means this ESP32 is the master
+#define MASTER // When uncommented this means this ESP32 is the master
 
 #define SERVERNAME "sphere"
 

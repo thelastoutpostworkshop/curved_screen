@@ -16,6 +16,28 @@ void handleReady(AsyncWebServerRequest *request)
     request->send(200, "text/plain", "ok");
     slavesReady++;
 }
+void waitForSlavesToshowFrame(void)
+{
+    while (slavesReady != SLAVECOUNT)
+    {
+        int packetSize = udp.parsePacket();
+        if (packetSize)
+        {
+            // Buffer to hold incoming packet
+            char packetBuffer[255];
+            // Read the packet into the buffer
+            int len = udp.read(packetBuffer, 255);
+            if (len > 0)
+            {
+                packetBuffer[len] = 0; // Null-terminate the string
+                if (strcmp(packetBuffer, "ready") == 0)
+                {
+                    slavesReady++;
+                }
+            }
+        }
+    }
+}
 #endif
 
 HTTPClient http;
@@ -65,9 +87,9 @@ void broadcastCommand(const char *command)
 void sendMessageToServer(const char *message)
 {
     String url = String("http://") + String(SERVERNAME) + ".local";
-    udp.beginPacket(url.c_str(), localUdpPort);        
-    udp.write((uint8_t *)message, strlen(message)); 
-    udp.endPacket();                                
+    udp.beginPacket(url.c_str(), localUdpPort);
+    udp.write((uint8_t *)message, strlen(message));
+    udp.endPacket();
 }
 
 ErrorCode initWebServer()
