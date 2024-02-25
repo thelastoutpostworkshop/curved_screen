@@ -46,7 +46,7 @@ ErrorCode initWebServer()
     masterServer.on("/ready", HTTP_GET, [](AsyncWebServerRequest *request)
                     { handleReady(request); });
     masterServer.begin();
-    Serial.printf("Server listening on %s.local\n",SERVERNAME);
+    Serial.printf("Server listening on %s.local\n", SERVERNAME);
 
 #endif
 
@@ -56,8 +56,15 @@ ErrorCode initWebServer()
 
 void sendReady(void)
 {
-    // String url = apiEndpoint + apiFrameJPG + esp_id + "/" + String(screenNumber) + "/" + String(frameNumber);
-    // Serial.printf("Calling %s\n", url.c_str());
+    String url = String(SERVERNAME) + "/ready";
+    http.begin(url);
+    int httpCode = http.GET();
+    Serial.printf("Sending ready %s\n", url.c_str());
+    if (httpCode < 0)
+    {
+        Serial.printf("[HTTP] GET failed, error: %s\n", http.errorToString(httpCode).c_str());
+    }
+    http.end()
 }
 
 int getFramesCount()
