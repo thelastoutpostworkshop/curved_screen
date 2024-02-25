@@ -6,6 +6,11 @@
 #include "secrets.h"
 #include "sphere.h"
 
+WiFiUDP udp;
+unsigned int localUdpPort = 4210;                 // Local port to listen on
+char incomingPacket[255];                         // Buffer for incoming packets
+const char *broadcastAddress = "255.255.255.255"; // Broadcast address
+
 #ifdef MASTER
 #include <ESPAsyncWebServer.h>
 AsyncWebServer masterServer(80);
@@ -23,14 +28,12 @@ void waitForSlavesToshowFrame(void)
         int packetSize = udp.parsePacket();
         if (packetSize)
         {
-            // Buffer to hold incoming packet
-            char packetBuffer[255];
             // Read the packet into the buffer
-            int len = udp.read(packetBuffer, 255);
+            int len = udp.read(incomingPacket, 255);
             if (len > 0)
             {
-                packetBuffer[len] = 0; // Null-terminate the string
-                if (strcmp(packetBuffer, "ready") == 0)
+                incomingPacket[len] = 0; // Null-terminate the string
+                if (strcmp(incomingPacket, "ready") == 0)
                 {
                     slavesReady++;
                 }
@@ -41,10 +44,6 @@ void waitForSlavesToshowFrame(void)
 #endif
 
 HTTPClient http;
-WiFiUDP udp;
-unsigned int localUdpPort = 4210;                 // Local port to listen on
-char incomingPacket[255];                         // Buffer for incoming packets
-const char *broadcastAddress = "255.255.255.255"; // Broadcast address
 
 const String apiEndpoint = "http://192.168.1.90:3000/api/";
 const String apiFrameCount = "frames-count";
