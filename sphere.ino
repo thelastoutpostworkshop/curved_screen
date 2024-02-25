@@ -1,4 +1,5 @@
 
+#include "sphere.h"
 #include "displayRaw.h"
 #include "webserver.h"
 
@@ -14,13 +15,6 @@ typedef struct
     int rotation;
     Display *display;
 } Screen;
-
-enum ErrorCode
-{
-    noError,
-    noFrames,
-    cannotGetJPGFrames
-};
 
 #define SCREEN_COUNT 4
 
@@ -100,7 +94,12 @@ void displayNormalMessage(const char *message, int16_t line)
 void setup()
 {
     Serial.begin(115200);
-    initWebServer();
+    if (initWebServer() != noError)
+    {
+        Serial.println("MDNS Failed for the Master, cannot continue");
+        while (true)
+            ;
+    }
     initTFT_eSPI();
     createDisplay();
 

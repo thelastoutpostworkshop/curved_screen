@@ -1,6 +1,7 @@
 #include <ESPmDNS.h>
 #include <HTTPClient.h>
 #include "secrets.h"
+#include "sphere.h"
 
 HTTPClient http;
 
@@ -8,7 +9,7 @@ const String apiEndpoint = "http://192.168.1.90:3000/api/";
 const String apiFrameCount = "frames-count";
 const String apiFrameJPG = "framejpg/";
 
-void initWebServer()
+ErrorCode initWebServer()
 {
     Serial.println("Connecting to WiFi");
     WiFi.begin(ssid, password);
@@ -20,13 +21,17 @@ void initWebServer()
     Serial.println("Connected");
     Serial.print("IP Address: ");
     Serial.println(WiFi.localIP());
+
+#ifdef MASTER
     if (!MDNS.begin("sphere"))
     {
-        Serial.println("Error starting mDNS");
-        return;
+        Serial.println("Error starting mDNS for the Master");
+        return noMDNS;
     }
+#endif
 
     http.setReuse(true);
+    return noError;
 }
 
 int getFramesCount()
@@ -38,21 +43,20 @@ int getFramesCount()
     if (httpCode > 0)
     {
         String payload = http.getString();
-        http.end();             
-        return payload.toInt(); 
+        http.end();
+        return payload.toInt();
     }
     else
     {
         Serial.printf("[HTTP] GET failed, error: %s\n", http.errorToString(httpCode).c_str());
-        http.end(); 
-        return -1;  
+        http.end();
+        return -1;
     }
 }
 
-
-size_t getFrameJPGData(String esp_id,int screenNumber, int frameNumber, uint8_t *buffer, size_t bufferSize)
+size_t getFrameJPGData(String esp_id, int screenNumber, int frameNumber, uint8_t *buffer, size_t bufferSize)
 {
-    String url = apiEndpoint + apiFrameJPG + esp_id + "/"+ String(screenNumber) + "/" + String(frameNumber);
+    String url = apiEndpoint + apiFrameJPG + esp_id + "/" + String(screenNumber) + "/" + String(frameNumber);
     Serial.printf("Calling %s\n", url.c_str());
 
     http.setReuse(true);
