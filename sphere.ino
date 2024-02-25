@@ -170,10 +170,14 @@ unsigned long t;
 void loop()
 {
 #ifdef MASTER
+    t = millis();
     broadcastCommand("Start");
     for (int i = 0; i < SCREEN_COUNT; i++)
     {
         grid[i].display->showJPGFrames();
+    }
+    while(millis()-t <180) {
+        delay(1);
     }
     // waitForSlaves();
 #else
