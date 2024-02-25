@@ -176,14 +176,12 @@ void loop()
 #else
     if (waitForCommand("Start"))
     {
-        Serial.println("Start command received. Proceeding with the action...");
-        // Place the code here to handle the start action, such as starting video playback
-        // t = millis();
+        t = millis();
         for (int i = 0; i < SCREEN_COUNT; i++)
         {
             grid[i].display->showJPGFrames();
         }
-        // Serial.printf("Took %ld ms\n", millis() - t);
+        Serial.printf("Took %ld ms\n", millis() - t);
     }
 #endif
 }

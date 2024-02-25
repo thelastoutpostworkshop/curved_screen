@@ -54,7 +54,7 @@ void broadcastCommand(const char *command)
     udp.write((uint8_t *)command, strlen(command)); // Correctly send the command as bytes
     if (udp.endPacket())
     {
-        Serial.printf("Command \"%s\" broadcasted successfully.\n", command);
+        // Serial.printf("Command \"%s\" broadcasted successfully.\n", command);
     }
     else
     {
