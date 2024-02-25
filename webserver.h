@@ -41,11 +41,18 @@ ErrorCode initWebServer()
         return noMDNS;
     }
     masterServer.on("/ready", handleReady);
+    masterServer.begin();
 
 #endif
 
     http.setReuse(true);
     return noError;
+}
+
+void sendReady(void)
+{
+    // String url = apiEndpoint + apiFrameJPG + esp_id + "/" + String(screenNumber) + "/" + String(frameNumber);
+    // Serial.printf("Calling %s\n", url.c_str());
 }
 
 int getFramesCount()

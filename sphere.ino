@@ -155,7 +155,10 @@ void setup()
     Serial.printf("PSRAM left = %s\n", formatBytes(ESP.getFreePsram()).c_str());
     String psram = "PSRAM left=" + formatBytes(ESP.getFreePsram());
     displayNormalMessage(psram.c_str(), 40);
-    delay(5000);
+
+    #ifndef MASTER
+        sendReady();
+    #endif
 }
 
 unsigned long t;
