@@ -162,7 +162,10 @@ void setup()
     displayNormalMessage(psram.c_str(), 40);
 
 #ifndef MASTER
+    pinMode(10, INPUT_PULLUP);
     sendReady();
+#else
+    pinMode(10, OUTPUT);
 #endif
 }
 
@@ -177,7 +180,14 @@ void loop()
         grid[i].display->showJPGFrames();
     }
     Serial.printf("Took %ld ms\n", millis() - t);
-
+    if (digitalRead(10) == HIGH)
+    {
+        digitalWrite(10, LOW);
+    }
+    else
+    {
+        digitalWrite(10, HIGH);
+    }
     // waitForSlaves();
 #else
     if (waitForCommand("Start"))
@@ -189,6 +199,7 @@ void loop()
         }
         // sendReady();
         Serial.printf("Took %ld ms\n", millis() - t);
+        Serial.printf("Took %ld ms, pin sync=%d\n", millis() - t, digitalRead(10));
     }
 #endif
 }
