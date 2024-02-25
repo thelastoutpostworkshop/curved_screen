@@ -1,3 +1,4 @@
+#include <ESPAsyncWebServer.h>
 #include <ESPmDNS.h>
 #include <WiFi.h>
 #include <AsyncTCP.h>
@@ -12,7 +13,6 @@ char incomingPacket[255];                         // Buffer for incoming packets
 const char *broadcastAddress = "255.255.255.255"; // Broadcast address
 
 #ifdef MASTER
-#include <ESPAsyncWebServer.h>
 AsyncWebServer masterServer(80);
 int slavesReady = 0;
 

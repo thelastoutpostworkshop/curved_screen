@@ -175,17 +175,17 @@ void loop()
     {
         grid[i].display->showJPGFrames();
     }
-    waitForSlavesToshowFrame();
+    // waitForSlaves();
 #else
     if (waitForCommand("Start"))
     {
-        // t = millis();
+        t = millis();
         for (int i = 0; i < SCREEN_COUNT; i++)
         {
             grid[i].display->showJPGFrames();
         }
-        sendMessageToServer("ready");
-        // Serial.printf("Took %ld ms\n", millis() - t);
+        // sendReady();
+        Serial.printf("Took %ld ms\n", millis() - t);
     }
 #endif
 }
