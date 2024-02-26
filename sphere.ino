@@ -37,7 +37,7 @@ ErrorCode getJPGFrames(void)
 {
     String frameText = "";
     framesCount = getFramesCount();
-    Serial.printf("Frames Count = %d\n", framesCount);
+    // Serial.printf("Frames Count = %d\n", framesCount);
 
     if (framesCount <= 0)
     {
@@ -126,10 +126,6 @@ void setup()
     ESPID = ESP.getEfuseMac();
     esp_id_s = String(ESPID);
 
-#ifdef MASTER
-    displayNormalMessage("Waiting for slaves...", 40);
-#endif
-
     // Retrieve all the JPG Frames
     ErrorCode res = getJPGFrames();
     if (res != noError)
@@ -158,6 +154,7 @@ void setup()
     displayNormalMessage(psram.c_str(), 40);
 
 #ifdef MASTER
+    displayNormalMessage("Waiting for slaves...", 40);
     slaves->waitForAllSlaves();
 #else
     sendReady();
