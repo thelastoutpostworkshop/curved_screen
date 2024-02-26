@@ -8,12 +8,11 @@
 
 #ifdef MASTER
 AsyncWebServer masterServer(80);
-int slavesReady = 0;
 
 void handleReady(AsyncWebServerRequest *request)
 {
     request->send(200, "text/plain", "ok");
-    slavesReady++;
+    slaves->addSlavesReady();
 }
 #endif
 

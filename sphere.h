@@ -1,5 +1,8 @@
 #ifndef _SPHERE_
 #define _SPHERE_
+#include "slaves.h"
+
+SLAVES *slaves;
 
 #define MASTER // When uncommented this means this ESP32 is the master
 

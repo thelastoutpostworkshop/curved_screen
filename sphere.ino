@@ -25,18 +25,6 @@ Screen grid[SCREEN_COUNT] = {
     {.csPin = 8, .rotation = 3},
     {.csPin = 3, .rotation = 3}};
 
-#ifdef MASTER
-void waitForSlaves(void)
-{
-    slavesReady = 0;
-    while (slavesReady < SLAVECOUNT)
-    {
-        delay(100);
-    }
-}
-
-#endif
-
 void createDisplay(void)
 {
     for (int i = 0; i < SCREEN_COUNT; i++)
@@ -109,6 +97,8 @@ void setup()
 #ifdef MASTER
     pinMode(PIN_SYNC, OUTPUT);
     digitalWrite(PIN_SYNC, LOW);
+    slaves = new SLAVES(SLAVECOUNT);
+    slaves->resetSlavesReady();
 #else
     pinMode(PIN_SYNC, INPUT_PULLUP);
 #endif
@@ -138,7 +128,6 @@ void setup()
 
 #ifdef MASTER
     displayNormalMessage("Waiting for slaves...", 40);
-    waitForSlaves();
 #endif
 
     // Retrieve all the JPG Frames
@@ -168,7 +157,9 @@ void setup()
     String psram = "PSRAM left=" + formatBytes(ESP.getFreePsram());
     displayNormalMessage(psram.c_str(), 40);
 
-#ifndef MASTER
+#ifdef MASTER
+    slaves->waitForAllSlaves();
+#else
     sendReady();
 #endif
 }
