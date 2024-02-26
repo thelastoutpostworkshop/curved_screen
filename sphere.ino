@@ -188,7 +188,7 @@ void loop()
         grid[i].display->showJPGFrames();
     }
     Serial.printf("Took %ld ms\n", millis() - t);
-    while (millis() - t < 160)
+    while (millis() - t < 145)
         ;
         // waitForSlaves();
 #else
