@@ -65,6 +65,29 @@ ErrorCode getJPGFrames(void)
     return noError;
 }
 
+ErrorCode getGifFiles(void)
+{
+    uint8_t *gifData;
+    size_t gifLength;
+    for (int i = 0; i < SCREEN_COUNT; i++)
+    {
+        Screen currentScreen = grid[i];
+
+        gifData = getGifData(esp_id_s, i, &gifLength);
+        if (gifData == NULL)
+        {
+            return cannotGetJPGFrames;
+        }
+        currentScreen.display->addGif(gifData, gifLength);
+        // frameText = String(frameIndex + 1) + "/" + String(framesCount);
+        // grid[i].display->clearScreen();
+        // grid[i].display->showText("Frames", 50, TFT_GREEN);
+        // grid[i].display->showText(frameText.c_str(), 100, TFT_GREEN);
+        yield();
+    }
+    return noError;
+}
+
 String formatBytes(size_t bytes)
 {
     if (bytes < 1024)
@@ -127,23 +150,32 @@ void setup()
     esp_id_s = String(ESPID);
 
     // Retrieve all the JPG Frames
-    ErrorCode res = getJPGFrames();
-    if (res != noError)
-    {
-        switch (res)
-        {
-        case noFrames:
-            Serial.println("Error: No Frames.");
-            displayErrorMessage("No Frames", 40);
-            break;
+    // ErrorCode res = getJPGFrames();
+    // if (res != noError)
+    // {
+    //     switch (res)
+    //     {
+    //     case noFrames:
+    //         Serial.println("Error: No Frames.");
+    //         displayErrorMessage("No Frames", 40);
+    //         break;
 
-        case cannotGetJPGFrames:
-            Serial.println("Error: Could not retrieved all the jpg images, cannot continue.");
-            displayErrorMessage("Could not retrieved all the jpg images", 40);
-            break;
+    //     case cannotGetJPGFrames:
+    //         Serial.println("Error: Could not retrieved all the jpg images, cannot continue.");
+    //         displayErrorMessage("Could not retrieved all the jpg images", 40);
+    //         break;
+    //     }
+    //     while (true)
+    //         ;
+    // }
+
+    getGifFiles();
+    for (int i = 0; i < SCREEN_COUNT; i++)
+    {
+        if (grid[i].display->openGif())
+        {
+            Serial.println("Successfully opened GIF");
         }
-        while (true)
-            ;
     }
 
     // Show mac number for identification by the server
@@ -166,8 +198,8 @@ void loop()
 {
 #ifdef MASTER
     digitalWrite(PIN_SYNC, HIGH);
-    delayMicroseconds(100); // Short duration for the pulse
-    digitalWrite(PIN_SYNC, LOW);  // Set the signal LOW again
+    delayMicroseconds(100);      // Short duration for the pulse
+    digitalWrite(PIN_SYNC, LOW); // Set the signal LOW again
 
     // broadcastCommand("Start");
     t = millis();
@@ -180,14 +212,26 @@ void loop()
         ;
         // waitForSlaves();
 #else
-    if (digitalRead(PIN_SYNC) == HIGH)
+    // if (digitalRead(PIN_SYNC) == HIGH)
+    // {
+    //     t = millis();
+    //     for (int i = 0; i < SCREEN_COUNT; i++)
+    //     {
+    //         grid[i].display->showJPGFrames();
+    //     }
+    //     // sendReady();
+    //     Serial.printf("Took %ld ms\n", millis() - t);
+    // }
+
+    // GIF
+    for (int i = 0; i < SCREEN_COUNT; i++)
     {
         t = millis();
-        for (int i = 0; i < SCREEN_COUNT; i++)
-        {
-            grid[i].display->showJPGFrames();
-        }
-        // sendReady();
+        grid[i].display->activate();
+        tft.startWrite();
+        grid[i].display->gif.playFrame(false, NULL);
+        tft.endWrite();
+        grid[i].display->deActivate();
         Serial.printf("Took %ld ms\n", millis() - t);
     }
 #endif
