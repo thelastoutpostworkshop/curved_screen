@@ -224,15 +224,17 @@ void loop()
     // }
 
     // GIF
+    t = millis();
     for (int i = 0; i < SCREEN_COUNT; i++)
     {
-        t = millis();
         grid[i].display->activate();
         tft.startWrite();
-        grid[i].display->gif.playFrame(false, NULL);
+        if(grid[i].display->gif.playFrame(false, NULL) == 0) {
+            grid[i].display->gif.reset();
+        }
         tft.endWrite();
         grid[i].display->deActivate();
-        Serial.printf("Took %ld ms\n", millis() - t);
     }
+    Serial.printf("Took %ld ms\n", millis() - t);
 #endif
 }

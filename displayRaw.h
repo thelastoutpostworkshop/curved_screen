@@ -233,7 +233,7 @@ public:
     }
 
     int openGif(void) {
-        gif.begin(BIG_ENDIAN_PIXELS);
+        gif.begin();
         return gif.open(frames[0],framesSize[0],GIFDraw);
     }
 
