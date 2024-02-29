@@ -201,11 +201,17 @@ void loop()
     delayMicroseconds(100);      // Short duration for the pulse
     digitalWrite(PIN_SYNC, LOW); // Set the signal LOW again
 
-    // broadcastCommand("Start");
     t = millis();
     for (int i = 0; i < SCREEN_COUNT; i++)
     {
-        grid[i].display->showJPGFrames();
+        grid[i].display->activate();
+        tft.startWrite();
+        if (grid[i].display->gif.playFrame(false, NULL) == 0)
+        {
+            grid[i].display->gif.reset();
+        }
+        tft.endWrite();
+        grid[i].display->deActivate();
     }
     Serial.printf("Took %ld ms\n", millis() - t);
     while (millis() - t < 145)
@@ -224,17 +230,22 @@ void loop()
     // }
 
     // GIF
-    t = millis();
-    for (int i = 0; i < SCREEN_COUNT; i++)
+    if (digitalRead(PIN_SYNC) == HIGH)
     {
-        grid[i].display->activate();
-        tft.startWrite();
-        if(grid[i].display->gif.playFrame(false, NULL) == 0) {
-            grid[i].display->gif.reset();
+        t = millis();
+        for (int i = 0; i < SCREEN_COUNT; i++)
+        {
+            grid[i].display->activate();
+            tft.startWrite();
+            if (grid[i].display->gif.playFrame(false, NULL) == 0)
+            {
+                grid[i].display->gif.reset();
+            }
+            tft.endWrite();
+            grid[i].display->deActivate();
         }
-        tft.endWrite();
-        grid[i].display->deActivate();
+        Serial.printf("Took %ld ms\n", millis() - t);
     }
-    Serial.printf("Took %ld ms\n", millis() - t);
+
 #endif
 }
