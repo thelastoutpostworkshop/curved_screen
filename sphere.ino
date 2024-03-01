@@ -76,7 +76,7 @@ ErrorCode getGifFiles(void)
         gifData = getGifData(esp_id_s, i, &gifLength);
         if (gifData == NULL)
         {
-            return cannotGetJPGFrames;
+            return cannotGetGifFiles;
         }
         currentScreen.display->addGif(gifData, gifLength);
         // frameText = String(frameIndex + 1) + "/" + String(framesCount);
@@ -169,7 +169,14 @@ void setup()
     //         ;
     // }
 
-    getGifFiles();
+    ErrorCode res = getGifFiles();
+    if (res != noError)
+    {
+        Serial.println("Error: Could not retrieved all the GIF files, cannot continue.");
+        displayErrorMessage("Could not retrieved all the GIF files", 40);
+        while (true)
+            ;
+    }
     for (int i = 0; i < SCREEN_COUNT; i++)
     {
         if (grid[i].display->openGif())
