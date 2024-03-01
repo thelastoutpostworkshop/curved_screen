@@ -19,6 +19,7 @@ enum ErrorCode
     noFrames,
     cannotGetJPGFrames,
     cannotGetGifFiles,
+    cannotOpenGifFile,
     noMDNS
 };
 

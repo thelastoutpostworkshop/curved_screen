@@ -73,8 +73,8 @@ ErrorCode getGifFiles(void)
     {
         Screen currentScreen = grid[i];
 
-        grid[i].display->clearScreen();
-        grid[i].display->showText("Getting GIF File", 50, TFT_GREEN);
+        currentScreen.display->clearScreen();
+        currentScreen.display->showText("Getting GIF File", 50, TFT_GREEN);
 
         gifData = getGifData(esp_id_s, i, &gifLength);
         if (gifData == NULL)
@@ -82,9 +82,12 @@ ErrorCode getGifFiles(void)
             return cannotGetGifFiles;
         }
         currentScreen.display->addGif(gifData, gifLength);
-
-        grid[i].display->clearScreen();
-        grid[i].display->showText("Completed", 50, TFT_GREEN);
+        if (!currentScreen.display->openGif())
+        {
+            return cannotOpenGifFile;
+        }
+        currentScreen.display->clearScreen();
+        currentScreen.display->showText("Completed", 50, TFT_GREEN);
         yield();
     }
     return noError;
@@ -174,17 +177,21 @@ void setup()
     ErrorCode res = getGifFiles();
     if (res != noError)
     {
-        Serial.println("Error: Could not retrieved all the GIF files, cannot continue.");
-        displayErrorMessage("Could not retrieved all the GIF files", 40);
+        switch (res)
+        {
+        case cannotGetGifFiles:
+            Serial.println("Error: Could not retrieved all the GIF files, cannot continue.");
+            displayErrorMessage("Could not retrieved all the GIF files", 40);
+            break;
+
+        case cannotOpenGifFile:
+            Serial.println("Error: Could not open a GIF file, cannot continue.");
+            displayErrorMessage("Could not open a GIF file", 40);
+            break;
+        }
+
         while (true)
             ;
-    }
-    for (int i = 0; i < SCREEN_COUNT; i++)
-    {
-        if (grid[i].display->openGif())
-        {
-            Serial.println("Successfully opened GIF");
-        }
     }
 
     // Show mac number for identification by the server
