@@ -73,16 +73,18 @@ ErrorCode getGifFiles(void)
     {
         Screen currentScreen = grid[i];
 
+        grid[i].display->clearScreen();
+        grid[i].display->showText("Getting GIF File", 50, TFT_GREEN);
+
         gifData = getGifData(esp_id_s, i, &gifLength);
         if (gifData == NULL)
         {
             return cannotGetGifFiles;
         }
         currentScreen.display->addGif(gifData, gifLength);
-        // frameText = String(frameIndex + 1) + "/" + String(framesCount);
-        // grid[i].display->clearScreen();
-        // grid[i].display->showText("Frames", 50, TFT_GREEN);
-        // grid[i].display->showText(frameText.c_str(), 100, TFT_GREEN);
+
+        grid[i].display->clearScreen();
+        grid[i].display->showText("Completed", 50, TFT_GREEN);
         yield();
     }
     return noError;
