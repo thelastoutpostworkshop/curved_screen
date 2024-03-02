@@ -120,6 +120,23 @@ void displayNormalMessage(const char *message, int16_t line)
     grid[0].display->showText(message, line, TFT_GREEN);
 }
 
+void calibration(void)
+{
+    int calibrationLoop = 4;
+    unsigned long duration;
+    int frameNumber = 0;
+
+    for (int cal = 0; cal < calibrationLoop; cal++)
+    {
+        for (int i = 0; i < SCREEN_COUNT; i++)
+        {
+            grid[i].display->activate();
+            grid[i].display->gif.playFrame(false, NULL);
+            grid[i].display->deActivate();
+        }
+    }
+}
+
 void setup()
 {
 #ifdef MASTER
