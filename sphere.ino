@@ -113,17 +113,19 @@ void displayErrorMessage(char *message, int16_t line)
 {
     grid[0].display->clearScreen();
     grid[0].display->showText(message, line, TFT_ORANGE);
+    Serial.println(message);
 }
 void displayNormalMessage(const char *message, int16_t line)
 {
     grid[0].display->clearScreen();
     grid[0].display->showText(message, line, TFT_GREEN);
+    Serial.println(message);
 }
 
 void calibration(void)
 {
     int calibrationLoop = 4;
-    unsigned long duration;
+    unsigned long duration,t;
     int frameNumber = 0;
 
     for (int cal = 0; cal < calibrationLoop; cal++)
@@ -132,7 +134,8 @@ void calibration(void)
         {
             grid[i].display->gif.reset();
         }
-        displayNormalMessage("Calibration...",40);
+        displayNormalMessage("Calibrating...",40);
+        t = millis();
         for (int i = 0; i < SCREEN_COUNT; i++)
         {
             grid[i].display->activate();
@@ -142,6 +145,8 @@ void calibration(void)
             }
             grid[i].display->deActivate();
         }
+        duration = millis()-t;
+        frameNumber++;
     }
 }
 
