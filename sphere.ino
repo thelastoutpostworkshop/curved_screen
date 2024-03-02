@@ -175,7 +175,6 @@ void setup()
 
     if (frameBuffer == NULL)
     {
-        Serial.println("Error: Memory allocation failed for frame buffer, cannot continue.");
         displayErrorMessage("No Memory for Frame Buffer", 40);
         while (true)
             ;
@@ -210,12 +209,10 @@ void setup()
         switch (res)
         {
         case cannotGetGifFiles:
-            Serial.println("Error: Could not retrieved all the GIF files, cannot continue.");
             displayErrorMessage("Could not retrieved all the GIF files", 40);
             break;
 
         case cannotOpenGifFile:
-            Serial.println("Error: Could not open a GIF file, cannot continue.");
             displayErrorMessage("Could not open a GIF file", 40);
             break;
         }
@@ -229,7 +226,6 @@ void setup()
     // Show mac number for identification by the server
     Serial.printf("id=%s\n", esp_id_s.c_str());
 
-    Serial.printf("PSRAM left = %s\n", formatBytes(ESP.getFreePsram()).c_str());
     String psram = "PSRAM left=" + formatBytes(ESP.getFreePsram());
     displayNormalMessage(psram.c_str(), 40);
 
