@@ -130,8 +130,16 @@ void calibration(void)
     {
         for (int i = 0; i < SCREEN_COUNT; i++)
         {
+            grid[i].display->gif.reset();
+        }
+        displayNormalMessage("Calibration...",40);
+        for (int i = 0; i < SCREEN_COUNT; i++)
+        {
             grid[i].display->activate();
-            grid[i].display->gif.playFrame(false, NULL);
+            if (grid[i].display->gif.playFrame(false, NULL) == 0)
+            {
+                // No more frames
+            }
             grid[i].display->deActivate();
         }
     }
@@ -210,6 +218,8 @@ void setup()
         while (true)
             ;
     }
+
+    calibration();
 
     // Show mac number for identification by the server
     Serial.printf("id=%s\n", esp_id_s.c_str());
