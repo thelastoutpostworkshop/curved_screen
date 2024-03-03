@@ -174,7 +174,7 @@ void setup()
 #ifdef MASTER
     pinMode(PIN_SYNC, OUTPUT);
     digitalWrite(PIN_SYNC, LOW);
-    SLAVES slaves(SLAVECOUNT);
+    SLAVES slaves;
     slaves.resetSlavesReady();
 #else
     pinMode(PIN_SYNC, INPUT_PULLUP);

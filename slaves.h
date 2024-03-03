@@ -1,16 +1,16 @@
 #ifndef _SLAVES_
 #define _SLAVES_
 
+#define SLAVECOUNT 1 // The number of ESP32 slaves
+
 class SLAVES
 {
 private:
-    int slavesCount;
     int slavesReady;
 
 public:
-    SLAVES(int numberOfSlaves)
+    SLAVES()
     {
-        slavesCount = numberOfSlaves;
     }
     void resetSlavesReady(void)
     {
@@ -22,7 +22,7 @@ public:
     }
     bool allSlavesReady(void)
     {
-        if (slavesReady == slavesCount)
+        if (slavesReady == SLAVECOUNT)
         {
             return true;
         }
