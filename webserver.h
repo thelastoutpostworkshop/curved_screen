@@ -16,7 +16,7 @@ AsyncWebServer masterServer(80);
 // }
 
 // Function to process the calibration data
-void processCalibrationData(uint8_t *data, size_t len, AsyncWebServerRequest *request)
+void handleCalibrationData(uint8_t *data, size_t len, AsyncWebServerRequest *request)
 {
     String calibrationData;
     for (size_t i = 0; i < len; i++)
@@ -64,7 +64,7 @@ ErrorCode initWebServer()
         "/calibration", HTTP_POST, [](AsyncWebServerRequest *request) {}, NULL,
         [](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
         {
-            processCalibrationData(data, len, request);
+            handleCalibrationData(data, len, request);
         });
 
     masterServer.begin();

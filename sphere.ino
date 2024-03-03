@@ -171,6 +171,14 @@ bool runCalibration(void)
     return true;
 }
 
+void processCalibrationData(void) {
+    for (int i = 0; i < SLAVECOUNT; i++)
+    {
+        /* code */
+    }
+    
+}
+
 void setup()
 {
 #ifdef MASTER
@@ -260,6 +268,7 @@ void setup()
 #ifdef MASTER
     displayNormalMessage("Waiting for slaves...", 40);
     slaves.waitForAllSlaves();
+    processCalibrationData();
 #else
     // sendReady();
 #endif
