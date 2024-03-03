@@ -67,6 +67,29 @@ ErrorCode initWebServer()
     return noError;
 }
 
+void sendCalibrationValues(String calibrationValues)
+{
+    String url = String("http://") + String(SERVERNAME) + ".local/calibration";
+    http.begin(url);     
+    http.addHeader("Content-Type", "text/plain"); 
+
+    int httpResponseCode = http.POST(calibrationValues);
+
+    if (httpResponseCode > 0)
+    {
+        String response = http.getString(); // Get server response
+        Serial.println(httpResponseCode);
+        Serial.println(response);
+    }
+    else
+    {
+        Serial.print("Error on sending POST: ");
+        Serial.println(httpResponseCode);
+    }
+
+    http.end();
+}
+
 void sendReady(void)
 {
     String url = String("http://") + String(SERVERNAME) + ".local/ready";
