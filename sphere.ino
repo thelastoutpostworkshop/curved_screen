@@ -260,7 +260,7 @@ void setup()
     displayNormalMessage("Waiting for slaves...", 40);
     slaves.waitForAllSlaves();
 #else
-    sendReady();
+    // sendReady();
 #endif
 }
 
