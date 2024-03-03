@@ -173,7 +173,7 @@ public:
   {
     frameCount = 0;
   }
-  bool setCalibration(unsigned long value)
+  bool addCalibration(unsigned long value)
   {
     if (frameCount >= MAX_FRAMES)
     {

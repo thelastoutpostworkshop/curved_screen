@@ -162,7 +162,7 @@ bool runCalibration(void)
                 grid[i].display->deActivate();
             }
             duration = millis() - t;
-            if (!calibration.setCalibration(duration))
+            if (!calibration.addCalibration(duration))
             {
                 return false;
             }
