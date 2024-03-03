@@ -14,6 +14,12 @@ void handleReady(AsyncWebServerRequest *request)
     request->send(200, "text/plain", "ok");
     slaves->addSlavesReady();
 }
+
+// Function to process the calibration data
+void processCalibrationData(uint8_t *data, size_t len, AsyncWebServerRequest *request)
+{
+    request->send(200, "text/plain", "Calibration data received");
+}
 #endif
 
 HTTPClient http;
@@ -45,6 +51,13 @@ ErrorCode initWebServer()
     }
     masterServer.on("/ready", HTTP_GET, [](AsyncWebServerRequest *request)
                     { handleReady(request); });
+    masterServer.on(
+        "/calibration", HTTP_POST, [](AsyncWebServerRequest *request) {}, NULL,
+        [](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
+        {
+            processCalibrationData(data, len, request);
+        });
+
     masterServer.begin();
     Serial.printf("Server listening on %s.local\n", SERVERNAME);
 
@@ -162,7 +175,7 @@ uint8_t *getGifData(String esp_id, int screenNumber, size_t *bufferSize)
             size_t availableBytes = stream->available();
             if (availableBytes > 0)
             {
-                int bytesRead = stream->readBytes((uint8_t*)gifData + totalBytesRead, availableBytes);
+                int bytesRead = stream->readBytes((uint8_t *)gifData + totalBytesRead, availableBytes);
                 totalBytesRead += bytesRead;
                 contentLength -= bytesRead;
             }
@@ -172,7 +185,7 @@ uint8_t *getGifData(String esp_id, int screenNumber, size_t *bufferSize)
         http.end();
         yield();
         // Serial.printf("Total bytes read: %lu\n", totalBytesRead);
-        return (uint8_t*)gifData;
+        return (uint8_t *)gifData;
     }
     else
     {
