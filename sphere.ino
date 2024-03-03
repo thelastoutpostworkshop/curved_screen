@@ -133,7 +133,7 @@ void eraseAllScreen(void)
 bool runCalibration(void)
 {
     Calibration calibration;
-    int calibrationLoop = 4;
+    int calibrationLoop = 2;
     unsigned long duration, t;
     bool moreFrame = true;
 
