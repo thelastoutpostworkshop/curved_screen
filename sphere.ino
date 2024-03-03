@@ -174,8 +174,8 @@ void setup()
 #ifdef MASTER
     pinMode(PIN_SYNC, OUTPUT);
     digitalWrite(PIN_SYNC, LOW);
-    slaves = new SLAVES(SLAVECOUNT);
-    slaves->resetSlavesReady();
+    SLAVES slaves(SLAVECOUNT);
+    slaves.resetSlavesReady();
 #else
     pinMode(PIN_SYNC, INPUT_PULLUP);
 #endif
@@ -258,7 +258,7 @@ void setup()
 
 #ifdef MASTER
     displayNormalMessage("Waiting for slaves...", 40);
-    slaves->waitForAllSlaves();
+    slaves.waitForAllSlaves();
 #else
     sendReady();
 #endif
