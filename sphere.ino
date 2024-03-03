@@ -122,6 +122,14 @@ void displayNormalMessage(const char *message, int16_t line)
     Serial.println(message);
 }
 
+void eraseAllScreen(void)
+{
+    for (int i = 0; i < SCREEN_COUNT; i++)
+    {
+        grid[0].display->clearScreen();
+    }
+}
+
 bool runCalibration(void)
 {
     Calibration calibration;
@@ -227,6 +235,8 @@ void setup()
             ;
     }
 
+    eraseAllScreen();
+
     if (!runCalibration())
     {
         displayErrorMessage("Calibration Error", 40);
@@ -239,6 +249,7 @@ void setup()
 
     String psram = "PSRAM left=" + formatBytes(ESP.getFreePsram());
     displayNormalMessage(psram.c_str(), 40);
+    eraseAllScreen();
 
 #ifdef MASTER
     displayNormalMessage("Waiting for slaves...", 40);
