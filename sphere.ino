@@ -143,6 +143,8 @@ bool runCalibration(void)
         {
             grid[i].display->gif.reset();
         }
+        moreFrame = true;
+        calibration.startCalibration();
         displayNormalMessage("Calibrating...", 40);
         while (moreFrame)
         {

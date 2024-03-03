@@ -169,6 +169,10 @@ public:
     }
     frameCount = 0;
   }
+  void startCalibration(void)
+  {
+    frameCount = 0;
+  }
   bool setCalibration(unsigned long value)
   {
     if (frameCount >= MAX_FRAMES)
