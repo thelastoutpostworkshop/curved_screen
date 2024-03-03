@@ -174,12 +174,16 @@ bool runCalibration(void)
     return true;
 }
 
-void processCalibrationData(void)
+bool processCalibrationData(void)
 {
     for (int i = 0; i < SLAVECOUNT; i++)
     {
-        calibration.retrieveCalibrationValues(slaves.getCalibrationData(i));
+        if (!calibration.retrieveCalibrationValues(slaves.getCalibrationData(i)))
+        {
+            return false;
+        }
     }
+    return true;
 }
 
 void setup()
@@ -271,7 +275,12 @@ void setup()
 #ifdef MASTER
     displayNormalMessage("Waiting for slaves...", 40);
     slaves.waitForAllSlaves();
-    processCalibrationData();
+    if (!processCalibrationData())
+    {
+        displayErrorMessage("Processing slaves calibration Error", 40);
+        while (true)
+            ;
+    }
 #else
     // sendReady();
 #endif

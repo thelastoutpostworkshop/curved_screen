@@ -160,6 +160,20 @@ private:
   unsigned long calibrationValues[MAX_FRAMES];
   int frameCount;
 
+  bool setCalibration(int frameNumber, unsigned long value)
+  {
+    if (frameNumber >= MAX_FRAMES)
+    {
+      Serial.printf("Error:setCalibration frameNumber %d wrong\n", frameNumber);
+      return false;
+    }
+    if (calibrationValues[frameNumber] < value)
+    {
+      calibrationValues[frameNumber] = value;
+    }
+    return true;
+  }
+
 public:
   Calibration()
   {
@@ -187,6 +201,7 @@ public:
     frameCount++;
     return true;
   }
+
   String getCalibrationValues(void)
   {
     String payload = "";
@@ -200,7 +215,7 @@ public:
     }
     return payload;
   }
-  void retrieveCalibrationValues(String calibrationReceived)
+  bool retrieveCalibrationValues(String calibrationReceived)
   {
     int frameStart = 0;
     int nextFrame;
@@ -210,6 +225,10 @@ public:
       int commaIndex = frameData.indexOf(',');
       int frameNumber = frameData.substring(0, commaIndex).toInt();
       unsigned long calibrationValue = frameData.substring(commaIndex + 1).toInt();
+      if (!setCalibration(frameNumber, calibrationValue))
+      {
+        return false;
+      }
       Serial.printf("Frame %d: %lu\n", frameNumber, calibrationValue);
       frameStart = nextFrame + 1;
     }
@@ -220,8 +239,13 @@ public:
       int commaIndex = lastFrameData.indexOf(',');
       int frameNumber = lastFrameData.substring(0, commaIndex).toInt();
       unsigned long calibrationValue = lastFrameData.substring(commaIndex + 1).toInt();
+      if (!setCalibration(frameNumber, calibrationValue))
+      {
+        return false;
+      }
       Serial.printf("Frame %d: %lu\n", frameNumber, calibrationValue);
     }
+    return true;
   }
 };
 
