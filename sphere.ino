@@ -288,6 +288,7 @@ void setup()
 
 unsigned long t, durationCalibrated;
 int frameNumber = 0;
+bool lastFrame = false;
 void loop()
 {
 #ifdef MASTER
@@ -296,6 +297,7 @@ void loop()
     digitalWrite(PIN_SYNC, LOW); // Set the signal LOW again
 
     durationCalibrated = calibration.getFrameCalibration(frameNumber) + 2;
+    Serial.printf("Calibration is %lu ms\n", durationCalibrated);
     t = millis();
     for (int i = 0; i < SCREEN_COUNT; i++)
     {
@@ -303,15 +305,20 @@ void loop()
         if (grid[i].display->gif.playFrame(false, NULL) == 0)
         {
             grid[i].display->gif.reset();
-            frameNumber = 0;
+            lastFrame = true;
         }
         grid[i].display->deActivate();
         frameNumber++;
     }
-    Serial.printf("Took %ld ms\n", millis() - t);
+    Serial.printf("Took %lu ms\n", millis() - t);
     while (millis() - t < durationCalibrated)
         ;
-        // waitForSlaves();
+    if (lastFrame)
+    {
+        lastFrame = false;
+        frameNumber = 0;
+    }
+    // waitForSlaves();
 #else
     // if (digitalRead(PIN_SYNC) == HIGH)
     // {
