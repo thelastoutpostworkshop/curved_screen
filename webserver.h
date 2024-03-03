@@ -78,6 +78,7 @@ ErrorCode initWebServer()
 void sendCalibrationValues(String calibrationValues)
 {
     String url = String("http://") + String(SERVERNAME) + ".local/calibration";
+    Serial.printf("Sending calibration data %s\n", url.c_str());
     http.begin(url);
     http.addHeader("Content-Type", "text/plain");
 
