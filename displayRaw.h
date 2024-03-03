@@ -200,6 +200,29 @@ public:
     }
     return payload;
   }
+  void retrieveCalibrationValues(String calibrationReceived)
+  {
+    int frameStart = 0;
+    int nextFrame;
+    while ((nextFrame = calibrationReceived.indexOf(';', frameStart)) != -1)
+    {
+      String frameData = calibrationReceived.substring(frameStart, nextFrame);
+      int commaIndex = frameData.indexOf(',');
+      int frameNumber = frameData.substring(0, commaIndex).toInt();
+      unsigned long calibrationValue = frameData.substring(commaIndex + 1).toInt();
+      Serial.printf("Frame %d: %lu\n", frameNumber, calibrationValue);
+      frameStart = nextFrame + 1;
+    }
+    // Parse the last frame (or only frame if there's just one)
+    String lastFrameData = calibrationReceived.substring(frameStart);
+    if (lastFrameData.length() > 0)
+    {
+      int commaIndex = lastFrameData.indexOf(',');
+      int frameNumber = lastFrameData.substring(0, commaIndex).toInt();
+      unsigned long calibrationValue = lastFrameData.substring(commaIndex + 1).toInt();
+      Serial.printf("Frame %d: %lu\n", frameNumber, calibrationValue);
+    }
+  }
 };
 
 class Display

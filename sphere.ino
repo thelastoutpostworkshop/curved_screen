@@ -25,6 +25,10 @@ Screen grid[SCREEN_COUNT] = {
     {.csPin = 8, .rotation = 3},
     {.csPin = 3, .rotation = 3}};
 
+#ifdef MASTER
+Calibration calibration;
+#endif
+
 void createDisplay(void)
 {
     for (int i = 0; i < SCREEN_COUNT; i++)
@@ -132,7 +136,6 @@ void eraseAllScreen(void)
 
 bool runCalibration(void)
 {
-    Calibration calibration;
     int calibrationLoop = 2;
     unsigned long duration, t;
     bool moreFrame = true;
@@ -171,12 +174,12 @@ bool runCalibration(void)
     return true;
 }
 
-void processCalibrationData(void) {
+void processCalibrationData(void)
+{
     for (int i = 0; i < SLAVECOUNT; i++)
     {
-        /* code */
+        calibration.retrieveCalibrationValues(slaves.getCalibrationData(i));
     }
-    
 }
 
 void setup()

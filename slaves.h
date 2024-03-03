@@ -32,9 +32,21 @@ public:
         {
             CalibrationData[calibrationReceived] = data;
             calibrationReceived++;
-        } else {
+        }
+        else
+        {
             Serial.println("Too many calibration data received!");
         }
+    }
+
+    String getCalibrationData(int slaveNumber)
+    {
+        if (slaveNumber >= SLAVECOUNT)
+        {
+            Serial.printf("Slave number %d non existant\n", slaveNumber);
+            return "";
+        }
+        return CalibrationData[slaveNumber];
     }
 
     void waitForAllSlaves(void)
