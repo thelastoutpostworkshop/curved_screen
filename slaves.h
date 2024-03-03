@@ -7,6 +7,16 @@ class SLAVES
 {
 private:
     int slavesReady;
+    String CalibrationData[SLAVECOUNT];
+
+    bool allSlavesReady(void)
+    {
+        if (slavesReady == SLAVECOUNT)
+        {
+            return true;
+        }
+        return false;
+    }
 
 public:
     SLAVES()
@@ -20,20 +30,17 @@ public:
     {
         slavesReady++;
     }
-    bool allSlavesReady(void)
+    void addCalibrationData(String data)
     {
-        if (slavesReady == SLAVECOUNT)
-        {
-            return true;
-        }
-        return false;
+        CalibrationData[slavesReady] = data;
     }
-    void waitForAllSlaves(void) {
+
+    void waitForAllSlaves(void)
+    {
         while (!allSlavesReady())
         {
             yield();
         }
-        
     }
 };
 #endif
