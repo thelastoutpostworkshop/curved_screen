@@ -229,7 +229,7 @@ public:
       {
         return false;
       }
-      Serial.printf("Frame %d: %lu\n", frameNumber, calibrationValue);
+      // Serial.printf("Frame %d: %lu\n", frameNumber, calibrationValue);
       frameStart = nextFrame + 1;
     }
     // Parse the last frame (or only frame if there's just one)
@@ -243,7 +243,7 @@ public:
       {
         return false;
       }
-      Serial.printf("Frame %d: %lu\n", frameNumber, calibrationValue);
+      // Serial.printf("Frame %d: %lu\n", frameNumber, calibrationValue);
     }
     return true;
   }
