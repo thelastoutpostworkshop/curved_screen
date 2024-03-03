@@ -288,7 +288,6 @@ void setup()
 
 unsigned long t, durationCalibrated;
 int frameNumber = 0;
-bool lastFrame = false;
 void loop()
 {
 #ifdef MASTER
@@ -302,22 +301,16 @@ void loop()
     for (int i = 0; i < SCREEN_COUNT; i++)
     {
         grid[i].display->activate();
-        if (grid[i].display->gif.playFrame(false, NULL) == 0)
-        {
-            grid[i].display->gif.reset();
-            lastFrame = true;
-        }
+        grid[i].display->gif.playFrame(false, NULL);
         grid[i].display->deActivate();
         frameNumber++;
+        if(frameNumber == calibration.getFrameCount()){
+            frameNumber = 0;
+        }
     }
     Serial.printf("Took %lu ms\n", millis() - t);
     while (millis() - t < durationCalibrated)
         ;
-    if (lastFrame)
-    {
-        lastFrame = false;
-        frameNumber = 0;
-    }
     // waitForSlaves();
 #else
     // if (digitalRead(PIN_SYNC) == HIGH)
