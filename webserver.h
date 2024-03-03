@@ -18,6 +18,14 @@ void handleReady(AsyncWebServerRequest *request)
 // Function to process the calibration data
 void processCalibrationData(uint8_t *data, size_t len, AsyncWebServerRequest *request)
 {
+    String calibrationData;
+    for (size_t i = 0; i < len; i++)
+    {
+        calibrationData += (char)data[i];
+    }
+
+    Serial.println("Received calibration data:");
+    Serial.println(calibrationData);
     request->send(200, "text/plain", "Calibration data received");
 }
 #endif
