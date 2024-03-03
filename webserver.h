@@ -70,8 +70,8 @@ ErrorCode initWebServer()
 void sendCalibrationValues(String calibrationValues)
 {
     String url = String("http://") + String(SERVERNAME) + ".local/calibration";
-    http.begin(url);     
-    http.addHeader("Content-Type", "text/plain"); 
+    http.begin(url);
+    http.addHeader("Content-Type", "text/plain");
 
     int httpResponseCode = http.POST(calibrationValues);
 
@@ -83,8 +83,7 @@ void sendCalibrationValues(String calibrationValues)
     }
     else
     {
-        Serial.print("Error on sending POST: ");
-        Serial.println(httpResponseCode);
+        Serial.printf("[HTTP] GET failed, error: %s\n", http.errorToString(httpResponseCode).c_str());
     }
 
     http.end();
