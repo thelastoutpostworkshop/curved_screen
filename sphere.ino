@@ -122,10 +122,11 @@ void displayNormalMessage(const char *message, int16_t line)
     Serial.println(message);
 }
 
-void calibration(void)
+bool runCalibration(void)
 {
+    Calibration calibration;
     int calibrationLoop = 4;
-    unsigned long duration,t;
+    unsigned long duration, t;
     int frameNumber = 0;
 
     for (int cal = 0; cal < calibrationLoop; cal++)
@@ -134,7 +135,7 @@ void calibration(void)
         {
             grid[i].display->gif.reset();
         }
-        displayNormalMessage("Calibrating...",40);
+        displayNormalMessage("Calibrating...", 40);
         t = millis();
         for (int i = 0; i < SCREEN_COUNT; i++)
         {
@@ -145,9 +146,14 @@ void calibration(void)
             }
             grid[i].display->deActivate();
         }
-        duration = millis()-t;
+        duration = millis() - t;
+        if (!calibration.setCalibration(frameNumber, duration))
+        {
+            return false;
+        }
         frameNumber++;
     }
+    return true;
 }
 
 void setup()
@@ -221,7 +227,12 @@ void setup()
             ;
     }
 
-    calibration();
+    if (!runCalibration())
+    {
+        displayErrorMessage("Calibration Error", 40);
+        while (true)
+            ;
+    }
 
     // Show mac number for identification by the server
     Serial.printf("id=%s\n", esp_id_s.c_str());

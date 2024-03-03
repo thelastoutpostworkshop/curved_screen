@@ -1,5 +1,5 @@
-#include "JPEGDEC.h"  // Install this library with the Arduino IDE Library Manager
-#include <TFT_eSPI.h> // Install this library with the Arduino IDE Library Manager
+#include "JPEGDEC.h"     // Install this library with the Arduino IDE Library Manager
+#include <TFT_eSPI.h>    // Install this library with the Arduino IDE Library Manager
 #include <AnimatedGIF.h> // Install this library with the Arduino IDE Library Manager
 
 #define MAX_FRAMES 256
@@ -12,15 +12,15 @@
 TFT_eSPI tft = TFT_eSPI();
 JPEGDEC jpeg;
 
-#define BUFFER_SIZE 256            // Optimum is >= GIF width or integral division of width
+#define BUFFER_SIZE 256 // Optimum is >= GIF width or integral division of width
 
 #ifdef USE_DMA
-  uint16_t usTemp[2][BUFFER_SIZE]; // Global to support DMA use
+uint16_t usTemp[2][BUFFER_SIZE]; // Global to support DMA use
 #else
-  uint16_t usTemp[1][BUFFER_SIZE];    // Global to support DMA use
+uint16_t usTemp[1][BUFFER_SIZE]; // Global to support DMA use
 #endif
-bool     dmaBuf = 0;
-  
+bool dmaBuf = 0;
+
 // Draw a line of image directly on the LCD
 void GIFDraw(GIFDRAW *pDraw)
 {
@@ -60,7 +60,7 @@ void GIFDraw(GIFDRAW *pDraw)
     {
       c = ucTransparent - 1;
       d = &usTemp[0][0];
-      while (c != ucTransparent && s < pEnd && iCount < BUFFER_SIZE )
+      while (c != ucTransparent && s < pEnd && iCount < BUFFER_SIZE)
       {
         c = *s++;
         if (c == ucTransparent) // done, stop
@@ -72,7 +72,7 @@ void GIFDraw(GIFDRAW *pDraw)
           *d++ = usPalette[c];
           iCount++;
         }
-      } // while looking for opaque pixels
+      }           // while looking for opaque pixels
       if (iCount) // any opaque pixels?
       {
         // DMA would degrtade performance here due to short line segments
@@ -100,9 +100,11 @@ void GIFDraw(GIFDRAW *pDraw)
     // Unroll the first pass to boost DMA performance
     // Translate the 8-bit pixels through the RGB565 palette (already byte reversed)
     if (iWidth <= BUFFER_SIZE)
-      for (iCount = 0; iCount < iWidth; iCount++) usTemp[dmaBuf][iCount] = usPalette[*s++];
+      for (iCount = 0; iCount < iWidth; iCount++)
+        usTemp[dmaBuf][iCount] = usPalette[*s++];
     else
-      for (iCount = 0; iCount < BUFFER_SIZE; iCount++) usTemp[dmaBuf][iCount] = usPalette[*s++];
+      for (iCount = 0; iCount < BUFFER_SIZE; iCount++)
+        usTemp[dmaBuf][iCount] = usPalette[*s++];
 
 #ifdef USE_DMA // 71.6 fps (ST7796 84.5 fps)
     tft.dmaWait();
@@ -120,9 +122,11 @@ void GIFDraw(GIFDRAW *pDraw)
     {
       // Translate the 8-bit pixels through the RGB565 palette (already byte reversed)
       if (iWidth <= BUFFER_SIZE)
-        for (iCount = 0; iCount < iWidth; iCount++) usTemp[dmaBuf][iCount] = usPalette[*s++];
+        for (iCount = 0; iCount < iWidth; iCount++)
+          usTemp[dmaBuf][iCount] = usPalette[*s++];
       else
-        for (iCount = 0; iCount < BUFFER_SIZE; iCount++) usTemp[dmaBuf][iCount] = usPalette[*s++];
+        for (iCount = 0; iCount < BUFFER_SIZE; iCount++)
+          usTemp[dmaBuf][iCount] = usPalette[*s++];
 
 #ifdef USE_DMA
       tft.dmaWait();
@@ -138,200 +142,230 @@ void GIFDraw(GIFDRAW *pDraw)
 
 void initTFT_eSPI(void)
 {
-    tft.init();
-    tft.setSwapBytes(true);
-    tft.setFreeFont(&Prototype20pt7b);
+  tft.init();
+  tft.setSwapBytes(true);
+  tft.setFreeFont(&Prototype20pt7b);
 }
 
 int draw(JPEGDRAW *pDraw)
 {
-    tft.setAddrWindow(pDraw->x, pDraw->y, pDraw->iWidth, pDraw->iHeight);
-    tft.pushPixels(pDraw->pPixels, pDraw->iWidth * pDraw->iHeight);
-    return 1;
+  tft.setAddrWindow(pDraw->x, pDraw->y, pDraw->iWidth, pDraw->iHeight);
+  tft.pushPixels(pDraw->pPixels, pDraw->iWidth * pDraw->iHeight);
+  return 1;
 }
+
+class Calibration
+{
+private:
+  unsigned long calibrationValues[MAX_FRAMES];
+
+public:
+  Calibration()
+  {
+    for (int i = 0; i < MAX_FRAMES; i++)
+    {
+      calibrationValues[i] = 0;
+    }
+  }
+  bool setCalibration(int frame, unsigned long value)
+  {
+    if (frame >= MAX_FRAMES)
+    {
+      Serial.println("Error: Maximum frame count reached.");
+      return false;
+    }
+    if (calibrationValues[frame] < value)
+    {
+      calibrationValues[frame] = value;
+    }
+    return true;
+  }
+};
 
 class Display
 {
 private:
-    int csPin; // Chip Select pin
-    uint16_t currentFrame = 0;
-    uint16_t frameCount = 0;
-    uint8_t *frames[MAX_FRAMES];
-    size_t framesSize[MAX_FRAMES];
+  int csPin; // Chip Select pin
+  uint16_t currentFrame = 0;
+  uint16_t frameCount = 0;
+  uint8_t *frames[MAX_FRAMES];
+  size_t framesSize[MAX_FRAMES];
 
 public:
-    AnimatedGIF gif;
-    int screenRotation;
+  AnimatedGIF gif;
+  int screenRotation;
 
-    void activate(void)
+  void activate(void)
+  {
+    digitalWrite(csPin, LOW);
+    tft.setRotation(screenRotation);
+  }
+  void deActivate(void)
+  {
+    digitalWrite(csPin, HIGH);
+  }
+  int chipSelectPin() const
+  {
+    return csPin;
+  }
+
+  uint8_t *addNewFrame(void)
+  {
+    if (frameCount >= MAX_FRAMES)
     {
-        digitalWrite(csPin, LOW);
-        tft.setRotation(screenRotation);
+      Serial.println("Error: Maximum frame count reached.");
+      return NULL;
     }
-    void deActivate(void)
+
+    size_t bufferLength = imageWidth * imageHeight * colorOutputSize;
+    uint8_t *newFrame = (uint8_t *)malloc(bufferLength);
+
+    if (newFrame == NULL)
     {
-        digitalWrite(csPin, HIGH);
+      Serial.println("Error: Memory allocation for new frame failed.");
+      return NULL;
     }
-    int chipSelectPin() const
+
+    frames[frameCount] = newFrame;
+    frameCount++;
+    return newFrame;
+  }
+
+  void addNewFrame(uint8_t *frame, size_t frameSize)
+  {
+    if (frameCount >= MAX_FRAMES)
     {
-        return csPin;
+      Serial.println("Error: Maximum frame count reached.");
+      return;
     }
 
-    uint8_t *addNewFrame(void)
+    // Specify the alignment. For example, align to a 8-byte boundary.
+    const size_t alignment = 8;
+    void *newFrame = NULL;
+
+    // Allocate memory with posix_memalign
+    int result = posix_memalign(&newFrame, alignment, frameSize);
+    if (result != 0)
     {
-        if (frameCount >= MAX_FRAMES)
-        {
-            Serial.println("Error: Maximum frame count reached.");
-            return NULL;
-        }
-
-        size_t bufferLength = imageWidth * imageHeight * colorOutputSize;
-        uint8_t *newFrame = (uint8_t *)malloc(bufferLength);
-
-        if (newFrame == NULL)
-        {
-            Serial.println("Error: Memory allocation for new frame failed.");
-            return NULL;
-        }
-
-        frames[frameCount] = newFrame;
-        frameCount++;
-        return newFrame;
+      newFrame = NULL; // posix_memalign doesn't set pointer on failure, unlike malloc
+      Serial.println("Error: Memory allocation for new frame failed.");
+      return;
     }
 
-    void addNewFrame(uint8_t *frame, size_t frameSize)
+    memcpy(newFrame, frame, frameSize);
+    framesSize[frameCount] = frameSize;
+    frames[frameCount] = (uint8_t *)newFrame; // Cast is safe because posix_memalign guarantees alignment
+    frameCount++;
+  }
+
+  void addGif(uint8_t *gifFile, size_t gifSize)
+  {
+    frameCount = 0;
+    frames[frameCount] = gifFile;
+    framesSize[frameCount] = gifSize;
+  }
+
+  int openGif(void)
+  {
+    gif.begin();
+    return gif.open(frames[0], framesSize[0], GIFDraw);
+  }
+
+  Display(int pin, int rotation) : csPin(pin), screenRotation(rotation)
+  {
+    pinMode(csPin, OUTPUT);
+    activate();
+    tft.fillScreen(TFT_BLACK);
+    deActivate();
+  }
+  uint16_t getFrameCount(void)
+  {
+    return frameCount;
+  }
+  uint8_t *getFrame(int frame)
+  {
+    return frames[frame];
+  }
+  size_t getFrameSize()
+  {
+    return imageWidth * imageHeight * colorOutputSize;
+  }
+  void freeFrames(void)
+  {
+    for (int i = 0; i < frameCount; i++)
     {
-        if (frameCount >= MAX_FRAMES)
-        {
-            Serial.println("Error: Maximum frame count reached.");
-            return;
-        }
-
-        // Specify the alignment. For example, align to a 8-byte boundary.
-        const size_t alignment = 8;
-        void *newFrame = NULL;
-
-        // Allocate memory with posix_memalign
-        int result = posix_memalign(&newFrame, alignment, frameSize);
-        if (result != 0)
-        {
-            newFrame = NULL; // posix_memalign doesn't set pointer on failure, unlike malloc
-            Serial.println("Error: Memory allocation for new frame failed.");
-            return;
-        }
-
-        memcpy(newFrame, frame, frameSize);
-        framesSize[frameCount] = frameSize;
-        frames[frameCount] = (uint8_t *)newFrame; // Cast is safe because posix_memalign guarantees alignment
-        frameCount++;
+      free(frames[i]);
     }
-
-    void addGif(uint8_t *gifFile, size_t gifSize) {
-        frameCount = 0;
-        frames[frameCount] = gifFile;
-        framesSize[frameCount] = gifSize;
-    }
-
-    int openGif(void) {
-        gif.begin();
-        return gif.open(frames[0],framesSize[0],GIFDraw);
-    }
-
-    Display(int pin, int rotation) : csPin(pin), screenRotation(rotation)
+    frameCount = 0;
+    currentFrame = 0;
+  }
+  void showFrame(int frame)
+  {
+    if (frame < frameCount)
     {
-        pinMode(csPin, OUTPUT);
-        activate();
-        tft.fillScreen(TFT_BLACK);
-        deActivate();
+      activate();
+      tft.pushImage(0, 0, imageWidth, imageHeight, (uint16_t *)frames[frame]);
+      deActivate();
     }
-    uint16_t getFrameCount(void)
+    else
     {
-        return frameCount;
+      Serial.printf("!!! No frame %d\n", frame);
     }
-    uint8_t *getFrame(int frame)
+  }
+  void showFrames(void)
+  {
+    if (frameCount > 0)
     {
-        return frames[frame];
-    }
-    size_t getFrameSize()
-    {
-        return imageWidth * imageHeight * colorOutputSize;
-    }
-    void freeFrames(void)
-    {
-        for (int i = 0; i < frameCount; i++)
-        {
-            free(frames[i]);
-        }
-        frameCount = 0;
+      activate();
+      tft.pushImage(0, 0, imageWidth, imageHeight, (uint16_t *)frames[currentFrame]);
+      deActivate();
+      currentFrame++;
+      if (currentFrame == frameCount)
+      {
         currentFrame = 0;
+      }
     }
-    void showFrame(int frame)
+    else
     {
-        if (frame < frameCount)
-        {
-            activate();
-            tft.pushImage(0, 0, imageWidth, imageHeight, (uint16_t *)frames[frame]);
-            deActivate();
-        }
-        else
-        {
-            Serial.printf("!!! No frame %d\n", frame);
-        }
+      Serial.println("!!! No frames to show");
     }
-    void showFrames(void)
+  }
+  void showJPGFrames(void)
+  {
+    if (frameCount > 0)
     {
-        if (frameCount > 0)
-        {
-            activate();
-            tft.pushImage(0, 0, imageWidth, imageHeight, (uint16_t *)frames[currentFrame]);
-            deActivate();
-            currentFrame++;
-            if (currentFrame == frameCount)
-            {
-                currentFrame = 0;
-            }
-        }
-        else
-        {
-            Serial.println("!!! No frames to show");
-        }
-    }
-    void showJPGFrames(void)
-    {
-        if (frameCount > 0)
-        {
-            int res = jpeg.openRAM(frames[currentFrame], framesSize[currentFrame], draw);
-            activate();
-            while (jpeg.decode(0, 0, 0) == JPEG_SUCCESS)
-            {
-                /* jpg file is decoded */
-            }
-            deActivate();
-            jpeg.close();
+      int res = jpeg.openRAM(frames[currentFrame], framesSize[currentFrame], draw);
+      activate();
+      while (jpeg.decode(0, 0, 0) == JPEG_SUCCESS)
+      {
+        /* jpg file is decoded */
+      }
+      deActivate();
+      jpeg.close();
 
-            currentFrame++;
-            if (currentFrame == frameCount)
-            {
-                currentFrame = 0;
-            }
-        }
-        else
-        {
-            Serial.println("!!! No frames to show");
-        }
+      currentFrame++;
+      if (currentFrame == frameCount)
+      {
+        currentFrame = 0;
+      }
     }
-    void clearScreen(void)
+    else
     {
-        activate();
-        tft.fillScreen(TFT_BLACK);
-        deActivate();
+      Serial.println("!!! No frames to show");
     }
-    void showText(const char *text, int16_t line, u_int16_t color)
-    {
-        activate();
-        tft.setCursor(10, line);
-        tft.setTextColor(color);
-        tft.println(text);
-        deActivate();
-    }
+  }
+  void clearScreen(void)
+  {
+    activate();
+    tft.fillScreen(TFT_BLACK);
+    deActivate();
+  }
+  void showText(const char *text, int16_t line, u_int16_t color)
+  {
+    activate();
+    tft.setCursor(10, line);
+    tft.setTextColor(color);
+    tft.println(text);
+    deActivate();
+  }
 };
