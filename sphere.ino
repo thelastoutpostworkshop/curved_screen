@@ -291,7 +291,8 @@ int frameNumber = 0;
 void loop()
 {
 #ifdef MASTER
-    durationCalibrated = calibration.getFrameCalibration(frameNumber) + 2;
+    // durationCalibrated = calibration.getFrameCalibration(frameNumber) + 2;
+    durationCalibrated=300;
     Serial.printf("Calibration frame #%d is %lu ms\n", frameNumber, durationCalibrated);
     t = millis();
 
