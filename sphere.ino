@@ -135,7 +135,6 @@ bool runCalibration(void)
     Calibration calibration;
     int calibrationLoop = 4;
     unsigned long duration, t;
-    int frameNumber = 0;
     bool moreFrame = true;
 
     for (int cal = 0; cal < calibrationLoop; cal++)
@@ -158,11 +157,10 @@ bool runCalibration(void)
                 grid[i].display->deActivate();
             }
             duration = millis() - t;
-            if (!calibration.setCalibration(frameNumber, duration))
+            if (!calibration.setCalibration(duration))
             {
                 return false;
             }
-            frameNumber++;
         }
     }
     return true;

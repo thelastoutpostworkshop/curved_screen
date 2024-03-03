@@ -158,6 +158,7 @@ class Calibration
 {
 private:
   unsigned long calibrationValues[MAX_FRAMES];
+  int frameCount;
 
 public:
   Calibration()
@@ -166,18 +167,20 @@ public:
     {
       calibrationValues[i] = 0;
     }
+    frameCount = 0;
   }
-  bool setCalibration(int frame, unsigned long value)
+  bool setCalibration(unsigned long value)
   {
-    if (frame >= MAX_FRAMES)
+    if (frameCount >= MAX_FRAMES)
     {
       Serial.println("Error: Maximum frame count reached.");
       return false;
     }
-    if (calibrationValues[frame] < value)
+    if (calibrationValues[frameCount] < value)
     {
-      calibrationValues[frame] = value;
+      calibrationValues[frameCount] = value;
     }
+    frameCount++;
     return true;
   }
 };
