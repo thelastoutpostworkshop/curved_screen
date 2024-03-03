@@ -187,6 +187,10 @@ public:
   {
     frameCount = 0;
   }
+  int getFrameCount(void)
+  {
+    return frameCount;
+  }
   unsigned long getFrameCalibration(int frameNumber)
   {
     if (frameNumber >= MAX_FRAMES)
