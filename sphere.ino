@@ -136,6 +136,7 @@ bool runCalibration(void)
     int calibrationLoop = 4;
     unsigned long duration, t;
     int frameNumber = 0;
+    bool moreFrame = true;
 
     for (int cal = 0; cal < calibrationLoop; cal++)
     {
@@ -144,22 +145,25 @@ bool runCalibration(void)
             grid[i].display->gif.reset();
         }
         displayNormalMessage("Calibrating...", 40);
-        t = millis();
-        for (int i = 0; i < SCREEN_COUNT; i++)
+        while (moreFrame)
         {
-            grid[i].display->activate();
-            if (grid[i].display->gif.playFrame(false, NULL) == 0)
+            t = millis();
+            for (int i = 0; i < SCREEN_COUNT; i++)
             {
-                // No more frames
+                grid[i].display->activate();
+                if (grid[i].display->gif.playFrame(false, NULL) == 0)
+                {
+                    moreFrame = false;
+                }
+                grid[i].display->deActivate();
             }
-            grid[i].display->deActivate();
+            duration = millis() - t;
+            if (!calibration.setCalibration(frameNumber, duration))
+            {
+                return false;
+            }
+            frameNumber++;
         }
-        duration = millis() - t;
-        if (!calibration.setCalibration(frameNumber, duration))
-        {
-            return false;
-        }
-        frameNumber++;
     }
     return true;
 }
