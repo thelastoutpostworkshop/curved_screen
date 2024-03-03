@@ -291,20 +291,21 @@ int frameNumber = 0;
 void loop()
 {
 #ifdef MASTER
+    durationCalibrated = calibration.getFrameCalibration(frameNumber) + 2;
+    Serial.printf("Calibration frame #%d is %lu ms\n", frameNumber,durationCalibrated);
+    t = millis();
+
     digitalWrite(PIN_SYNC, HIGH);
     delayMicroseconds(100);      // Short duration for the pulse
     digitalWrite(PIN_SYNC, LOW); // Set the signal LOW again
 
-    durationCalibrated = calibration.getFrameCalibration(frameNumber) + 2;
-    Serial.printf("Calibration is %lu ms\n", durationCalibrated);
-    t = millis();
     for (int i = 0; i < SCREEN_COUNT; i++)
     {
         grid[i].display->activate();
         grid[i].display->gif.playFrame(false, NULL);
         grid[i].display->deActivate();
     }
-    Serial.printf("Took %lu ms\n", millis() - t);
+    // Serial.printf("Took %lu ms\n", millis() - t);
     frameNumber++;
     if (frameNumber == calibration.getFrameCount())
     {
