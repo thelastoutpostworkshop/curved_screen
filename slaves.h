@@ -6,12 +6,12 @@
 class SLAVES
 {
 private:
-    int slavesReady;
+    int calibrationReceived;
     String CalibrationData[SLAVECOUNT];
 
     bool allSlavesReady(void)
     {
-        if (slavesReady == SLAVECOUNT)
+        if (calibrationReceived == SLAVECOUNT)
         {
             return true;
         }
@@ -24,15 +24,17 @@ public:
     }
     void resetSlavesReady(void)
     {
-        slavesReady = 0;
-    }
-    void addSlavesReady(void)
-    {
-        slavesReady++;
+        calibrationReceived = 0;
     }
     void addCalibrationData(String data)
     {
-        CalibrationData[slavesReady] = data;
+        if (calibrationReceived < SLAVECOUNT)
+        {
+            CalibrationData[calibrationReceived] = data;
+            calibrationReceived++;
+        } else {
+            Serial.println("Too many calibration data received!");
+        }
     }
 
     void waitForAllSlaves(void)

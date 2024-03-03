@@ -165,7 +165,9 @@ bool runCalibration(void)
             }
         }
     }
+#ifndef MASTER
     sendCalibrationValues(calibration.getCalibrationValues());
+#endif
     return true;
 }
 
@@ -174,7 +176,6 @@ void setup()
 #ifdef MASTER
     pinMode(PIN_SYNC, OUTPUT);
     digitalWrite(PIN_SYNC, LOW);
-    SLAVES slaves;
     slaves.resetSlavesReady();
 #else
     pinMode(PIN_SYNC, INPUT_PULLUP);

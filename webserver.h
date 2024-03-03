@@ -9,11 +9,11 @@
 #ifdef MASTER
 AsyncWebServer masterServer(80);
 
-void handleReady(AsyncWebServerRequest *request)
-{
-    request->send(200, "text/plain", "ok");
-    slaves->addSlavesReady();
-}
+// void handleReady(AsyncWebServerRequest *request)
+// {
+//     request->send(200, "text/plain", "ok");
+//     slaves->addSlavesReady();
+// }
 
 // Function to process the calibration data
 void processCalibrationData(uint8_t *data, size_t len, AsyncWebServerRequest *request)
@@ -26,6 +26,7 @@ void processCalibrationData(uint8_t *data, size_t len, AsyncWebServerRequest *re
 
     Serial.println("Received calibration data:");
     Serial.println(calibrationData);
+    slaves.addCalibrationData(calibrationData);
     request->send(200, "text/plain", "Calibration data received");
 }
 #endif
@@ -57,8 +58,8 @@ ErrorCode initWebServer()
         Serial.println("Error starting mDNS for the Master");
         return noMDNS;
     }
-    masterServer.on("/ready", HTTP_GET, [](AsyncWebServerRequest *request)
-                    { handleReady(request); });
+    // masterServer.on("/ready", HTTP_GET, [](AsyncWebServerRequest *request)
+    //                 { handleReady(request); });
     masterServer.on(
         "/calibration", HTTP_POST, [](AsyncWebServerRequest *request) {}, NULL,
         [](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
