@@ -187,6 +187,15 @@ public:
   {
     frameCount = 0;
   }
+  unsigned long getFrameCalibration(int frameNumber)
+  {
+    if (frameNumber >= MAX_FRAMES)
+    {
+      Serial.printf("Error:getFrameCalibration frameNumber %d wrong\n", frameNumber);
+      return ULONG_MAX;
+    }
+    return calibrationValues[frameNumber];
+  }
   bool addCalibration(unsigned long value)
   {
     if (frameCount >= MAX_FRAMES)
