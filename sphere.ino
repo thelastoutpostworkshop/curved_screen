@@ -163,6 +163,7 @@ bool runCalibration(void)
             }
         }
     }
+    Serial.println(calibration.getCalibrationValues());
     return true;
 }
 

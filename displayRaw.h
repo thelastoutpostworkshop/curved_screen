@@ -183,6 +183,19 @@ public:
     frameCount++;
     return true;
   }
+  String getCalibrationValues(void)
+  {
+    String payload = "";
+    for (int frameNumber = 0; frameNumber < frameCount; frameNumber++)
+    {
+      if (frameNumber > 0)
+      {
+        payload += ";"; // Separator between frames
+      }
+      payload += String(frameNumber) + "," + String(calibrationValues[frameNumber]);
+    }
+    return payload;
+  }
 };
 
 class Display
