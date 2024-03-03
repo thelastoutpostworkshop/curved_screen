@@ -25,9 +25,7 @@ Screen grid[SCREEN_COUNT] = {
     {.csPin = 8, .rotation = 3},
     {.csPin = 3, .rotation = 3}};
 
-#ifdef MASTER
 Calibration calibration;
-#endif
 
 void createDisplay(void)
 {
@@ -174,6 +172,7 @@ bool runCalibration(void)
     return true;
 }
 
+#ifdef MASTER
 bool processCalibrationData(void)
 {
     for (int i = 0; i < SLAVECOUNT; i++)
@@ -185,6 +184,7 @@ bool processCalibrationData(void)
     }
     return true;
 }
+#endif
 
 void setup()
 {
@@ -292,7 +292,7 @@ void loop()
 {
 #ifdef MASTER
     durationCalibrated = calibration.getFrameCalibration(frameNumber) + 2;
-    Serial.printf("Calibration frame #%d is %lu ms\n", frameNumber,durationCalibrated);
+    Serial.printf("Calibration frame #%d is %lu ms\n", frameNumber, durationCalibrated);
     t = millis();
 
     digitalWrite(PIN_SYNC, HIGH);
@@ -329,14 +329,18 @@ void loop()
     // GIF
     if (digitalRead(PIN_SYNC) == HIGH)
     {
+        Serial.printf("Playing frame #%d\n", frameNumber);
         t = millis();
         for (int i = 0; i < SCREEN_COUNT; i++)
         {
             grid[i].display->activate();
-            // tft.startWrite();
             grid[i].display->gif.playFrame(false, NULL);
-            // tft.endWrite();
             grid[i].display->deActivate();
+        }
+        frameNumber++;
+        if (frameNumber == calibration.getFrameCount())
+        {
+            frameNumber = 0;
         }
         Serial.printf("Took %ld ms\n", millis() - t);
     }
