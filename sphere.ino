@@ -126,7 +126,7 @@ void eraseAllScreen(void)
 {
     for (int i = 0; i < SCREEN_COUNT; i++)
     {
-        grid[0].display->clearScreen();
+        grid[i].display->clearScreen();
     }
 }
 
