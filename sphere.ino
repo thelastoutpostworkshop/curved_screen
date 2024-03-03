@@ -286,7 +286,8 @@ void setup()
 #endif
 }
 
-unsigned long t;
+unsigned long t, durationCalibrated;
+int frameNumber = 0;
 void loop()
 {
 #ifdef MASTER
@@ -294,20 +295,21 @@ void loop()
     delayMicroseconds(100);      // Short duration for the pulse
     digitalWrite(PIN_SYNC, LOW); // Set the signal LOW again
 
+    durationCalibrated = calibration.getFrameCalibration(frameNumber) + 2;
     t = millis();
     for (int i = 0; i < SCREEN_COUNT; i++)
     {
         grid[i].display->activate();
-        tft.startWrite();
         if (grid[i].display->gif.playFrame(false, NULL) == 0)
         {
             grid[i].display->gif.reset();
+            frameNumber = 0;
         }
-        tft.endWrite();
         grid[i].display->deActivate();
+        frameNumber++;
     }
     Serial.printf("Took %ld ms\n", millis() - t);
-    while (millis() - t < 145)
+    while (millis() - t < durationCalibrated)
         ;
         // waitForSlaves();
 #else
