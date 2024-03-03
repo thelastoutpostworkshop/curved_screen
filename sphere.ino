@@ -311,7 +311,7 @@ void loop()
     {
         frameNumber = 0;
     }
-    while (millis() - t < durationCalibrated)
+    while ((millis() - t) < durationCalibrated)
         ;
         // waitForSlaves();
 #else
