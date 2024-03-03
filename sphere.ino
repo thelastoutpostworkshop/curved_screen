@@ -303,15 +303,16 @@ void loop()
         grid[i].display->activate();
         grid[i].display->gif.playFrame(false, NULL);
         grid[i].display->deActivate();
-        frameNumber++;
-        if(frameNumber == calibration.getFrameCount()){
-            frameNumber = 0;
-        }
     }
     Serial.printf("Took %lu ms\n", millis() - t);
+    frameNumber++;
+    if (frameNumber == calibration.getFrameCount())
+    {
+        frameNumber = 0;
+    }
     while (millis() - t < durationCalibrated)
         ;
-    // waitForSlaves();
+        // waitForSlaves();
 #else
     // if (digitalRead(PIN_SYNC) == HIGH)
     // {
