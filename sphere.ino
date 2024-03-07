@@ -165,6 +165,7 @@ bool runCalibration(void)
                 return false;
             }
         }
+        Serial.println(calibration.getCalibrationValues().c_str());
     }
 #ifndef MASTER
     sendCalibrationValues(calibration.getCalibrationValues());
@@ -185,7 +186,6 @@ bool processCalibrationData(void)
     return true;
 }
 #endif
-
 void setup()
 {
 #ifdef MASTER
@@ -281,6 +281,9 @@ void setup()
         while (true)
             ;
     }
+    Serial.println("Final calibration values:");
+    Serial.println(calibration.getCalibrationValues().c_str());
+
 #else
     // sendReady();
 #endif
