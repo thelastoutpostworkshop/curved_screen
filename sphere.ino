@@ -9,6 +9,7 @@ uint8_t *frameBuffer;
 int framesCount;
 String esp_id_s;
 uint64_t ESPID;
+volatile bool syncTriggered = false;
 
 typedef struct
 {
@@ -185,7 +186,13 @@ bool processCalibrationData(void)
     }
     return true;
 }
+#else
+void handleSyncInterrupt()
+{
+    syncTriggered = true;
+}
 #endif
+
 void setup()
 {
 #ifdef MASTER
@@ -194,6 +201,8 @@ void setup()
     slaves.resetSlavesReady();
 #else
     pinMode(PIN_SYNC, INPUT_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(PIN_SYNC), handleSyncInterrupt, RISING);
+
 #endif
 
     Serial.begin(115200);
@@ -295,7 +304,7 @@ void loop()
 {
 #ifdef MASTER
     // durationCalibrated = calibration.getFrameCalibration(frameNumber) + 10;
-    durationCalibrated=500;
+    durationCalibrated = 500;
     Serial.printf("Calibration frame #%d is %lu ms\n", frameNumber, durationCalibrated);
 
     digitalWrite(PIN_SYNC, HIGH);
@@ -332,7 +341,7 @@ void loop()
     // }
 
     // GIF
-    if (digitalRead(PIN_SYNC) == HIGH)
+    if (syncTriggered)
     {
         Serial.printf("Playing frame #%d\n", frameNumber);
         // t = millis();
@@ -347,6 +356,7 @@ void loop()
         {
             frameNumber = 0;
         }
+        syncTriggered = false;
         // Serial.printf("Took %ld ms\n", millis() - t);
     }
 
