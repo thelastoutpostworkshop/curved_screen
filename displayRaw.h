@@ -21,8 +21,22 @@ uint16_t usTemp[1][BUFFER_SIZE]; // Global to support DMA use
 #endif
 bool dmaBuf = 0;
 
-// Draw a line of image directly on the LCD
 void GIFDraw(GIFDRAW *pDraw)
+{
+  // tft.startWrite();
+  // Serial.printf("x=%d, y=%d, w=%d, h=%d\n", pDraw->iX, pDraw->iY, pDraw->iWidth, pDraw->iHeight);
+  if (pDraw->y == 0)
+  { // set the memory window (once per frame) when the first line is rendered
+    tft.setAddrWindow(pDraw->iX, pDraw->iY, pDraw->iWidth, pDraw->iHeight);
+  }
+  // For all other lines, just push the pixels to the display. We requested 'COOKED'big-endian RGB565 and
+  // the library provides them here. No need to do anything except push them right to the display
+  tft.pushPixels((uint16_t *)pDraw->pPixels, pDraw->iWidth);
+  // tft.endWrite();
+} /* GIFDraw() *
+
+// Draw a line of image directly on the LCD
+void GIFDraw2(GIFDRAW *pDraw)
 {
   uint8_t *s;
   uint16_t *d, *usPalette;
@@ -143,7 +157,7 @@ void GIFDraw(GIFDRAW *pDraw)
 void initTFT_eSPI(void)
 {
   tft.init();
-  tft.setSwapBytes(true);
+  // tft.setSwapBytes(true);
   tft.setFreeFont(&Prototype20pt7b);
 }
 
@@ -270,6 +284,7 @@ private:
   uint16_t frameCount = 0;
   uint8_t *frames[MAX_FRAMES];
   size_t framesSize[MAX_FRAMES];
+  uint8_t *pTurboGIFBuffer, *frameGIFBuffer;
 
 public:
   AnimatedGIF gif;
@@ -347,7 +362,20 @@ public:
 
   int openGif(void)
   {
-    gif.begin();
+    gif.begin(GIF_PALETTE_RGB565_BE);
+    pTurboGIFBuffer = (uint8_t *)heap_caps_malloc(TURBO_BUFFER_SIZE + (imageWidth * imageHeight), MALLOC_CAP_8BIT);
+    if (pTurboGIFBuffer == NULL)
+    {
+      Serial.println("Could not allocate pTurboBuffer");
+    }
+    frameGIFBuffer = (uint8_t *)malloc(imageWidth * imageHeight * 2);
+    if (frameGIFBuffer == NULL)
+    {
+      Serial.println("Could not allocate frameBuffer");
+    }
+    gif.setDrawType(GIF_DRAW_COOKED);
+    gif.setTurboBuf(pTurboGIFBuffer);
+    gif.setFrameBuf(frameGIFBuffer);
     return gif.open(frames[0], framesSize[0], GIFDraw);
   }
 
