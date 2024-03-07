@@ -367,11 +367,13 @@ public:
     if (pTurboGIFBuffer == NULL)
     {
       Serial.println("Could not allocate pTurboBuffer");
+      return 0;
     }
     frameGIFBuffer = (uint8_t *)malloc(imageWidth * imageHeight * 2);
     if (frameGIFBuffer == NULL)
     {
       Serial.println("Could not allocate frameBuffer");
+      return 0;
     }
     gif.setDrawType(GIF_DRAW_COOKED);
     gif.setTurboBuf(pTurboGIFBuffer);
