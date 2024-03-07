@@ -294,15 +294,16 @@ int frameNumber = 0;
 void loop()
 {
 #ifdef MASTER
-    durationCalibrated = calibration.getFrameCalibration(frameNumber) + 10;
-    // durationCalibrated=300;
-    // Serial.printf("Calibration frame #%d is %lu ms\n", frameNumber, durationCalibrated);
-    t = millis();
+    // durationCalibrated = calibration.getFrameCalibration(frameNumber) + 10;
+    durationCalibrated=500;
+    Serial.printf("Calibration frame #%d is %lu ms\n", frameNumber, durationCalibrated);
 
     digitalWrite(PIN_SYNC, HIGH);
-    delayMicroseconds(100);      // Short duration for the pulse
+    // delayMicroseconds(100);      // Short duration for the pulse
+    delay(3);
     digitalWrite(PIN_SYNC, LOW); // Set the signal LOW again
 
+    t = millis();
     for (int i = 0; i < SCREEN_COUNT; i++)
     {
         grid[i].display->activate();
@@ -333,7 +334,7 @@ void loop()
     // GIF
     if (digitalRead(PIN_SYNC) == HIGH)
     {
-        // Serial.printf("Playing frame #%d\n", frameNumber);
+        Serial.printf("Playing frame #%d\n", frameNumber);
         // t = millis();
         for (int i = 0; i < SCREEN_COUNT; i++)
         {
@@ -341,11 +342,11 @@ void loop()
             grid[i].display->gif.playFrame(false, NULL);
             grid[i].display->deActivate();
         }
-        // frameNumber++;
-        // if (frameNumber == calibration.getFrameCount())
-        // {
-        //     frameNumber = 0;
-        // }
+        frameNumber++;
+        if (frameNumber == calibration.getFrameCount())
+        {
+            frameNumber = 0;
+        }
         // Serial.printf("Took %ld ms\n", millis() - t);
     }
 
