@@ -171,6 +171,7 @@ bool runCalibration(void)
 #ifndef MASTER
     sendCalibrationValues(calibration.getCalibrationValues());
 #endif
+    framesCount = calibration.getFrameCount();
     return true;
 }
 
@@ -308,7 +309,7 @@ void loop()
     Serial.printf("Calibration frame #%d is %lu ms\n", frameNumber, durationCalibrated);
 
     digitalWrite(PIN_SYNC, HIGH);
-    delayMicroseconds(100);      // Short duration for the pulse
+    delayMicroseconds(100); // Short duration for the pulse
     // delay(3);
     digitalWrite(PIN_SYNC, LOW); // Set the signal LOW again
 
@@ -321,7 +322,7 @@ void loop()
     }
     // Serial.printf("Took %lu ms\n", millis() - t);
     frameNumber++;
-    if (frameNumber == calibration.getFrameCount())
+    if (frameNumber == framesCount)
     {
         frameNumber = 0;
     }
@@ -352,7 +353,7 @@ void loop()
             grid[i].display->deActivate();
         }
         frameNumber++;
-        if (frameNumber == calibration.getFrameCount())
+        if (frameNumber == framesCount)
         {
             frameNumber = 0;
         }
