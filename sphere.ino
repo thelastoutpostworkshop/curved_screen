@@ -309,13 +309,12 @@ int frameNumber = 0;
 void loop()
 {
 #ifdef MASTER
-    // durationCalibrated = calibration.getFrameCalibration(frameNumber) + 15;
-    durationCalibrated = 160;
-    Serial.printf("Calibration frame #%d is %lu ms\n", frameNumber, durationCalibrated);
+    durationCalibrated = calibration.getFrameCalibration(frameNumber) + 15;
+    // durationCalibrated = 160;
+    // Serial.printf("Calibration frame #%d is %lu ms\n", frameNumber, durationCalibrated);
 
     digitalWrite(PIN_SYNC, HIGH);
     delayMicroseconds(100); // Short duration for the pulse
-    // delay(3);
     digitalWrite(PIN_SYNC, LOW); // Set the signal LOW again
 
     t = millis();
