@@ -187,7 +187,7 @@ bool processCalibrationData(void)
     return true;
 }
 #else
-void handleSyncInterrupt()
+void showFrameInterrupt()
 {
     for (int i = 0; i < SCREEN_COUNT; i++)
     {
@@ -206,7 +206,7 @@ void setup()
     slaves.resetSlavesReady();
 #else
     pinMode(PIN_SYNC_SHOW_FRAME, INPUT_PULLUP);
-    attachInterrupt(digitalPinToInterrupt(PIN_SYNC_SHOW_FRAME), handleSyncInterrupt, RISING);
+    attachInterrupt(digitalPinToInterrupt(PIN_SYNC_SHOW_FRAME), showFrameInterrupt, RISING);
 
 #endif
 
