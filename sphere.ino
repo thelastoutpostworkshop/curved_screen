@@ -5,6 +5,7 @@
 #include "webserver.h"
 
 #define FRAME_BUFFER_SIZE 50000L
+#define SAFETY_WAIT_TIME_FRAME 5
 uint8_t *frameBuffer;
 int framesCount;
 String esp_id_s;
@@ -308,7 +309,7 @@ int frameNumber = 0;
 void loop()
 {
 #ifdef MASTER
-    durationCalibrated = calibration.getFrameCalibration(frameNumber) + 15;
+    durationCalibrated = calibration.getFrameCalibration(frameNumber) + SAFETY_WAIT_TIME_FRAME;
     // durationCalibrated = 160;
     // Serial.printf("Calibration frame #%d is %lu ms\n", frameNumber, durationCalibrated);
 
