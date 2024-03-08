@@ -4,7 +4,6 @@
 #include "ESP.h"
 #include "webserver.h"
 
-#define FRAME_BUFFER_SIZE 50000L
 #define SAFETY_WAIT_TIME_FRAME 5
 uint8_t *frameBuffer;
 int framesCount;
@@ -34,38 +33,6 @@ void createDisplay(void)
     {
         grid[i].display = new Display(grid[i].csPin, grid[i].rotation);
     }
-}
-
-ErrorCode getJPGFrames(void)
-{
-    String frameText = "";
-    framesCount = getFramesCount();
-    // Serial.printf("Frames Count = %d\n", framesCount);
-
-    if (framesCount <= 0)
-    {
-        return noFrames;
-    }
-
-    for (int i = 0; i < SCREEN_COUNT; i++)
-    {
-        Screen currentScreen = grid[i];
-        for (int frameIndex = 0; frameIndex < framesCount; frameIndex++)
-        {
-            size_t jpgsize = getFrameJPGData(esp_id_s, i, frameIndex, frameBuffer, FRAME_BUFFER_SIZE);
-            if (jpgsize == 0)
-            {
-                return cannotGetJPGFrames;
-            }
-            currentScreen.display->addNewFrame(frameBuffer, jpgsize);
-            frameText = String(frameIndex + 1) + "/" + String(framesCount);
-            grid[i].display->clearScreen();
-            grid[i].display->showText("Frames", 50, TFT_GREEN);
-            grid[i].display->showText(frameText.c_str(), 100, TFT_GREEN);
-            yield();
-        }
-    }
-    return noError;
 }
 
 ErrorCode getGifFiles(void)
@@ -221,15 +188,6 @@ void setup()
     initTFT_eSPI();
     createDisplay();
 
-    frameBuffer = (uint8_t *)malloc(FRAME_BUFFER_SIZE);
-
-    if (frameBuffer == NULL)
-    {
-        displayErrorMessage("No Memory for Frame Buffer", 40);
-        while (true)
-            ;
-    }
-
     ESPID = ESP.getEfuseMac();
     esp_id_s = String(ESPID);
 
@@ -332,38 +290,5 @@ void loop()
     }
     while ((millis() - t) <= durationCalibrated)
         ;
-        // waitForSlaves();
-#else
-    // if (digitalRead(PIN_SYNC) == HIGH)
-    // {
-    //     t = millis();
-    //     for (int i = 0; i < SCREEN_COUNT; i++)
-    //     {
-    //         grid[i].display->showJPGFrames();
-    //     }
-    //     // sendReady();
-    //     Serial.printf("Took %ld ms\n", millis() - t);
-    // }
-
-    // GIF
-    // if (syncTriggered)
-    // {
-    //     // Serial.printf("Playing frame #%d\n", frameNumber);
-    //     // t = millis();
-    //     for (int i = 0; i < SCREEN_COUNT; i++)
-    //     {
-    //         grid[i].display->activate();
-    //         grid[i].display->gif.playFrame(false, NULL);
-    //         grid[i].display->deActivate();
-    //     }
-    //     frameNumber++;
-    //     if (frameNumber == framesCount)
-    //     {
-    //         frameNumber = 0;
-    //     }
-    //     syncTriggered = false;
-    //     // Serial.printf("Took %ld ms\n", millis() - t);
-    // }
-
 #endif
 }
