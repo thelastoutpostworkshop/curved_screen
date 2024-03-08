@@ -173,8 +173,7 @@ void setup()
     slaves.resetSlavesReady();
 #else
     pinMode(PIN_SYNC_SHOW_FRAME, INPUT_PULLUP);
-    attachInterrupt(digitalPinToInterrupt(PIN_SYNC_SHOW_FRAME), showFrameInterrupt, RISING);
-
+    delay(5000); // Give the master the time to start
 #endif
 
     Serial.begin(115200);
@@ -210,6 +209,8 @@ void setup()
 
     eraseAllScreen();
 
+    attachInterrupt(digitalPinToInterrupt(PIN_SYNC_SHOW_FRAME), showFrameInterrupt, RISING);
+
     if (!runCalibration())
     {
         displayErrorMessage("Calibration Error", 40);
@@ -221,8 +222,9 @@ void setup()
     Serial.printf("id=%s\n", esp_id_s.c_str());
 
     String psram = "PSRAM left=" + formatBytes(ESP.getFreePsram());
-    displayNormalMessage(psram.c_str(), 40);
-    eraseAllScreen();
+    Serial.println(psram.c_str());
+    // displayNormalMessage(psram.c_str(), 40);
+    // eraseAllScreen();
 
 #ifdef MASTER
     displayNormalMessage("Waiting for slaves...", 40);
@@ -248,7 +250,7 @@ void loop()
     // Serial.printf("Calibration frame #%d is %lu ms\n", frameNumber, durationCalibrated);
 
     digitalWrite(PIN_SYNC_SHOW_FRAME, HIGH);
-    delayMicroseconds(100); // Short duration for the pulse
+    delayMicroseconds(100);                 // Short duration for the pulse
     digitalWrite(PIN_SYNC_SHOW_FRAME, LOW); // Set the signal LOW again
 
     t = millis();
