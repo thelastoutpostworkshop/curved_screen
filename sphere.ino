@@ -191,26 +191,6 @@ void setup()
     ESPID = ESP.getEfuseMac();
     esp_id_s = String(ESPID);
 
-    // Retrieve all the JPG Frames
-    // ErrorCode res = getJPGFrames();
-    // if (res != noError)
-    // {
-    //     switch (res)
-    //     {
-    //     case noFrames:
-    //         Serial.println("Error: No Frames.");
-    //         displayErrorMessage("No Frames", 40);
-    //         break;
-
-    //     case cannotGetJPGFrames:
-    //         Serial.println("Error: Could not retrieved all the jpg images, cannot continue.");
-    //         displayErrorMessage("Could not retrieved all the jpg images", 40);
-    //         break;
-    //     }
-    //     while (true)
-    //         ;
-    // }
-
     ErrorCode res = getGifFiles();
     if (res != noError)
     {
@@ -256,9 +236,6 @@ void setup()
     }
     Serial.println("Final calibration values:");
     Serial.println(calibration.getCalibrationValues().c_str());
-
-#else
-    // sendReady();
 #endif
 }
 
