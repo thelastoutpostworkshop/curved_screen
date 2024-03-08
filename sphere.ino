@@ -343,7 +343,7 @@ void loop()
     // GIF
     if (syncTriggered)
     {
-        Serial.printf("Playing frame #%d\n", frameNumber);
+        // Serial.printf("Playing frame #%d\n", frameNumber);
         // t = millis();
         for (int i = 0; i < SCREEN_COUNT; i++)
         {
