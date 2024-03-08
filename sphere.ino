@@ -5,7 +5,6 @@
 #include "webserver.h"
 
 #define SAFETY_WAIT_TIME_FRAME 5
-uint8_t *frameBuffer;
 int framesCount;
 String esp_id_s;
 uint64_t ESPID;
