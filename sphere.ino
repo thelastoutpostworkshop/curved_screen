@@ -229,6 +229,7 @@ void setup()
     // eraseAllScreen();
 
 #ifdef MASTER
+    eraseAllScreen();
     displayNormalMessage("Waiting for slaves...", 40);
     slaves.waitForAllSlaves();
     if (!processCalibrationData())
