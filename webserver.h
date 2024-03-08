@@ -31,8 +31,6 @@ void handleCalibrationData(uint8_t *data, size_t len, AsyncWebServerRequest *req
 }
 #endif
 
-HTTPClient http;
-
 const String apiEndpoint = "http://192.168.1.90:3000/api/";
 const String apiFrameCount = "frames-count";
 const String apiFrameJPG = "framejpg/";
@@ -72,12 +70,13 @@ ErrorCode initWebServer()
 
 #endif
 
-    http.setReuse(true);
     return noError;
 }
 
 void sendCalibrationValues(String calibrationValues)
 {
+    HTTPClient http;
+
     String url = String("http://") + String(SERVERNAME) + ".local/calibration";
     Serial.printf("Sending calibration data %s\n", url.c_str());
     http.begin(url);
@@ -101,6 +100,8 @@ void sendCalibrationValues(String calibrationValues)
 
 void sendReady(void)
 {
+    HTTPClient http;
+
     String url = String("http://") + String(SERVERNAME) + ".local/ready";
     http.begin(url);
     int httpCode = http.GET();
@@ -114,6 +115,8 @@ void sendReady(void)
 
 int getFramesCount()
 {
+    HTTPClient http;
+
     String url = apiEndpoint + apiFrameCount;
     http.begin(url);
     int httpCode = http.GET();
@@ -134,10 +137,11 @@ int getFramesCount()
 
 size_t getFrameJPGData(String esp_id, int screenNumber, int frameNumber, uint8_t *buffer, size_t bufferSize)
 {
+    HTTPClient http;
+
     String url = apiEndpoint + apiFrameJPG + esp_id + "/" + String(screenNumber) + "/" + String(frameNumber);
     // Serial.printf("Calling %s\n", url.c_str());
 
-    http.setReuse(true);
     http.begin(url);
     int httpCode = http.GET();
 
@@ -179,10 +183,11 @@ size_t getFrameJPGData(String esp_id, int screenNumber, int frameNumber, uint8_t
 
 uint8_t *getGifData(String esp_id, int screenNumber, size_t *bufferSize)
 {
+    HTTPClient http;
+
     String url = apiEndpoint + apiGif + esp_id + "/" + String(screenNumber);
     Serial.printf("Calling %s\n", url.c_str());
 
-    http.setReuse(true);
     http.begin(url);
     int httpCode = http.GET();
     void *gifData = NULL;
