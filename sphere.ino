@@ -190,7 +190,12 @@ bool processCalibrationData(void)
 #else
 void handleSyncInterrupt()
 {
-    syncTriggered = true;
+    for (int i = 0; i < SCREEN_COUNT; i++)
+    {
+        grid[i].display->activate();
+        grid[i].display->gif.playFrame(false, NULL);
+        grid[i].display->deActivate();
+    }
 }
 #endif
 
@@ -342,24 +347,24 @@ void loop()
     // }
 
     // GIF
-    if (syncTriggered)
-    {
-        // Serial.printf("Playing frame #%d\n", frameNumber);
-        // t = millis();
-        for (int i = 0; i < SCREEN_COUNT; i++)
-        {
-            grid[i].display->activate();
-            grid[i].display->gif.playFrame(false, NULL);
-            grid[i].display->deActivate();
-        }
-        frameNumber++;
-        if (frameNumber == framesCount)
-        {
-            frameNumber = 0;
-        }
-        syncTriggered = false;
-        // Serial.printf("Took %ld ms\n", millis() - t);
-    }
+    // if (syncTriggered)
+    // {
+    //     // Serial.printf("Playing frame #%d\n", frameNumber);
+    //     // t = millis();
+    //     for (int i = 0; i < SCREEN_COUNT; i++)
+    //     {
+    //         grid[i].display->activate();
+    //         grid[i].display->gif.playFrame(false, NULL);
+    //         grid[i].display->deActivate();
+    //     }
+    //     frameNumber++;
+    //     if (frameNumber == framesCount)
+    //     {
+    //         frameNumber = 0;
+    //     }
+    //     syncTriggered = false;
+    //     // Serial.printf("Took %ld ms\n", millis() - t);
+    // }
 
 #endif
 }
