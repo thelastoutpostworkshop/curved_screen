@@ -209,7 +209,9 @@ void setup()
 
     eraseAllScreen();
 
+#ifndef MASTER
     attachInterrupt(digitalPinToInterrupt(PIN_SYNC_SHOW_FRAME), showFrameInterrupt, RISING);
+#endif
 
     if (!runCalibration())
     {
