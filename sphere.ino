@@ -9,7 +9,6 @@ uint8_t *frameBuffer;
 int framesCount;
 String esp_id_s;
 uint64_t ESPID;
-volatile bool syncTriggered = false;
 
 typedef struct
 {
@@ -202,12 +201,12 @@ void handleSyncInterrupt()
 void setup()
 {
 #ifdef MASTER
-    pinMode(PIN_SYNC, OUTPUT);
-    digitalWrite(PIN_SYNC, LOW);
+    pinMode(PIN_SYNC_SHOW_FRAME, OUTPUT);
+    digitalWrite(PIN_SYNC_SHOW_FRAME, LOW);
     slaves.resetSlavesReady();
 #else
-    pinMode(PIN_SYNC, INPUT_PULLUP);
-    attachInterrupt(digitalPinToInterrupt(PIN_SYNC), handleSyncInterrupt, RISING);
+    pinMode(PIN_SYNC_SHOW_FRAME, INPUT_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(PIN_SYNC_SHOW_FRAME), handleSyncInterrupt, RISING);
 
 #endif
 
@@ -313,9 +312,9 @@ void loop()
     // durationCalibrated = 160;
     // Serial.printf("Calibration frame #%d is %lu ms\n", frameNumber, durationCalibrated);
 
-    digitalWrite(PIN_SYNC, HIGH);
+    digitalWrite(PIN_SYNC_SHOW_FRAME, HIGH);
     delayMicroseconds(100); // Short duration for the pulse
-    digitalWrite(PIN_SYNC, LOW); // Set the signal LOW again
+    digitalWrite(PIN_SYNC_SHOW_FRAME, LOW); // Set the signal LOW again
 
     t = millis();
     for (int i = 0; i < SCREEN_COUNT; i++)
