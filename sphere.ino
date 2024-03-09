@@ -48,12 +48,12 @@ ErrorCode getGifFiles(void)
         gifData = getGifData(esp_id_s, i, &gifLength);
         if (gifData == NULL)
         {
-            return cannotGetGifFiles;
+            return lastError;
         }
         currentScreen.display->addGif(gifData, gifLength);
         if (!currentScreen.display->openGif())
         {
-            return cannotOpenGifFile;
+            return lastError;
         }
         currentScreen.display->clearScreen();
         currentScreen.display->showText("Completed", 50, TFT_GREEN);
@@ -201,6 +201,11 @@ void setup()
         case cannotOpenGifFile:
             displayErrorMessage("Could not open a GIF file", 40);
             break;
+        
+        case notEnoughMemory:
+            displayErrorMessage("Not Enough memory", 40);
+            break;
+        
         }
 
         while (true)

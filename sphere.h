@@ -18,7 +18,10 @@ enum ErrorCode
     cannotGetJPGFrames,
     cannotGetGifFiles,
     cannotOpenGifFile,
+    notEnoughMemory,
     noMDNS
 };
+
+ErrorCode lastError;
 
 #endif

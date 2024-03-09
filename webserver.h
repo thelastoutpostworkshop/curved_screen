@@ -200,6 +200,7 @@ uint8_t *getGifData(String esp_id, int screenNumber, size_t *bufferSize)
         if (result != 0)
         {
             Serial.println("Error: Memory allocation for getGifData failed.");
+            lastError = notEnoughMemory;
             return NULL;
         }
         *bufferSize = contentLength;
@@ -228,6 +229,7 @@ uint8_t *getGifData(String esp_id, int screenNumber, size_t *bufferSize)
     {
         Serial.printf("[HTTP] GET failed, error: %s\n", http.errorToString(httpCode).c_str());
         http.end();
-        return 0;
+        lastError = cannotGetGifFiles;
+        return NULL;
     }
 }
