@@ -76,29 +76,41 @@ ErrorCode initWebServer()
     return noError;
 }
 
-void sendCalibrationValues(String calibrationValues)
+ErrorCode sendCalibrationValues(String calibrationValues)
 {
     HTTPClient http;
+    int httpResponseCode = -1;
+    int retry = 0;
 
     String url = String("http://") + String(SERVERNAME) + ".local/calibration";
     Serial.printf("Sending calibration data %s\n", url.c_str());
-    http.begin(url);
-    http.addHeader("Content-Type", "text/plain");
 
-    int httpResponseCode = http.POST(calibrationValues);
-
-    if (httpResponseCode > 0)
+    while (httpResponseCode < 0 && retry < MAXRETRY)
     {
-        String response = http.getString(); // Get server response
-        Serial.println(httpResponseCode);
-        Serial.println(response);
+        if (retry > 0)
+        {
+            Serial.println("Retrying...");
+        }
+        http.end();
+        http.begin(url);
+        http.addHeader("Content-Type", "text/plain");
+
+        httpResponseCode = http.POST(calibrationValues);
+
+        // if (httpResponseCode > 0)
+        // {
+        //     String response = http.getString(); // Get server response
+        //     Serial.println(httpResponseCode);
+        //     Serial.println(response);
+        // }
+        retry++;
     }
-    else
+    if (httpResponseCode < 0)
     {
         Serial.printf("[HTTP] GET failed, error: %s\n", http.errorToString(httpResponseCode).c_str());
+        return cannotSendCalibrationValues;
     }
-
-    http.end();
+    return noError;
 }
 
 void sendReady(void)

@@ -135,7 +135,12 @@ bool runCalibration(void)
         Serial.println(calibration.getCalibrationValues().c_str());
     }
 #ifndef MASTER
-    sendCalibrationValues(calibration.getCalibrationValues());
+    if (sendCalibrationValues(calibration.getCalibrationValues()) != noError)
+    {
+        displayNormalMessage("Error sending calibration values", 40);
+        while (true)
+            ;
+    }
 #endif
     framesCount = calibration.getFrameCount();
     return true;
@@ -201,11 +206,10 @@ void setup()
         case cannotOpenGifFile:
             displayErrorMessage("Could not open a GIF file", 40);
             break;
-        
+
         case notEnoughMemory:
             displayErrorMessage("Not Enough memory", 40);
             break;
-        
         }
 
         while (true)
