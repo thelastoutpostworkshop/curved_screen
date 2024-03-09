@@ -6,6 +6,9 @@
 #include "secrets.h"
 #include "sphere.h"
 
+#define MAXRETRY 10
+#define PAUSEDELAYRETRY 100
+
 #ifdef MASTER
 AsyncWebServer masterServer(80);
 
@@ -181,17 +184,34 @@ size_t getFrameJPGData(String esp_id, int screenNumber, int frameNumber, uint8_t
     }
 }
 
+int HTTPGetWithRetry(HTTPClient *http, String url, int httpCode)
+{
+    int retry = 0;
+    while (httpCode != HTTP_CODE_OK && retry < MAXRETRY)
+    {
+        Serial.printf("Calling %s\n", url.c_str());
+        if (retry > 0)
+        {
+            Serial.println("Retrying...");
+        }
+        http->end();
+        http->begin(url);
+        httpCode = http->GET();
+        retry++;
+        delay(PAUSEDELAYRETRY);
+    }
+    return httpCode;
+}
+
 uint8_t *getGifData(String esp_id, int screenNumber, size_t *bufferSize)
 {
     HTTPClient http;
+    int httpCode;
 
     String url = apiEndpoint + apiGif + esp_id + "/" + String(screenNumber);
-    Serial.printf("Calling %s\n", url.c_str());
-
-    http.begin(url);
-    int httpCode = http.GET();
     void *gifData = NULL;
 
+    httpCode = HTTPGetWithRetry(&http, url, httpCode);
     if (httpCode == HTTP_CODE_OK)
     {
         size_t contentLength = http.getSize();
