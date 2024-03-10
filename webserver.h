@@ -100,6 +100,7 @@ ErrorCode sendCalibrationValues(String calibrationValues)
 
     String url = String("http://") + String(SERVERNAME) + ".local/calibration";
     Serial.printf("Sending calibration data %s\n", url.c_str());
+    http.setConnectTimeout(10000);
 
     while (httpResponseCode < 0 && retry < MAXRETRY)
     {
