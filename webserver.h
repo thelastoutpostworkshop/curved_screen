@@ -12,15 +12,20 @@
 #ifdef MASTER
 AsyncWebServer masterServer(80);
 
-const char *homePage = R"rawliteral(
+const char *homePageTemplate = R"rawliteral(
 <!DOCTYPE HTML><html>
 <head>
   <title>ESP32 Home Page</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; padding: 0; background-color: #f0f0f0; color: #333; }
+    h1 { color: #007BFF; }
+    #slaveCount { background-color: #007BFF; color: #ffffff; padding: 10px; border-radius: 5px; display: inline-block; }
+  </style>
 </head>
 <body>
-  <h1>Welcome to the ESP32 Home Page!</h1>
-  <p>This is a simple example of serving an HTML page from the ESP32.</p>
+  <h1>Sphere Master Control</h1>
+  <p>Number of ESP32 Slaves: <span id="slaveCount">%SLAVE_COUNT%</span></p>
 </body>
 </html>
 )rawliteral";
@@ -75,7 +80,10 @@ ErrorCode initWebServer()
             handleCalibrationData(data, len, request);
         });
     masterServer.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
-              { request->send_P(200, "text/html", homePage); });
+                    {
+  String page = String(homePageTemplate);
+  page.replace("%SLAVE_COUNT%", String(SLAVECOUNT));
+  request->send(200, "text/html", page); });
     masterServer.begin();
     Serial.printf("Server listening on %s.local\n", SERVERNAME);
 
