@@ -12,11 +12,18 @@
 #ifdef MASTER
 AsyncWebServer masterServer(80);
 
-// void handleReady(AsyncWebServerRequest *request)
-// {
-//     request->send(200, "text/plain", "ok");
-//     slaves->addSlavesReady();
-// }
+const char *homePage = R"rawliteral(
+<!DOCTYPE HTML><html>
+<head>
+  <title>ESP32 Home Page</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+  <h1>Welcome to the ESP32 Home Page!</h1>
+  <p>This is a simple example of serving an HTML page from the ESP32.</p>
+</body>
+</html>
+)rawliteral";
 
 // Function to process the calibration data
 void handleCalibrationData(uint8_t *data, size_t len, AsyncWebServerRequest *request)
@@ -67,7 +74,8 @@ ErrorCode initWebServer()
         {
             handleCalibrationData(data, len, request);
         });
-
+    masterServer.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send_P(200, "text/html", homePage); });
     masterServer.begin();
     Serial.printf("Server listening on %s.local\n", SERVERNAME);
 
