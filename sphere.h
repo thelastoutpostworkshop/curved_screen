@@ -5,7 +5,7 @@
 // #define MASTER // When uncommented this means this ESP32 is the master
 
 #define SERVERNAME "sphere"
-#define PIN_SYNC_SHOW_FRAME 10
+#define PIN_SYNC_SHOW_FRAME 38
 
 #ifdef MASTER
 SLAVES slaves;
