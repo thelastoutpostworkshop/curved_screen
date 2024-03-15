@@ -192,7 +192,7 @@ void setup()
 
     ESPID = ESP.getEfuseMac();
     esp_id_s = String(ESPID);
-    Serial.printf("ESP id=%s\n",esp_id_s);
+    Serial.printf("ESP id=%s\n",esp_id_s.c_str());
 
     ErrorCode res = getGifFiles();
     if (res != noError)
