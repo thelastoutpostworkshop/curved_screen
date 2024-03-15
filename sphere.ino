@@ -20,8 +20,8 @@ typedef struct
 Screen grid[SCREEN_COUNT] = {
     {.csPin = 17, .rotation = 3},
     {.csPin = 18, .rotation = 3},
-    {.csPin = 8, .rotation = 3},
-    {.csPin = 3, .rotation = 3}};
+    {.csPin = 47, .rotation = 3},
+    {.csPin = 48, .rotation = 3}};
 
 Calibration calibration;
 
@@ -192,6 +192,7 @@ void setup()
 
     ESPID = ESP.getEfuseMac();
     esp_id_s = String(ESPID);
+    Serial.printf("ESP id=%s\n",esp_id_s);
 
     ErrorCode res = getGifFiles();
     if (res != noError)
