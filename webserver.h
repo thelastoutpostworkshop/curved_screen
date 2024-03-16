@@ -46,7 +46,7 @@ void handleCalibrationData(uint8_t *data, size_t len, AsyncWebServerRequest *req
 }
 #endif
 
-const String apiEndpoint = "http://192.168.1.90:3000/api/";
+const String apiEndpoint = "http://192.168.1.90/api/";
 const String apiFrameCount = "frames-count";
 const String apiFrameJPG = "framejpg/";
 const String apiGif = "gif/";
@@ -56,6 +56,7 @@ ErrorCode initWebServer()
     Serial.println("Connecting to WiFi");
     WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, password);
+    WiFi.setAutoReconnect(true);
     while (WiFi.status() != WL_CONNECTED)
     {
         delay(300);
