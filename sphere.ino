@@ -171,6 +171,7 @@ void showFrameInterrupt()
 
 void setup()
 {
+    String psram;
 #ifdef MASTER
     pinMode(PIN_SYNC_SHOW_FRAME, OUTPUT);
     digitalWrite(PIN_SYNC_SHOW_FRAME, LOW);
@@ -187,12 +188,15 @@ void setup()
         while (true)
             ;
     }
+    psram = "PSRAM Size=" + formatBytes(ESP.getPsramSize());
+    Serial.println(psram.c_str());
+
     initTFT_eSPI();
     createDisplay();
 
     ESPID = ESP.getEfuseMac();
     esp_id_s = String(ESPID);
-    Serial.printf("ESP id=%s\n",esp_id_s.c_str());
+    Serial.printf("ESP id=%s\n", esp_id_s.c_str());
 
     ErrorCode res = getGifFiles();
     if (res != noError)
@@ -232,7 +236,7 @@ void setup()
     // Show mac number for identification by the server
     Serial.printf("id=%s\n", esp_id_s.c_str());
 
-    String psram = "PSRAM left=" + formatBytes(ESP.getFreePsram());
+    psram = "PSRAM left=" + formatBytes(ESP.getFreePsram());
     Serial.println(psram.c_str());
     // displayNormalMessage(psram.c_str(), 40);
     // eraseAllScreen();
