@@ -169,17 +169,17 @@ void showFrameInterrupt()
 }
 #endif
 
-void turnBuiltInLEDBlue(void)
+void turnBuiltInLEDBlue(uint8_t brightness = 32)
 {
-    neopixelWrite(RGB_BUILTIN, 0, 0, 64);
+    neopixelWrite(RGB_BUILTIN, 0, 0, brightness);
 }
-void turnBuiltInLEDGreen(void)
+void turnBuiltInLEDGreen(uint8_t brightness = 32)
 {
-    neopixelWrite(RGB_BUILTIN, 0, 64, 0);
+    neopixelWrite(RGB_BUILTIN, 0, brightness, 0);
 }
-void turnBuiltInLEDRed(void)
+void turnBuiltInLEDRed(uint8_t brightness = 32)
 {
-    neopixelWrite(RGB_BUILTIN, 64, 0, 0);
+    neopixelWrite(RGB_BUILTIN, brightness, 0, 0);
 }
 
 void setup()
@@ -261,6 +261,7 @@ void setup()
     // eraseAllScreen();
 
 #ifdef MASTER
+    turnBuiltInLEDBlue(128);
     eraseAllScreen();
     displayNormalMessage("Waiting for slaves...", 40);
     slaves.waitForAllSlaves();
@@ -273,6 +274,8 @@ void setup()
     }
     Serial.println("Final calibration values:");
     Serial.println(calibration.getCalibrationValues().c_str());
+#else
+    turnBuiltInLEDGreen(128);
 #endif
 }
 
