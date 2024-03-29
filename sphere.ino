@@ -169,22 +169,40 @@ void showFrameInterrupt()
 }
 #endif
 
+void turnBuiltInLEDBlue(void)
+{
+    neopixelWrite(RGB_BUILTIN, 0, 0, 64);
+}
+void turnBuiltInLEDGreen(void)
+{
+    neopixelWrite(RGB_BUILTIN, 0, 64, 0);
+}
+void turnBuiltInLEDRed(void)
+{
+    neopixelWrite(RGB_BUILTIN, 64, 0, 0);
+}
+
 void setup()
 {
     String psram;
 #ifdef MASTER
     pinMode(PIN_SYNC_SHOW_FRAME, OUTPUT);
     digitalWrite(PIN_SYNC_SHOW_FRAME, LOW);
+    turnBuiltInLEDBlue();
     slaves.resetSlavesReady();
 #else
     pinMode(PIN_SYNC_SHOW_FRAME, INPUT_PULLUP);
+    turnBuiltInLEDGreen();
     delay(5000); // Give the master the time to start
 #endif
+
+    // pinMode(BUILTIN_LED, OUTPUT);
 
     Serial.begin(115200);
     if (initWebServer() != noError)
     {
         Serial.println("MDNS Failed for the Master, cannot continue");
+        turnBuiltInLEDRed();
         while (true)
             ;
     }
@@ -215,7 +233,7 @@ void setup()
             displayErrorMessage("Not Enough memory", 40);
             break;
         }
-
+        turnBuiltInLEDRed();
         while (true)
             ;
     }
@@ -229,6 +247,7 @@ void setup()
     if (!runCalibration())
     {
         displayErrorMessage("Calibration Error", 40);
+        turnBuiltInLEDRed();
         while (true)
             ;
     }
@@ -248,6 +267,7 @@ void setup()
     if (!processCalibrationData())
     {
         displayErrorMessage("Processing slaves calibration Error", 40);
+        turnBuiltInLEDRed();
         while (true)
             ;
     }
