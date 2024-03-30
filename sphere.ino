@@ -177,6 +177,14 @@ void turnBuiltInLEDGreen(uint8_t brightness = 32)
 {
     neopixelWrite(RGB_BUILTIN, 0, brightness, 0);
 }
+void turnBuiltInLEDCyan(uint8_t brightness = 32)
+{
+    neopixelWrite(RGB_BUILTIN, 0, brightness, brightness);
+}
+void turnBuiltInLEDYellow(uint8_t brightness = 32)
+{
+    neopixelWrite(RGB_BUILTIN, brightness, brightness, 0);
+}
 void turnBuiltInLEDRed(uint8_t brightness = 32)
 {
     neopixelWrite(RGB_BUILTIN, brightness, 0, 0);
@@ -189,7 +197,6 @@ void setup()
 #ifdef MASTER
     pinMode(PIN_SYNC_SHOW_FRAME, OUTPUT);
     digitalWrite(PIN_SYNC_SHOW_FRAME, LOW);
-    turnBuiltInLEDBlue();
     slaves.resetSlavesReady();
 #else
     pinMode(PIN_SYNC_SHOW_FRAME, INPUT_PULLUP);
@@ -197,7 +204,7 @@ void setup()
     delay(5000); // Give the master the time to start
 #endif
 
-    // pinMode(BUILTIN_LED, OUTPUT);
+    turnBuiltInLEDCyan();
 
     Serial.begin(115200);
     if (initWebServer() != noError)
@@ -265,6 +272,7 @@ void setup()
     turnBuiltInLEDBlue(128);
     eraseAllScreen();
     displayNormalMessage("Waiting for slaves...", 40);
+    turnBuiltInLEDYellow();
     slaves.waitForAllSlaves();
     if (!processCalibrationData())
     {
@@ -275,6 +283,7 @@ void setup()
     }
     Serial.println("Final calibration values:");
     Serial.println(calibration.getCalibrationValues().c_str());
+    turnBuiltInLEDBlue();
 #else
     turnBuiltInLEDGreen(128);
 #endif
