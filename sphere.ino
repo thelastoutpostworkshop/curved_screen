@@ -270,8 +270,8 @@ void setup()
 #ifdef MASTER
     turnBuiltInLEDBlue(128);
     eraseAllScreen();
-    displayNormalMessage("Waiting for slaves...", 40);
     turnBuiltInLEDYellow();
+    displayNormalMessage("Waiting for slaves...", 40);
     slaves.waitForAllSlaves();
     if (!processCalibrationData())
     {
