@@ -180,6 +180,7 @@ void turnBuiltInLEDGreen(uint8_t brightness = 32)
 void turnBuiltInLEDRed(uint8_t brightness = 32)
 {
     neopixelWrite(RGB_BUILTIN, brightness, 0, 0);
+    Serial.printf("Turn RGB red, brightness=%d\n",brightness);
 }
 
 void setup()
