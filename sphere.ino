@@ -200,7 +200,6 @@ void setup()
     slaves.resetSlavesReady();
 #else
     pinMode(PIN_SYNC_SHOW_FRAME, INPUT_PULLUP);
-    turnBuiltInLEDGreen();
     delay(5000); // Give the master the time to start
 #endif
 
