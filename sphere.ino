@@ -185,6 +185,7 @@ void turnBuiltInLEDYellow(uint8_t brightness = 32)
 {
     neopixelWrite(RGB_BUILTIN, brightness, brightness, 0);
     Serial.printf("Turn RGB yellow, brightness=%d\n", brightness);
+    delay(20);
 }
 void turnBuiltInLEDRed(uint8_t brightness = 32)
 {
@@ -192,28 +193,42 @@ void turnBuiltInLEDRed(uint8_t brightness = 32)
     Serial.printf("Turn RGB red, brightness=%d\n", brightness);
 }
 
+void flashBuitinRGBError()
+{
+    while (true)
+    {
+        turnBuiltInLEDRed();
+        delay(300);
+#ifdef MASTER
+        turnBuiltInLEDGreen();
+#else
+        turnBuiltInLEDBlue();
+#endif
+        delay(300);
+    }
+}
+
 void setup()
 {
     String psram;
 #ifdef MASTER
+    turnBuiltInLEDGreen();
     pinMode(PIN_SYNC_SHOW_FRAME, OUTPUT);
     digitalWrite(PIN_SYNC_SHOW_FRAME, LOW);
     slaves.resetSlavesReady();
 #else
+    turnBuiltInLEDBlue();
     pinMode(PIN_SYNC_SHOW_FRAME, INPUT_PULLUP);
     delay(5000); // Give the master the time to start
 #endif
-
-    turnBuiltInLEDCyan();
 
     Serial.begin(115200);
     if (initWebServer() != noError)
     {
         Serial.println("MDNS Failed for the Master, cannot continue");
-        turnBuiltInLEDRed();
-        while (true)
-            ;
+        flashBuitinRGBError();
     }
+    Serial.printf("RGB builtin=%d\n", RGB_BUILTIN);
     psram = "PSRAM Size=" + formatBytes(ESP.getPsramSize());
     Serial.println(psram.c_str());
 
@@ -241,9 +256,7 @@ void setup()
             displayErrorMessage("Not Enough memory", 40);
             break;
         }
-        turnBuiltInLEDRed();
-        while (true)
-            ;
+        flashBuitinRGBError();
     }
 
     eraseAllScreen();
@@ -255,9 +268,7 @@ void setup()
     if (!runCalibration())
     {
         displayErrorMessage("Calibration Error", 40);
-        turnBuiltInLEDRed();
-        while (true)
-            ;
+        flashBuitinRGBError();
     }
 
     // Show mac number for identification by the server
@@ -269,23 +280,16 @@ void setup()
     // eraseAllScreen();
 
 #ifdef MASTER
-    turnBuiltInLEDBlue(128);
     eraseAllScreen();
-    turnBuiltInLEDYellow();
     displayNormalMessage("Waiting for slaves...", 40);
     slaves.waitForAllSlaves();
     if (!processCalibrationData())
     {
         displayErrorMessage("Processing slaves calibration Error", 40);
-        turnBuiltInLEDRed();
-        while (true)
-            ;
+        flashBuitinRGBError();
     }
     Serial.println("Final calibration values:");
     Serial.println(calibration.getCalibrationValues().c_str());
-    turnBuiltInLEDBlue();
-#else
-    turnBuiltInLEDGreen(128);
 #endif
 }
 
