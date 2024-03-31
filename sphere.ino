@@ -184,13 +184,10 @@ void turnBuiltInLEDCyan(uint8_t brightness = 32)
 void turnBuiltInLEDYellow(uint8_t brightness = 32)
 {
     neopixelWrite(RGB_BUILTIN, brightness, brightness, 0);
-    Serial.printf("Turn RGB yellow, brightness=%d\n", brightness);
-    delay(20);
 }
 void turnBuiltInLEDRed(uint8_t brightness = 32)
 {
     neopixelWrite(RGB_BUILTIN, brightness, 0, 0);
-    Serial.printf("Turn RGB red, brightness=%d\n", brightness);
 }
 
 void flashBuitinRGBError()
