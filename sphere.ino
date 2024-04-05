@@ -26,7 +26,7 @@ typedef struct
 Screen grid[SCREEN_COUNT] = {
     {.csPin = 17, .rotation = 3},
     {.csPin = 18, .rotation = 3},
-    {.csPin = 47, .rotation = 3}};
+    {.csPin = 48, .rotation = 3}};
 
 Calibration calibration;
 
