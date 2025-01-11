@@ -14,17 +14,13 @@ typedef struct
     Display *display;
 } Screen;
 
-#define SCREEN_COUNT 2
-
-// Screen grid[SCREEN_COUNT] = {
-//     {.csPin = 17, .rotation = 3},
-//     {.csPin = 18, .rotation = 3},
-//     {.csPin = 47, .rotation = 3},
-//     {.csPin = 48, .rotation = 3}};
+#define SCREEN_COUNT 4
 
 Screen grid[SCREEN_COUNT] = {
-    {.csPin = 48, .rotation = 3},
-    {.csPin = 47, .rotation = 3}};
+    {.csPin = 47, .rotation = 2},
+    {.csPin = 48, .rotation = 2},
+    {.csPin = 18, .rotation = 2},
+    {.csPin = 17, .rotation = 2}};
 
 Calibration calibration;
 
