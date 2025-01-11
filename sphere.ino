@@ -17,10 +17,10 @@ typedef struct
 #define SCREEN_COUNT 4
 
 Screen grid[SCREEN_COUNT] = {
-    {.csPin = 47, .rotation = 2},
-    {.csPin = 48, .rotation = 2},
-    {.csPin = 18, .rotation = 2},
-    {.csPin = 17, .rotation = 2}};
+    {.csPin = 17, .rotation = 0},
+    {.csPin = 18, .rotation = 0},
+    {.csPin = 48, .rotation = 0},
+    {.csPin = 47, .rotation = 0}};
 
 Calibration calibration;
 
