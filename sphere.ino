@@ -253,10 +253,12 @@ void setup()
     initTFT_eSPI();
     createDisplay();
 
+    // Get the internal ESP32-S3 Mac address, this will serve as the ID for the GIF server program
     ESPID = ESP.getEfuseMac();
     esp_id_s = String(ESPID);
     Serial.printf("ESP id=%s\n", esp_id_s.c_str());
 
+    // Get the gif files from the GIF server
     ErrorCode res = getGifFiles();
     if (res != noError)
     {
@@ -280,18 +282,21 @@ void setup()
     eraseAllScreen();
 
 #ifndef MASTER
+    // The sync pin will trigger an interrupt on the slaves and show a frame on all screen
     attachInterrupt(digitalPinToInterrupt(PIN_SYNC_SHOW_FRAME), showFrameInterrupt, RISING);
 #endif
 
+    // Start the calibration process
     if (!runCalibration())
     {
         displayErrorMessage("Calibration Error", 40);
         flashBuitinRGBError();
     }
 
-    // Show mac number for identification by the server
+    // Print the internal ESP32-S3 Mac address, this will serve as the ID for the GIF server program
     Serial.printf("id=%s\n", esp_id_s.c_str());
 
+    // Shows the psram left on the ESP32-S3, this will give you an idea on the size remaining if you want larger gif to be displayed
     psram = "PSRAM left=" + formatBytes(ESP.getFreePsram());
     Serial.println(psram.c_str());
     // displayNormalMessage(psram.c_str(), 40);
@@ -300,6 +305,7 @@ void setup()
 #ifdef MASTER
     eraseAllScreen();
     displayNormalMessage("Waiting for slaves...", 40);
+    // The master waits for all the calibration data to be received from the slaves, then process the calibration data
     slaves.waitForAllSlaves();
     if (!processCalibrationData())
     {
@@ -315,15 +321,18 @@ unsigned long t, durationCalibrated;
 int frameNumber = 0;
 void loop()
 {
-#ifdef MASTER
+#ifdef MASTER // Loop is not used on the slaves
+    // Get the calibrated duration for the frame
     durationCalibrated = calibration.getFrameCalibration(frameNumber) + SAFETY_WAIT_TIME_FRAME;
     // durationCalibrated = 160;
     // Serial.printf("Calibration frame #%d is %lu ms\n", frameNumber, durationCalibrated);
 
+    // Send the sync signal to the slaves to start showing the frames
     digitalWrite(PIN_SYNC_SHOW_FRAME, HIGH);
     delayMicroseconds(100);                 // Short duration for the pulse
     digitalWrite(PIN_SYNC_SHOW_FRAME, LOW); // Set the signal LOW again
 
+    // The master show its own frames
     t = millis();
     for (int i = 0; i < SCREEN_COUNT; i++)
     {
@@ -332,11 +341,14 @@ void loop()
         grid[i].display->deActivate();
     }
     // Serial.printf("Took %lu ms\n", millis() - t);
+
     frameNumber++;
     if (frameNumber == framesCount)
     {
+        // This will loop the GIF
         frameNumber = 0;
     }
+    // Wait for the calibrated duration to pass
     while ((millis() - t) <= durationCalibrated)
         ;
 #endif
