@@ -2,12 +2,13 @@
 #define _SYNC_
 #include "slaves.h"
 
-#define PIN_SYNC_SHOW_FRAME 38
+#define PIN_SYNC_SHOW_FRAME 38 // Pin to used for sync signal to trigger slaves for showing a frame
 
 #ifdef MASTER
-SLAVES slaves;
+SLAVES slaves;  // Slaves
 #endif
 
+// Error codes
 enum ErrorCode
 {
     noError,
@@ -20,6 +21,6 @@ enum ErrorCode
     noMDNS
 };
 
-ErrorCode lastError;
+ErrorCode lastError;    // Contain the last error code
 
 #endif
