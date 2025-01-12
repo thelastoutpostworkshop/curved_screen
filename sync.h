@@ -13,7 +13,6 @@ enum ErrorCode
 {
     noError,
     noFrames,
-    cannotGetJPGFrames,
     cannotGetGifFiles,
     cannotOpenGifFile,
     notEnoughMemory,
