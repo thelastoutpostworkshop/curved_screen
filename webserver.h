@@ -10,8 +10,8 @@
 #define PAUSEDELAYRETRY 100 // Delay in ms before retrying a failed HTTP call
 
 const String apiEndpoint = "http://192.168.1.90/api/";  // The end point API for the GIF server, change this according to your local network
-const String apiFrameCount = "frames-count";            // API to get the frames count
-const String apiGif = "gif/";
+const String apiFrameCount = "frames-count";            // API name to get the frames count
+const String apiGif = "gif/";  // API name to get the GIF data
 
 #ifdef MASTER
 AsyncWebServer masterServer(80); // Master runs on port 80
@@ -66,6 +66,7 @@ ErrorCode initWebServer()
     Serial.println(WiFi.localIP());
 
 #ifdef MASTER
+    // The master web server is started with its own name
     if (!MDNS.begin(SERVERNAME))
     {
         Serial.println("Error starting mDNS for the Master");
