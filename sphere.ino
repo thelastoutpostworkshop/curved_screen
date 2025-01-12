@@ -22,14 +22,14 @@ typedef struct
 
 // Screen arrangement on the ESP32-S3
 // Do not forget to configure the proper setup driver for the TFT_eSPI library, see this tutorial : https://youtu.be/6lLlKY5U77w
-#define SCREEN_COUNT 4
-Screen grid[SCREEN_COUNT] = {
+#define SCREEN_COUNT 4 // The number of screens connected to the ESP32-S3
+Screen grid[SCREEN_COUNT] = { // Set the proper CS pin and orientation for each screen
     {.csPin = 17, .rotation = 0},
     {.csPin = 18, .rotation = 0},
     {.csPin = 48, .rotation = 0},
     {.csPin = 47, .rotation = 0}};
 
-Calibration calibration;
+Calibration calibration; // To store calibration data
 
 void createDisplay(void)
 {
