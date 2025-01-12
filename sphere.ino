@@ -33,6 +33,7 @@ void createDisplay(void)
     }
 }
 
+// Reads GIF files for each screen
 ErrorCode getGifFiles(void)
 {
     uint8_t *gifData;
@@ -61,6 +62,7 @@ ErrorCode getGifFiles(void)
     return noError;
 }
 
+// Format size string in human readable format
 String formatBytes(size_t bytes)
 {
     if (bytes < 1024)
@@ -77,12 +79,15 @@ String formatBytes(size_t bytes)
     }
 }
 
+// Display error message on a sreen
 void displayErrorMessage(char *message, int16_t line)
 {
     grid[0].display->clearScreen();
     grid[0].display->showText(message, line, TFT_ORANGE);
     Serial.println(message);
 }
+
+// Display information message on a sreen
 void displayNormalMessage(const char *message, int16_t line)
 {
     grid[0].display->clearScreen();
@@ -90,6 +95,7 @@ void displayNormalMessage(const char *message, int16_t line)
     Serial.println(message);
 }
 
+// Erase all screen to black
 void eraseAllScreen(void)
 {
     for (int i = 0; i < SCREEN_COUNT; i++)
@@ -98,6 +104,7 @@ void eraseAllScreen(void)
     }
 }
 
+// Run a calibration on the gif to find the time needed to display each frame
 bool runCalibration(void)
 {
     int calibrationLoop = 2;
@@ -134,6 +141,7 @@ bool runCalibration(void)
         Serial.println(calibration.getCalibrationValues().c_str());
     }
 #ifndef MASTER
+    // A screen slave will send its calibration data to the master
     if (sendCalibrationValues(calibration.getCalibrationValues()) != noError)
     {
         displayNormalMessage("Error sending calibration values", 40);
@@ -146,6 +154,7 @@ bool runCalibration(void)
 }
 
 #ifdef MASTER
+// Retrieve calibration data from all the screen slaves
 bool processCalibrationData(void)
 {
     for (int i = 0; i < SLAVECOUNT; i++)
@@ -158,6 +167,8 @@ bool processCalibrationData(void)
     return true;
 }
 #else
+
+// Display a frame on each screen
 void showFrameInterrupt()
 {
     for (int i = 0; i < SCREEN_COUNT; i++)
@@ -169,6 +180,7 @@ void showFrameInterrupt()
 }
 #endif
 
+// These functions use the builtin RGB Led on the ESP32S3 as a visual indicators
 void turnBuiltInLEDBlue(uint8_t brightness = 32)
 {
     neopixelWrite(RGB_BUILTIN, 0, 0, brightness);
