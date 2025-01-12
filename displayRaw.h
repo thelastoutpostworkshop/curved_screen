@@ -1,7 +1,9 @@
+// This file provides functions for the calibration and to show GIF
+
 #include <TFT_eSPI.h>    // Install this library with the Arduino IDE Library Manager
 #include <AnimatedGIF.h> // Install this library with the Arduino IDE Library Manager
 
-#define MAX_FRAMES 256
+#define MAX_FRAMES 256   // Maximum frames that the GIF can have, used for calibration, you can increase this value if needed
 #define colorOutputSize 2 // 16 bit color as output
 #define imageWidth 240
 #define imageHeight 240
@@ -10,6 +12,7 @@
 
 TFT_eSPI tft = TFT_eSPI();
 
+// Main function to show a frame on a screen
 void GIFDraw(GIFDRAW *pDraw)
 {
 
@@ -27,6 +30,7 @@ void initTFT_eSPI(void)
   tft.setFreeFont(&Prototype20pt7b);
 }
 
+// Calibration functions
 class Calibration
 {
 private:
@@ -135,6 +139,7 @@ public:
   }
 };
 
+// Control functions for the screens
 class Display
 {
 private:
