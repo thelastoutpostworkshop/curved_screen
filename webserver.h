@@ -1,14 +1,21 @@
+// Web server functions 
+
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include "secrets.h"
-#include "sphere.h"
+#include "sync.h"
 
 #define SERVERNAME "curved"
 #define MAXRETRY 10
 #define PAUSEDELAYRETRY 100
 
+const String apiEndpoint = "http://192.168.1.90/api/";
+const String apiFrameCount = "frames-count";
+const String apiFrameJPG = "framejpg/";
+const String apiGif = "gif/";
+
 #ifdef MASTER
-AsyncWebServer masterServer(80);
+AsyncWebServer masterServer(80); // Master runs on port 80
 
 const char *homePageTemplate = R"rawliteral(
 <!DOCTYPE HTML><html>
@@ -43,11 +50,6 @@ void handleCalibrationData(uint8_t *data, size_t len, AsyncWebServerRequest *req
     request->send(200, "text/plain", "Calibration data received");
 }
 #endif
-
-const String apiEndpoint = "http://192.168.1.90/api/";
-const String apiFrameCount = "frames-count";
-const String apiFrameJPG = "framejpg/";
-const String apiGif = "gif/";
 
 ErrorCode initWebServer()
 {
