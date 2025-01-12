@@ -5,13 +5,13 @@
 #include "secrets.h"
 #include "sync.h"
 
-#define SERVERNAME "curved"
-#define MAXRETRY 10
-#define PAUSEDELAYRETRY 100
+#define SERVERNAME "curved" // The name of the master web server, slaves are uting it to send calibration data
+#define MAXRETRY 10         // Maximum number of retries for an HTTP call
+#define PAUSEDELAYRETRY 100 // Delay in ms before retrying a failed HTTP call
 
-const String apiEndpoint = "http://192.168.1.90/api/";
-const String apiFrameCount = "frames-count";
-const String apiFrameJPG = "framejpg/";
+const String apiEndpoint = "http://192.168.1.90/api/";  // The end point API for the GIF server, change this according to your local network
+const String apiFrameCount = "frames-count";            // API to get the frames count
+const String apiFrameJPG = "framejpg/"; 
 const String apiGif = "gif/";
 
 #ifdef MASTER
