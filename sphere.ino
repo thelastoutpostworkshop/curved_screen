@@ -9,9 +9,8 @@
 #include "displayRaw.h"
 #include "webserver.h"
 
-int framesCount;
-String esp_id_s;
-uint64_t ESPID;
+int framesCount;    // The number of frames for the GIF files
+String esp_id_s;    // The ESP32-S3 internal mac address, serving as the ID for the GIF processing program
 
 typedef struct
 {
@@ -260,7 +259,7 @@ void setup()
     createDisplay();
 
     // Get the internal ESP32-S3 Mac address, this will serve as the ID for the GIF server program
-    ESPID = ESP.getEfuseMac();
+    const uint32_t ESPID = ESP.getEfuseMac();
     esp_id_s = String(ESPID);
     Serial.printf("ESP id=%s\n", esp_id_s.c_str());
 
