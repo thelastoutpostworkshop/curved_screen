@@ -11,7 +11,6 @@
 
 const String apiEndpoint = "http://192.168.1.90/api/";  // The end point API for the GIF server, change this according to your local network
 const String apiFrameCount = "frames-count";            // API to get the frames count
-const String apiFrameJPG = "framejpg/"; 
 const String apiGif = "gif/";
 
 #ifdef MASTER
@@ -165,52 +164,6 @@ int getFramesCount()
         Serial.printf("[HTTP] GET failed, error: %s\n", http.errorToString(httpCode).c_str());
         http.end();
         return -1;
-    }
-}
-
-size_t getFrameJPGData(String esp_id, int screenNumber, int frameNumber, uint8_t *buffer, size_t bufferSize)
-{
-    HTTPClient http;
-
-    String url = apiEndpoint + apiFrameJPG + esp_id + "/" + String(screenNumber) + "/" + String(frameNumber);
-    // Serial.printf("Calling %s\n", url.c_str());
-
-    http.begin(url);
-    int httpCode = http.GET();
-
-    if (httpCode == HTTP_CODE_OK)
-    {
-        size_t contentLength = http.getSize();
-        if (contentLength > bufferSize)
-        {
-            Serial.printf("getFrameJPGData content too large, content size = %lu, bufferSize=%lu\n", contentLength, bufferSize);
-            return 0;
-        }
-        WiFiClient *stream = http.getStreamPtr();
-        size_t totalBytesRead = 0;
-
-        while (http.connected() && (contentLength > 0 || contentLength == -1))
-        {
-            size_t availableBytes = stream->available();
-            if (availableBytes > 0)
-            {
-                int bytesRead = stream->readBytes(buffer + totalBytesRead, availableBytes);
-                totalBytesRead += bytesRead;
-                contentLength -= bytesRead;
-            }
-            yield();
-        }
-
-        http.end();
-        yield();
-        // Serial.printf("Total bytes read: %lu\n", totalBytesRead);
-        return totalBytesRead;
-    }
-    else
-    {
-        Serial.printf("[HTTP] GET failed, error: %s\n", http.errorToString(httpCode).c_str());
-        http.end();
-        return 0;
     }
 }
 
