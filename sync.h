@@ -2,7 +2,6 @@
 #define _SYNC_
 #include "slaves.h"
 
-#define SERVERNAME "sphere"
 #define PIN_SYNC_SHOW_FRAME 38
 
 #ifdef MASTER

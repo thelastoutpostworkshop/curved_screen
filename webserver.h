@@ -3,6 +3,7 @@
 #include "secrets.h"
 #include "sphere.h"
 
+#define SERVERNAME "curved"
 #define MAXRETRY 10
 #define PAUSEDELAYRETRY 100
 
