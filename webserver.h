@@ -1,7 +1,4 @@
-#include <ESPAsyncWebServer.h>
-#include <ESPmDNS.h>
 #include <WiFi.h>
-#include <AsyncTCP.h>
 #include <HTTPClient.h>
 #include "secrets.h"
 #include "sphere.h"
