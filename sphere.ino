@@ -20,8 +20,9 @@ typedef struct
     Display *display;
 } Screen;
 
+// Screen arrangement on the ESP32-S3
+// Do not forget to configure the proper setup driver for the TFT_eSPI library, see this tutorial : https://youtu.be/6lLlKY5U77w
 #define SCREEN_COUNT 4
-
 Screen grid[SCREEN_COUNT] = {
     {.csPin = 17, .rotation = 0},
     {.csPin = 18, .rotation = 0},
