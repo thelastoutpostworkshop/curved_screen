@@ -202,6 +202,7 @@ void turnBuiltInLEDRed(uint8_t brightness = 32)
     neopixelWrite(RGB_BUILTIN, brightness, 0, 0);
 }
 
+// Built-in LED RBG blinks as a visual indicator that something has gone wrong
 void flashBuitinRGBError()
 {
     while (true)
@@ -221,14 +222,16 @@ void setup()
 {
     String psram;
 #ifdef MASTER
+    // Master ESP32-S3 in indicated buy its builtin RGB LED turned green
     turnBuiltInLEDGreen();
-    pinMode(PIN_SYNC_SHOW_FRAME, OUTPUT);
+    pinMode(PIN_SYNC_SHOW_FRAME, OUTPUT); // The sync pin is controlled by the master
     digitalWrite(PIN_SYNC_SHOW_FRAME, LOW);
     slaves.resetSlavesReady();
 #else
+    // Master ESP32-S3 in indicated buy its builtin RGB LED turned blue
     turnBuiltInLEDBlue();
-    pinMode(PIN_SYNC_SHOW_FRAME, INPUT_PULLUP);
-    delay(5000); // Give the master the time to start
+    pinMode(PIN_SYNC_SHOW_FRAME, INPUT_PULLUP); // The sync pin will be read by the slaves
+    delay(5000);                                // Give the master the time to start
 #endif
 
     Serial.begin(115200);
@@ -238,7 +241,13 @@ void setup()
         flashBuitinRGBError();
     }
     Serial.printf("RGB builtin=%d\n", RGB_BUILTIN);
-    psram = "PSRAM Size=" + formatBytes(ESP.getPsramSize());
+    const uint32_t psram_size = ESP.getPsramSize();
+    if (psram_size == 0)
+    {
+        Serial.println("No PSRAM avalaible, cannot continue");
+        flashBuitinRGBError();
+    }
+    psram = "PSRAM Size=" + formatBytes(psram_size);
     Serial.println(psram.c_str());
 
     initTFT_eSPI();
