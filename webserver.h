@@ -1,16 +1,20 @@
-#include <ESPAsyncWebServer.h>
-#include <ESPmDNS.h>
+// Web server functions 
+
 #include <WiFi.h>
-#include <AsyncTCP.h>
 #include <HTTPClient.h>
 #include "secrets.h"
-#include "sphere.h"
+#include "sync.h"
 
-#define MAXRETRY 10
-#define PAUSEDELAYRETRY 100
+#define SERVERNAME "curved" // The name of the master web server, slaves are uting it to send calibration data
+#define MAXRETRY 10         // Maximum number of retries for an HTTP call
+#define PAUSEDELAYRETRY 100 // Delay in ms before retrying a failed HTTP call
+
+const String apiEndpoint = "http://192.168.1.90/api/";  // The end point API for the GIF server, change this according to your local network
+const String apiFrameCount = "frames-count";            // API name to get the frames count
+const String apiGif = "gif/";  // API name to get the GIF data
 
 #ifdef MASTER
-AsyncWebServer masterServer(80);
+AsyncWebServer masterServer(80); // Master runs on port 80
 
 const char *homePageTemplate = R"rawliteral(
 <!DOCTYPE HTML><html>
@@ -46,11 +50,6 @@ void handleCalibrationData(uint8_t *data, size_t len, AsyncWebServerRequest *req
 }
 #endif
 
-const String apiEndpoint = "http://192.168.1.90/api/";
-const String apiFrameCount = "frames-count";
-const String apiFrameJPG = "framejpg/";
-const String apiGif = "gif/";
-
 ErrorCode initWebServer()
 {
     Serial.println("Connecting to WiFi");
@@ -67,6 +66,7 @@ ErrorCode initWebServer()
     Serial.println(WiFi.localIP());
 
 #ifdef MASTER
+    // The master web server is started with its own name
     if (!MDNS.begin(SERVERNAME))
     {
         Serial.println("Error starting mDNS for the Master");
@@ -165,52 +165,6 @@ int getFramesCount()
         Serial.printf("[HTTP] GET failed, error: %s\n", http.errorToString(httpCode).c_str());
         http.end();
         return -1;
-    }
-}
-
-size_t getFrameJPGData(String esp_id, int screenNumber, int frameNumber, uint8_t *buffer, size_t bufferSize)
-{
-    HTTPClient http;
-
-    String url = apiEndpoint + apiFrameJPG + esp_id + "/" + String(screenNumber) + "/" + String(frameNumber);
-    // Serial.printf("Calling %s\n", url.c_str());
-
-    http.begin(url);
-    int httpCode = http.GET();
-
-    if (httpCode == HTTP_CODE_OK)
-    {
-        size_t contentLength = http.getSize();
-        if (contentLength > bufferSize)
-        {
-            Serial.printf("getFrameJPGData content too large, content size = %lu, bufferSize=%lu\n", contentLength, bufferSize);
-            return 0;
-        }
-        WiFiClient *stream = http.getStreamPtr();
-        size_t totalBytesRead = 0;
-
-        while (http.connected() && (contentLength > 0 || contentLength == -1))
-        {
-            size_t availableBytes = stream->available();
-            if (availableBytes > 0)
-            {
-                int bytesRead = stream->readBytes(buffer + totalBytesRead, availableBytes);
-                totalBytesRead += bytesRead;
-                contentLength -= bytesRead;
-            }
-            yield();
-        }
-
-        http.end();
-        yield();
-        // Serial.printf("Total bytes read: %lu\n", totalBytesRead);
-        return totalBytesRead;
-    }
-    else
-    {
-        Serial.printf("[HTTP] GET failed, error: %s\n", http.errorToString(httpCode).c_str());
-        http.end();
-        return 0;
     }
 }
 
