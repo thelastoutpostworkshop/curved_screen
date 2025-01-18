@@ -1,17 +1,22 @@
-// Web server functions 
+// Web server functions
 
 #include <WiFi.h>
 #include <HTTPClient.h>
+#include <ESPAsyncWebServer.h>
 #include "secrets.h"
 #include "sync.h"
 
-#define SERVERNAME "curved" // The name of the master web server, slaves are uting it to send calibration data
+// Comment the next line to compile and upload the code to the ESP32-S3 acting as the slaves, you can have as many slaves as you want
+// Uncomment the next line to compile and upload the code to the ESP32-S3 acting as the master - only one master is allowed
+#define MASTER  
+
+#define MASTER_SERVERNAME "curved" // The name of the master web server, slaves are uting it to send calibration data
 #define MAXRETRY 10         // Maximum number of retries for an HTTP call
 #define PAUSEDELAYRETRY 100 // Delay in ms before retrying a failed HTTP call
 
-const String apiEndpoint = "http://192.168.1.90/api/";  // The end point API for the GIF server, change this according to your local network
-const String apiFrameCount = "frames-count";            // API name to get the frames count
-const String apiGif = "gif/";  // API name to get the GIF data
+const String apiEndpoint = "http://192.168.1.90/api/"; // The end point API for the GIF server, change this according to your local network
+const String apiFrameCount = "frames-count";           // API name to get the frames count
+const String apiGif = "gif/";                          // API name to get the GIF data
 
 #ifdef MASTER
 AsyncWebServer masterServer(80); // Master runs on port 80
@@ -86,7 +91,7 @@ ErrorCode initWebServer()
   page.replace("%SLAVE_COUNT%", String(SLAVECOUNT));
   request->send(200, "text/html", page); });
     masterServer.begin();
-    Serial.printf("Server listening on %s.local\n", SERVERNAME);
+    Serial.printf("Server listening on %s.local\n", MASTER_SERVERNAME);
 
 #endif
 
@@ -99,7 +104,7 @@ ErrorCode sendCalibrationValues(String calibrationValues)
     int httpResponseCode = -1;
     int retry = 0;
 
-    String url = String("http://") + String(SERVERNAME) + ".local/calibration";
+    String url = String("http://") + String(MASTER_SERVERNAME) + ".local/calibration";
     Serial.printf("Sending calibration data %s\n", url.c_str());
     http.setConnectTimeout(10000);
 
@@ -135,7 +140,7 @@ void sendReady(void)
 {
     HTTPClient http;
 
-    String url = String("http://") + String(SERVERNAME) + ".local/ready";
+    String url = String("http://") + String(MASTER_SERVERNAME) + ".local/ready";
     http.begin(url);
     int httpCode = http.GET();
     Serial.printf("Sending ready %s\n", url.c_str());
