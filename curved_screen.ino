@@ -322,5 +322,7 @@ void loop()
     // Wait for the calibrated duration to pass
     while ((millis() - t) <= durationCalibrated)
         ;
+#else
+    delay(5);
 #endif
 }
