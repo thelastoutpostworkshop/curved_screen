@@ -1,8 +1,6 @@
 #ifndef _SLAVES_
 #define _SLAVES_
 
-#define SLAVECOUNT 1 // The number of ESP32 slaves
-
 class SLAVES
 {
 private:

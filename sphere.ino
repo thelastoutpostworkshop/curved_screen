@@ -1,4 +1,7 @@
 
+#define MASTER // When uncommented this means this ESP32 is the master
+#define SLAVECOUNT 1 // The number of ESP32 slaves
+
 #include "sphere.h"
 #include "displayRaw.h"
 #include "ESP.h"
