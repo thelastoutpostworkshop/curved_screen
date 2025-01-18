@@ -1,5 +1,5 @@
 // Main sketch for the master ESP32-S3 and the slaves
-// Tested on
+// Tested on xxx
 
 // Comment the next line to compile and upload the code to the ESP32-S3 acting as the slaves, you can have as many slaves as you want
 // Uncomment the next line to compile and upload the code to the ESP32-S3 acting as the master - only one master is allowed
