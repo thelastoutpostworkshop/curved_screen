@@ -1,10 +1,17 @@
 // Main sketch for the master ESP32-S3 and the slaves
 // Tested on xxx
 
+#include "configure.h"
 #include "displayRaw.h"
 #include "webserver.h"
+#include "slaves.h"
 #include "rgbstatus.h"
-#include "sync.h"
+
+extern ErrorCode lastError;    // Contain the last error code
+
+#ifdef MASTER
+SLAVES slaves;  // Slaves
+#endif
 
 int framesCount;    // The number of frames for the GIF files
 String esp_id_s;    // The ESP32-S3 internal mac address, serving as the ID for the GIF processing program

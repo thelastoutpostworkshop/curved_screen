@@ -1,9 +1,8 @@
-// Slaves functions
-//
-#ifndef _SLAVES_
-#define _SLAVES_
+#ifndef _SLAVES_H_
+#define _SLAVES_H_
 
-#define SLAVECOUNT 1 // The number of ESP32-S3 slaves
+#include <Arduino.h>
+#include "configure.h"
 
 class SLAVES
 {
@@ -11,54 +10,24 @@ private:
     int calibrationReceived;
     String CalibrationData[SLAVECOUNT];
 
-    // Wait for all slaves calibration data to be received
-    bool allSlavesReady(void)
-    {
-        if (calibrationReceived == SLAVECOUNT)
-        {
-            return true;
-        }
-        return false;
-    }
+    // Check if all slaves are ready
+    bool allSlavesReady(void);
 
 public:
-    SLAVES()
-    {
-    }
-    void resetSlavesReady(void)
-    {
-        calibrationReceived = 0;
-    }
-    void addCalibrationData(String data)
-    {
-        if (calibrationReceived < SLAVECOUNT)
-        {
-            CalibrationData[calibrationReceived] = data;
-            calibrationReceived++;
-        }
-        else
-        {
-            Serial.println("Too many calibration data received!");
-        }
-    }
+    // Constructor
+    SLAVES();
 
-    String getCalibrationData(int slaveNumber)
-    {
-        if (slaveNumber >= SLAVECOUNT)
-        {
-            Serial.printf("Slave number %d non existant\n", slaveNumber);
-            return "";
-        }
-        return CalibrationData[slaveNumber];
-    }
+    // Reset the ready state of slaves
+    void resetSlavesReady(void);
 
-    // Wait for all slaves to be ready
-    void waitForAllSlaves(void)
-    {
-        while (!allSlavesReady())
-        {
-            yield();
-        }
-    }
+    // Add calibration data for a slave
+    void addCalibrationData(String data);
+
+    // Get the calibration data for a specific slave
+    String getCalibrationData(int slaveNumber);
+
+    // Block until all slaves are ready
+    void waitForAllSlaves(void);
 };
-#endif
+
+#endif // _SLAVES_H_
