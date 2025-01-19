@@ -16,13 +16,6 @@ SLAVES slaves;  // Slaves
 int framesCount;    // The number of frames for the GIF files
 String esp_id_s;    // The ESP32-S3 internal mac address, serving as the ID for the GIF processing program
 
-typedef struct
-{
-    int csPin;
-    int rotation;
-    Display *display;
-} Screen;
-
 // Screen arrangement on the ESP32-S3
 // Do not forget to configure the proper setup driver for the TFT_eSPI library, see this tutorial : https://youtu.be/6lLlKY5U77w
 #define SCREEN_COUNT 4 // The number of screens connected to the ESP32-S3

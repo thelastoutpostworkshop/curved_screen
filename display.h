@@ -54,4 +54,11 @@ public:
     void showText(const char *text, int16_t line, uint16_t color);
 };
 
+typedef struct
+{
+    int csPin;
+    int rotation;
+    Display *display;
+} Screen;
+
 #endif // DISPLAY_H
