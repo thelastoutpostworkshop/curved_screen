@@ -7,23 +7,23 @@
 #include "slaves.h"
 #include "rgbstatus.h"
 
-extern ErrorCode lastError;    // Contain the last error code
+extern ErrorCode lastError; // Contain the last error code
 
 #ifdef MASTER
-SLAVES slaves;  // Slaves
+SLAVES slaves; // Slaves
 #endif
 
-int framesCount;    // The number of frames for the GIF files
-String esp_id_s;    // The ESP32-S3 internal mac address, serving as the ID for the GIF processing program
+int framesCount; // The number of frames for the GIF files
+String esp_id_s; // The ESP32-S3 internal mac address, serving as the ID for the GIF processing program
 
 // Screen arrangement on the ESP32-S3
 // Do not forget to configure the proper setup driver for the TFT_eSPI library, see this tutorial : https://youtu.be/6lLlKY5U77w
-#define SCREEN_COUNT 4 // The number of screens connected to the ESP32-S3
-Screen grid[SCREEN_COUNT] = { // Set the proper CS pin and orientation for each screen
+#define SCREEN_COUNT 2 // The number of screens connected to the ESP32-S3
+Screen grid[SCREEN_COUNT] = {
+    // Set the proper CS pin and orientation for each screen
     {.csPin = 17, .rotation = 0},
     {.csPin = 18, .rotation = 0},
-    {.csPin = 48, .rotation = 0},
-    {.csPin = 47, .rotation = 0}};
+};
 
 Calibration calibration; // To store calibration data
 
