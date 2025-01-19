@@ -7,5 +7,6 @@ const String apiGif = "gif/";                          // API name to get the GI
 
 uint8_t *getGifData(String, int, size_t *);
 ErrorCode initWebServer();
+ErrorCode sendCalibrationValues(String);
 
 #endif
