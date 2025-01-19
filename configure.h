@@ -17,6 +17,7 @@
 #endif
 
 #define PIN_SYNC_SHOW_FRAME 38 // Pin to used for sync signal to trigger slaves for showing a frame
+#define SAFETY_WAIT_TIME_FRAME 5    // Value (in ms) added to the final calibration time of a frame for safety
 
 #define MAX_FRAMES 256   // Maximum frames that the GIF can have, used for calibration, you can increase this value if needed
 #define colorOutputSize 2 // 16 bit color as output

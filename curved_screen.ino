@@ -26,7 +26,6 @@ Screen grid[SCREEN_COUNT] = { // Set the proper CS pin and orientation for each 
     {.csPin = 47, .rotation = 0}};
 
 Calibration calibration; // To store calibration data
-#define SAFETY_WAIT_TIME_FRAME 5    // Value (in ms) added to the final calibration time of a frame for safety
 
 void createDisplay(void)
 {
