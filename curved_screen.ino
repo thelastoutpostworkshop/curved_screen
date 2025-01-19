@@ -1,10 +1,10 @@
 // Main sketch for the master ESP32-S3 and the slaves
 // Tested on xxx
 
-#include "sync.h"
 #include "displayRaw.h"
 #include "webserver.h"
 #include "rgbstatus.h"
+#include "sync.h"
 
 int framesCount;    // The number of frames for the GIF files
 String esp_id_s;    // The ESP32-S3 internal mac address, serving as the ID for the GIF processing program

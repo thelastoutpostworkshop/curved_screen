@@ -1,10 +1,13 @@
 // Web server functions
 
+#ifndef _CURVEDSCREEN_WEB_SERVER_
+#define _CURVEDSCREEN_WEB_SERVER_
+
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <ESPAsyncWebServer.h>
 #include "secrets.h"
-#include "sync.h"
+#include "curvedscreen.h"
 
 // Comment the next line to compile and upload the code to the ESP32-S3 acting as the slaves, you can have as many slaves as you want
 // Uncomment the next line to compile and upload the code to the ESP32-S3 acting as the master - only one master is allowed
@@ -242,3 +245,4 @@ uint8_t *getGifData(String esp_id, int screenNumber, size_t *bufferSize)
         return NULL;
     }
 }
+#endif
