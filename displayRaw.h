@@ -2,12 +2,7 @@
 
 #include <TFT_eSPI.h>    // Install this library with the Arduino IDE Library Manager
 #include <AnimatedGIF.h> // Install this library with the Arduino IDE Library Manager
-
-#define MAX_FRAMES 256   // Maximum frames that the GIF can have, used for calibration, you can increase this value if needed
-#define colorOutputSize 2 // 16 bit color as output
-#define imageWidth 240
-#define imageHeight 240
-
+#include "configure.h"
 #include "fonts/Prototype20pt7b.h"
 
 TFT_eSPI tft = TFT_eSPI();
