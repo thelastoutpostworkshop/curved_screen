@@ -218,7 +218,7 @@ void setup()
     createDisplay();
 
     // Get the internal ESP32-S3 Mac address, this will serve as the ID for the GIF server program
-    const uint32_t ESPID = ESP.getEfuseMac();
+    const uint64_t ESPID = ESP.getEfuseMac();
     esp_id_s = String(ESPID);
     Serial.printf("ESP id=%s\n", esp_id_s.c_str());
 
