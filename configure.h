@@ -5,7 +5,7 @@
 // Uncomment the next line to compile and upload the code to the ESP32-S3 acting as the master - only one master is allowed
 // #define MASTER  
 
-#define masterPort 8080
+#define masterPort 80
 #define MASTER_SERVERNAME "curved" // The name of the master web server, slaves are uting it to send calibration data
 #define MAXRETRY 10         // Maximum number of retries for an HTTP call
 #define PAUSEDELAYRETRY 100 // Delay in ms before retrying a failed HTTP call
