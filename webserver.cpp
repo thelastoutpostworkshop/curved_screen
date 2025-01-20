@@ -147,28 +147,6 @@ void sendReady(void)
     http.end();
 }
 
-// int getFramesCount()
-// {
-//     HTTPClient http;
-
-//     String url = apiEndpoint + apiFrameCount;
-//     http.begin(url);
-//     int httpCode = http.GET();
-
-//     if (httpCode > 0)
-//     {
-//         String payload = http.getString();
-//         http.end();
-//         return payload.toInt();
-//     }
-//     else
-//     {
-//         Serial.printf("[HTTP] GET failed, error: %s\n", http.errorToString(httpCode).c_str());
-//         http.end();
-//         return -1;
-//     }
-// }
-
 int HTTPGetWithRetry(HTTPClient *http, String url, int httpCode)
 {
     int retry = 0;
