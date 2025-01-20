@@ -220,7 +220,7 @@ uint8_t *getGifData(String esp_id, int screenNumber, size_t *bufferSize)
                 totalBytesRead += bytesRead;
                 contentLength -= bytesRead;
             }
-            yield();
+            // yield();
         }
 
         http.end();
