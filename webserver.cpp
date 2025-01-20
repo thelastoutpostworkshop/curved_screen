@@ -64,7 +64,7 @@ ErrorCode initWebServer()
     Serial.println("Connecting to WiFi");
     WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, password);
-    WiFi.setAutoReconnect(true);
+    // WiFi.setAutoReconnect(true);
     while (WiFi.status() != WL_CONNECTED)
     {
         delay(300);
@@ -193,7 +193,7 @@ uint8_t *getGifData(String esp_id, int screenNumber, size_t *bufferSize)
 
     String url = apiEndpoint + apiGif + esp_id + "/" + String(screenNumber);
     void *gifData = NULL;
-    http.setConnectTimeout(10000);
+    // http.setConnectTimeout(10000);
     httpCode = HTTPGetWithRetry(&http, url, httpCode);
     if (httpCode == HTTP_CODE_OK)
     {
