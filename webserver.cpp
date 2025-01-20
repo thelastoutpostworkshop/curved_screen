@@ -32,8 +32,8 @@ ErrorCode lastError; // Contain the last error code
 #ifdef MASTER
 extern SLAVES slaves; // Slaves
 
-AsyncWebServer masterServer(masterPort); 
-bool masterReady = false;        // Master is ready to receive calibration data from slaves
+AsyncWebServer masterServer(masterPort);
+bool masterReady = false; // Master is ready to receive calibration data from slaves
 
 // Function to process the calibration data
 void handleCalibrationData(uint8_t *data, size_t len, AsyncWebServerRequest *request)
@@ -148,7 +148,7 @@ int HTTPGetWithRetry(HTTPClient *http, String url, int httpCode)
         Serial.printf("Calling %s\n", url.c_str());
         if (retry > 0)
         {
-            Serial.println("Retrying...");
+            Serial.printf("Received %d, Retrying...\n", httpCode);
         }
         http->end();
         http->begin(url);
