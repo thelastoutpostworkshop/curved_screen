@@ -159,6 +159,33 @@ int HTTPGetWithRetry(HTTPClient *http, String url, int httpCode)
     return httpCode;
 }
 
+// Call to master to see if it is ready to receive calibrated data
+bool isMasterReady()
+{
+    HTTPClient http;
+    int httpCode;
+    bool ready = false;
+
+    String url = String("http://") + String(MASTER_SERVERNAME) + ".local/ready";
+    http.setConnectTimeout(10000);
+    httpCode = HTTPGetWithRetry(&http, url, httpCode);
+    if (httpCode == HTTP_CODE_OK)
+    {
+        String payload = http.getString();
+        ready = (payload == "true");
+
+        Serial.printf("[HTTP] GET succeeded, masterReady: %s\n", payload.c_str());
+        return true;
+    }
+    else
+    {
+        Serial.printf("[HTTP] GET failed, error: %s\n", http.errorToString(httpCode).c_str());
+        http.end();
+        lastError = cannotGetIfMasterIsReady;
+        return false;
+    }
+}
+
 uint8_t *getGifData(String esp_id, int screenNumber, size_t *bufferSize)
 {
     HTTPClient http;

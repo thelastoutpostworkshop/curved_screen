@@ -143,10 +143,17 @@ bool runCalibration(void)
         Serial.println(calibration.getCalibrationValues().c_str());
     }
 #ifndef MASTER
+    bool ready = isMasterReady();
+    if (!ready)
+    {
+        displayErrorMessage("Error master not ready to receive calibration values", 40);
+        while (true)
+            ;
+    }
     // A screen slave will send its calibration data to the master
     if (sendCalibrationValues(calibration.getCalibrationValues()) != noError)
     {
-        displayNormalMessage("Error sending calibration values", 40);
+        displayErrorMessage("Error sending calibration values", 40);
         while (true)
             ;
     }

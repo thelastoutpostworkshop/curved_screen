@@ -33,7 +33,8 @@ enum ErrorCode
     cannotOpenGifFile,
     notEnoughMemory,
     cannotSendCalibrationValues,
-    noMDNS
+    noMDNS,
+    cannotGetIfMasterIsReady
 };
 
 #endif
