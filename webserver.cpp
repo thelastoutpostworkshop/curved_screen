@@ -143,6 +143,7 @@ ErrorCode sendCalibrationValues(String calibrationValues)
 int HTTPGetWithRetry(HTTPClient *http, String url, int httpCode)
 {
     int retry = 0;
+    httpCode = http->GET();
     while (httpCode != HTTP_CODE_OK && retry < MAXRETRY)
     {
         Serial.printf("Calling %s\n", url.c_str());
