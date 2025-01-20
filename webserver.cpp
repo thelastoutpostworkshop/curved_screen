@@ -175,7 +175,7 @@ bool isMasterReady()
         ready = (payload == "true");
 
         Serial.printf("[HTTP] GET succeeded, masterReady: %s\n", payload.c_str());
-        return true;
+        return ready;
     }
     else
     {
