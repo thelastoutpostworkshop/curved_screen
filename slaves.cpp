@@ -1,6 +1,8 @@
 #include "slaves.h"
 #include "configure.h"
 
+extern bool masterReady;        // Master is ready to receive calibration data from slaves
+
 // Constructor
 SLAVES::SLAVES()
     : calibrationReceived(0) // Initialize calibrationReceived to 0
@@ -47,6 +49,7 @@ String SLAVES::getCalibrationData(int slaveNumber)
 // Block until all slaves are ready
 void SLAVES::waitForAllSlaves(void)
 {
+    masterReady = true;
     while (!allSlavesReady())
     {
         yield();
