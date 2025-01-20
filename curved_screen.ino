@@ -323,6 +323,6 @@ void loop()
     while ((millis() - t) <= durationCalibrated)
         ;
 #else
-    delay(20);
+    delay(5);
 #endif
 }
