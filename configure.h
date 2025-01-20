@@ -3,7 +3,7 @@
 
 // Comment the next line to compile and upload the code to the ESP32-S3 acting as the slaves, you can have as many slaves as you want
 // Uncomment the next line to compile and upload the code to the ESP32-S3 acting as the master - only one master is allowed
-#define MASTER  
+// #define MASTER  
 
 #define masterPort 8080
 #define MASTER_SERVERNAME "curved" // The name of the master web server, slaves are uting it to send calibration data
@@ -27,7 +27,7 @@
 
 // Gif processing server
 
-const String apiEndpoint = "http://192.168.1.90/api/:8080"; // The end point API for the GIF server, change this according to your local network
+const String apiEndpoint = "http://192.168.1.90:8080/api/"; // The end point API for the GIF server, change this according to your local network
 const String apiGif = "gif/";            // API name to get the GIF data
 
 
