@@ -11,6 +11,9 @@ extern ErrorCode lastError; // Contain the last error code
 
 #ifdef MASTER
 SLAVES slaves; // Slaves
+const char* role = "Master";
+#else
+const char* role = "Slave";
 #endif
 
 int framesCount; // The number of frames for the GIF files
@@ -227,7 +230,7 @@ void setup()
     // Get the internal ESP32-S3 Mac address, this will serve as the ID for the GIF server program
     const uint64_t ESPID = ESP.getEfuseMac();
     esp_id_s = String(ESPID);
-    Serial.printf("ESP id=%s\n", esp_id_s.c_str());
+    Serial.printf("%s ESP id=%s\n", role, esp_id_s.c_str());
 
     // Get the gif files from the GIF server
     ErrorCode res = getGifFiles();
