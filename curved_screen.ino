@@ -323,6 +323,6 @@ void loop()
     while ((millis() - t) <= durationCalibrated)
         ;
 #else
-    delay(5);
+    vTaskDelete(NULL); // Deletes the "Arduino" task running this loop
 #endif
 }
