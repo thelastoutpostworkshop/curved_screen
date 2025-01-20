@@ -149,7 +149,7 @@ int HTTPGetWithRetry(HTTPClient *http, String url, int httpCode)
         Serial.printf("Calling %s\n", url.c_str());
         if (retry > 0)
         {
-            Serial.printf("Received %d, Retrying...\n", httpCode);
+            Serial.printf("Received %s, Retrying...\n", http->errorToString(httpCode).c_str());
         }
         http->end();
         http->begin(url);
