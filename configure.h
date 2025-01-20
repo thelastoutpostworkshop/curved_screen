@@ -5,6 +5,7 @@
 // Uncomment the next line to compile and upload the code to the ESP32-S3 acting as the master - only one master is allowed
 #define MASTER  
 
+#define masterPort 8080
 #define MASTER_SERVERNAME "curved" // The name of the master web server, slaves are uting it to send calibration data
 #define MAXRETRY 10         // Maximum number of retries for an HTTP call
 #define PAUSEDELAYRETRY 100 // Delay in ms before retrying a failed HTTP call
@@ -23,6 +24,12 @@
 #define colorOutputSize 2 // 16 bit color as output
 #define imageWidth 240
 #define imageHeight 240
+
+// Gif processing server
+
+const String apiEndpoint = "http://192.168.1.90/api/:8080"; // The end point API for the GIF server, change this according to your local network
+const String apiGif = "gif/";            // API name to get the GIF data
+
 
 // Error codes
 enum ErrorCode

@@ -32,7 +32,7 @@ ErrorCode lastError; // Contain the last error code
 #ifdef MASTER
 extern SLAVES slaves; // Slaves
 
-AsyncWebServer masterServer(80); // Master runs on port 80
+AsyncWebServer masterServer(masterPort); 
 bool masterReady = false;        // Master is ready to receive calibration data from slaves
 
 // Function to process the calibration data
