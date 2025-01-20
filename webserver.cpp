@@ -27,13 +27,13 @@ const char *homePageTemplate = R"rawliteral(
 </html>
 )rawliteral";
 
-ErrorCode lastError;    // Contain the last error code
+ErrorCode lastError; // Contain the last error code
 
 #ifdef MASTER
-extern SLAVES slaves;  // Slaves
+extern SLAVES slaves; // Slaves
 
 AsyncWebServer masterServer(80); // Master runs on port 80
-
+bool masterReady = false;        // Master is ready to receive calibration data from slaves
 
 // Function to process the calibration data
 void handleCalibrationData(uint8_t *data, size_t len, AsyncWebServerRequest *request)
@@ -48,6 +48,14 @@ void handleCalibrationData(uint8_t *data, size_t len, AsyncWebServerRequest *req
     Serial.println(calibrationData);
     slaves.addCalibrationData(calibrationData);
     request->send(200, "text/plain", "Calibration data received");
+}
+void handleReady(AsyncWebServerRequest *request)
+{
+    // Convert the boolean to a string representation
+    String response = masterReady ? "true" : "false";
+
+    // Send the response as plain text
+    request->send(200, "text/plain", response);
 }
 #endif
 
@@ -73,8 +81,8 @@ ErrorCode initWebServer()
         Serial.println("Error starting mDNS for the Master");
         return noMDNS;
     }
-    // masterServer.on("/ready", HTTP_GET, [](AsyncWebServerRequest *request)
-    //                 { handleReady(request); });
+    masterServer.on("/ready", HTTP_GET, [](AsyncWebServerRequest *request)
+                    { handleReady(request); });
     masterServer.on(
         "/calibration", HTTP_POST, [](AsyncWebServerRequest *request) {}, NULL,
         [](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
@@ -130,21 +138,6 @@ ErrorCode sendCalibrationValues(String calibrationValues)
         return cannotSendCalibrationValues;
     }
     return noError;
-}
-
-void sendReady(void)
-{
-    HTTPClient http;
-
-    String url = String("http://") + String(MASTER_SERVERNAME) + ".local/ready";
-    http.begin(url);
-    int httpCode = http.GET();
-    Serial.printf("Sending ready %s\n", url.c_str());
-    if (httpCode < 0)
-    {
-        Serial.printf("[HTTP] GET failed, error: %s\n", http.errorToString(httpCode).c_str());
-    }
-    http.end();
 }
 
 int HTTPGetWithRetry(HTTPClient *http, String url, int httpCode)
