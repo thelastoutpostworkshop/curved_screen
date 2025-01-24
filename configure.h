@@ -10,7 +10,7 @@
 #define MAXRETRY 10         // Maximum number of retries for an HTTP call
 #define PAUSEDELAYRETRY 100 // Delay in ms before retrying a failed HTTP call
 
-#define SLAVECOUNT 1 // The number of ESP32-S3 slaves
+#define SLAVECOUNT 3 // The number of ESP32-S3 slaves
 
 // Define the GPIO pin for the built-in RGB LED
 #ifndef RGB_BUILTIN
