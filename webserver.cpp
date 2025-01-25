@@ -124,12 +124,6 @@ ErrorCode sendCalibrationValues(String calibrationValues)
 
         httpResponseCode = http.POST(calibrationValues);
 
-        // if (httpResponseCode > 0)
-        // {
-        //     String response = http.getString(); // Get server response
-        //     Serial.println(httpResponseCode);
-        //     Serial.println(response);
-        // }
         retry++;
     }
     if (httpResponseCode < 0)
