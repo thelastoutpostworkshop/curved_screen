@@ -7,7 +7,7 @@
 
 #define masterPort 80
 #define MASTER_SERVERNAME "curved" // The name of the master web server, slaves are uting it to send calibration data
-#define MAXRETRY 10         // Maximum number of retries for an HTTP call
+#define MAXRETRY 20         // Maximum number of retries for an HTTP call
 #define PAUSEDELAYRETRY 500 // Delay in ms before retrying a failed HTTP call
 
 #define SLAVECOUNT 3 // The number of ESP32-S3 slaves
