@@ -24,8 +24,8 @@ String esp_id_s; // The ESP32-S3 internal mac address, serving as the ID for the
 #define SCREEN_COUNT 2 // The number of screens connected to the ESP32-S3
 Screen grid[SCREEN_COUNT] = {
     // Set the proper CS pin and orientation for each screen
-    {.csPin = 17, .rotation = 0},
-    {.csPin = 18, .rotation = 0},
+    {.csPin = 17, .rotation = 2},
+    {.csPin = 18, .rotation = 2},
 };
 
 Calibration calibration; // To store calibration data
