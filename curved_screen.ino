@@ -1,5 +1,5 @@
 // Main sketch for the master ESP32-S3 and the slaves
-// Tested on xxx
+// Tested on
 
 #include "configure.h"
 #include "display.h"
